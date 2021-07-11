@@ -30,9 +30,6 @@ before_build:
 build:
     project: c:\projects\milkytracker\build\MilkyTracker.sln
 
-build_linux:
-  - docker run hello-world
-
 
 after_build:
   # https://github.com/chocolatey/chocolatey/issues/431
