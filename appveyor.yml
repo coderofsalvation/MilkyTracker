@@ -1,9 +1,19 @@
 configuration:
   - Release
 
+image:
+  - Visual Studio 2020
+  - Ubuntu
+
 platform:
   - Win32
   - x64
+
+services:
+- docker
+
+environment:
+  APPVEYOR_YML_DISABLE_PS_LINUX: true
 
 install:
   - git submodule update --init --recursive
@@ -12,13 +22,17 @@ install:
       Update-AppveyorBuild -Version "$env:GIT_TAG-$env:APPVEYOR_BUILD_NUMBER"
 
 before_build:
-  - md c:\projects\milkytracker\build
-  - cd c:\projects\milkytracker\build
-  - if %platform% == Win32 cmake -G "Visual Studio 14" -T v140_xp ..
-  - if %platform% == x64 cmake -G "Visual Studio 14 Win64" -T v140_xp ..
+  - ps: md c:\projects\milkytracker\build
+  - ps: cd c:\projects\milkytracker\build
+  - ps: if %platform% == Win32 cmake -G "Visual Studio 14" -T v140_xp ..
+  - ps: if %platform% == x64 cmake -G "Visual Studio 14 Win64" -T v140_xp ..
 
 build:
     project: c:\projects\milkytracker\build\MilkyTracker.sln
+
+build_linux:
+  - docker run hello-world
+
 
 after_build:
   # https://github.com/chocolatey/chocolatey/issues/431
