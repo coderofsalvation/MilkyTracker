@@ -2,7 +2,7 @@ configuration:
   - Release
 
 image:
-  - Visual Studio 2020
+  - Visual Studio 2019
   - Ubuntu
 
 platform:
