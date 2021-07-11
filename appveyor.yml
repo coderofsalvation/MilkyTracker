@@ -24,8 +24,8 @@ install:
 before_build:
   - cmd: md c:\projects\milkytracker\build
   - cmd: cd c:\projects\milkytracker\build
-  - cmd: if %platform% == Win32 cmake -G "Visual Studio 16" -T v140_xp ..
-  - cmd: if %platform% == x64 cmake -G "Visual Studio 16 Win64" -T v140_xp ..
+  - cmd: if %platform% == Win32 cmake -G "Visual Studio 15 2017" -T v140_xp ..
+  - cmd: if %platform% == x64 cmake -G "Visual Studio 15 2017 Win64" -T v140_xp ..
 
 build:
     project: c:\projects\milkytracker\build\MilkyTracker.sln
