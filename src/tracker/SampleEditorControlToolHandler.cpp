@@ -74,7 +74,17 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.fadeSampleVolumeStart != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeStart : 100.0f);
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.fadeSampleVolumeEnd != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeEnd : 100.0f);
 			break;
-			
+		
+		case ToolHandlerResponder::SampleToolTypeDecimate:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Decimate sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Bits [1..16]");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Decimate [0..1]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(1, 16, 2);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, 1.0f, 2);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.decimateBits != SampleEditorControlLastValues::invalidIntValue() ? lastValues.decimateBits : 16);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.decimateRate != SampleEditorControlLastValues::invalidIntValue() ? lastValues.decimateRate : 0.5f );
+			break;
+
 		case ToolHandlerResponder::SampleToolTypeChangeSign:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Change sign" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Ignore bits from MSB [0..]");
@@ -209,6 +219,18 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			sampleEditor->tool_scaleSample(&par);
 			break;
 		}
+
+		case ToolHandlerResponder::SampleToolTypeDecimate:
+		{
+			lastValues.decimateBits = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.decimateRate = static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.decimateBits ));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.decimateRate ));
+			sampleEditor->tool_decimateSample(&par);
+			break;
+		}
+		
 
 		case ToolHandlerResponder::SampleToolTypeChangeSign:
 		{

@@ -34,6 +34,8 @@ struct SampleEditorControlLastValues
 	float boostSampleVolume;
 	float fadeSampleVolumeStart;
 	float fadeSampleVolumeEnd;
+	pp_int32 decimateBits;
+	float decimateRate;
 	float DCOffset;
 	pp_int32 silenceSize;
 	float waveFormVolume;

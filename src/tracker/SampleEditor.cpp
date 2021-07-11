@@ -882,6 +882,12 @@ void SampleEditor::mixPasteSample()
 	tool_mixPasteSample(&par);
 }
 
+void SampleEditor::substractSample()
+{
+	FilterParameters par(0);
+	tool_substractSample(&par);
+}
+
 void SampleEditor::AMPasteSample()
 {
 	FilterParameters par(0);
@@ -904,6 +910,12 @@ void SampleEditor::FLPasteSample()
 {
 	FilterParameters par(0);
 	tool_FLPasteSample(&par);
+}
+
+void SampleEditor::ReverberateSample()
+{
+	FilterParameters par(0);
+	tool_reverberateSample(&par);
 }
 
 void SampleEditor::convertSampleResolution(bool convert)
@@ -1441,6 +1453,63 @@ void SampleEditor::tool_mixPasteSample(const FilterParameters* par)
 
 }
 
+void SampleEditor::tool_substractSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(NULL, NULL);
+
+	prepareUndo();
+
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+
+	float step = (float)clipBoard->getWidth() / (float)(sEnd - sStart);
+
+	float j = 0.0f;
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float frac = j - (float)floor(j);
+
+		pp_int16 s = clipBoard->getSampleWord((pp_int32)j);
+		float f1 = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+		s = clipBoard->getSampleWord((pp_int32)j + 1);
+		float f2 = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+
+		float f = (1.0f - frac) * f1 + frac * f2;
+
+		setFloatSampleInWaveform(i, getFloatSampleFromWaveform(i) - f);
+		j += step;
+	}
+
+	finishUndo();
+
+	postFilter();
+
+}
+
 void SampleEditor::tool_AMPasteSample(const FilterParameters* par)
 {
 	if (isEmptySample())
@@ -1741,6 +1810,99 @@ void SampleEditor::tool_FLPasteSample(const FilterParameters* par)
 
 }
 
+void SampleEditor::tool_reverberateSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+	float sLength = sEnd - sStart;
+
+	preFilter(&SampleEditor::tool_reverberateSample, par);
+
+	prepareUndo();
+
+
+	VRand rand;
+	rand.seed();
+	pp_int32 i;
+	float decay = 0.49;
+	pp_int32 delay = 1800;
+	pp_int32 reverb_samples = delay;
+	float hpdata = 0.0f;
+	float lpdata = 0.0f;
+	float cut = 0.1;
+	float* reverb_buf;
+	float* reverb_buf_result;
+	bool wetonly = true;
+	pp_int32 reverb_pos = 0;
+	float wet = 1.0f;
+	float dist = 0.2;
+	float f2;
+	float reflect = 0.4;
+	pp_int32 reflections = 1;
+
+	// reverb ringbuf
+	reverb_buf = (float*)malloc(reverb_samples * sizeof(float));
+	for (pp_int32 i = 0; i < reverb_samples; i++ ) reverb_buf[i] = 0.0f;
+	// reverb result buf
+	reverb_buf_result = (float*)malloc( sLength * sizeof(float));
+	for (pp_int32 i = 0; i < sLength; i++) reverb_buf_result[i] = 0.0f;
+
+	// reflections
+	for (pp_int32 r = 1; r < reflections+1; r++) {
+		for (pp_int32 i = sStart; i < sEnd; i++)
+		{
+			int ndelay = delay;// + (r * reflect);
+			if (i >= ndelay ){
+				float f = getFloatSampleFromWaveform(i - ndelay);
+				//(rand.white() * 0.05f)
+				f2 = (f * decay) + (reverb_buf[reverb_pos] * decay);
+				//lpdata = lpdata - (cut * (lpdata - f2));
+				//hpdata = lpdata - f2;
+				reverb_pos = (reverb_pos + 1) % reverb_samples;
+				reverb_buf[reverb_pos] = f2;
+				reverb_buf_result[i] = (dist * tanh(f2 / dist)) * wet;
+				this->setFloatSampleInWaveform(i, reverb_buf_result[i]);
+			}
+		}
+	}
+
+	/*
+	// mix verb + dry
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float f = getFloatSampleFromWaveform(i);
+		this->setFloatSampleInWaveform(i, reverb_buf_result[i]);
+	}*/
+
+
+	free(reverb_buf);
+	free(reverb_buf_result);
+
+	finishUndo();
+
+	postFilter();
+
+}
+
 
 void SampleEditor::tool_scaleSample(const FilterParameters* par)
 {
@@ -1869,40 +2031,155 @@ void SampleEditor::tool_compressSample(const FilterParameters* par)
 	prepareUndo();
 
 	float maxLevel = ((par == NULL) ? 1.0f : par->getParameter(0).floatPart);
-	float peak_pre = 0.0f;
-	float peak_post = 0.0f;
-	float compress = 0.8;
+	float max = 0.0f;
 
 	pp_int32 i;
 
+	float peak = 0.0f;
+	
 	// find peak value (pre)
 	for (i = sStart; i < sEnd; i++)
 	{
 		float f = getFloatSampleFromWaveform(i);
-		if (ppfabs(f) > peak_pre) peak_pre = ppfabs(f);
+		if (ppfabs(f) > peak) peak = ppfabs(f);
 	}
+
+	float compress = peak * 0.66;
 
 	// compress
 	for (i = sStart; i < sEnd; i++)
 	{
 		float f = getFloatSampleFromWaveform(i);
-		f = compress * tanh(f / compress);       // upward compression
-		setFloatSampleInWaveform(i, f);
+		float b = compress * tanh(f / compress);       // upward compression
+		if (ppfabs(f-b) > max) max = ppfabs(f-b);
+		setFloatSampleInWaveform(i, b);
 	}
 
-	// find peak value (post)
-	for (i = sStart; i < sEnd; i++)
-	{
-		float f = getFloatSampleFromWaveform(i);
-		if (ppfabs(f) > peak_post) peak_post = ppfabs(f);
-	}
-
-	float scale = 1.0f + (peak_pre - peak_post);
-
+	float scale = 1.0f + max; // compensate levels
+	
 	for (i = sStart; i < sEnd; i++)
 	{
 		float f = getFloatSampleFromWaveform(i);
 		setFloatSampleInWaveform(i, f * scale);
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_decimateSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_decimateSample, par);
+
+	prepareUndo();
+
+	float maxLevel = ((par == NULL) ? 1.0f : par->getParameter(0).floatPart);
+	float max = 0.0f;
+
+	pp_int32 i;
+
+	int bits = par->getParameter(0).intPart;
+	float rate = par->getParameter(1).floatPart;
+
+	long int m = 1 << (bits - 1);
+	float y = 0, cnt = 0;
+
+	for (i = sStart; i < sEnd; i++)
+	{
+		float f = getFloatSampleFromWaveform(i);
+		cnt += rate;
+		if (cnt >= 1)
+		{
+			cnt -= 1;
+			y = (long int)(f * m) / (float)m;
+		}
+		setFloatSampleInWaveform(i, y);
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_exciteSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_exciteSample, par);
+	prepareUndo();
+
+	mp_sint32 i = 0;
+
+	float x = 0.0f;
+	bool subtle = true;
+	float saturate = 0.5;
+	float cut1 = 0.86;
+	float cut2 = 0.725;
+	float cut = cut1;
+	float boost = 15.0;
+	float comp = 0.05;
+	float lpdata = 0.0;
+	float hpdata = 0.0;
+	int n = 0;
+
+	for (i = sStart; i < sEnd; i++)
+	{
+		x = getFloatSampleFromWaveform(i);
+
+		lpdata = lpdata - (cut * (lpdata - x));
+		hpdata = lpdata - x;
+		// introduce partial aliasing
+		if (saturate) {
+			n += 1;
+			if ((n % 2) == 0) hpdata = hpdata * (saturate + 1.0);
+		}
+		// maximize
+		hpdata = (comp * tanh(hpdata / comp)) * boost;
+
+		setFloatSampleInWaveform(i, (x + hpdata) * 0.9);
 	}
 
 	finishUndo();

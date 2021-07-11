@@ -250,10 +250,12 @@ public:
 	void cropSample();
 	void clearSample();
 	void mixPasteSample();
+	void substractSample();
 	void AMPasteSample();
 	void FMPasteSample();
 	void PHPasteSample();
 	void FLPasteSample();
+	void ReverberateSample();
 	void convertSampleResolution(bool convert);
 
 	// remember to stop playing before using this
@@ -318,11 +320,13 @@ public:
 	void tool_cropSample(const FilterParameters* par);
 	void tool_clearSample(const FilterParameters* par);
 	void tool_mixPasteSample(const FilterParameters* par);
+	void tool_substractSample(const FilterParameters* par);
 	void tool_AMPasteSample(const FilterParameters* par);
 	void tool_FMPasteSample(const FilterParameters* par);
 	void tool_PHPasteSample(const FilterParameters* par);
 	void tool_FLPasteSample(const FilterParameters* par);
-	
+	void tool_reverberateSample(const FilterParameters* par);
+
 	// convert sample resolution
 	void tool_convertSampleResolution(const FilterParameters* par);
 	
@@ -330,6 +334,7 @@ public:
 	void tool_scaleSample(const FilterParameters* par);
 	void tool_normalizeSample(const FilterParameters* par);
 	void tool_compressSample(const FilterParameters* par);
+	void tool_decimateSample(const FilterParameters* par);
 	void tool_reverseSample(const FilterParameters* par);
 	void tool_PTboostSample(const FilterParameters* par);
 	bool isValidxFadeSelection();
@@ -339,6 +344,7 @@ public:
 	void tool_resampleSample(const FilterParameters* par);
 	void tool_DCNormalizeSample(const FilterParameters* par);
 	void tool_DCOffsetSample(const FilterParameters* par);
+	void tool_exciteSample(const FilterParameters* par);
 	void tool_rectangularSmoothSample(const FilterParameters* par);
 	void tool_triangularSmoothSample(const FilterParameters* par);
 	void tool_eqSample(const FilterParameters* par,bool selective);
