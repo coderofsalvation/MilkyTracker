@@ -209,6 +209,12 @@ if(UNIX)
             message("MIDI support disabled (ALSA unavailable)")
         endif()
     endif()
+    # just bundle the extra libs so the core application 
+    # won't crash in case of version mismatches of non-essential libs
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+    set(BUILD_SHARED_LIBS OFF)
+    set(CMAKE_EXE_LINKER_FLAGS "-static")
+
 endif()
 
 # Restore library suffixes
