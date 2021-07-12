@@ -34,6 +34,7 @@
 #include "EditorBase.h"
 #include "Undo.h"
 #include "Singleton.h"
+#include "Convolve.h"
 
 struct TXMSample;
 
@@ -345,6 +346,7 @@ public:
 	void tool_DCNormalizeSample(const FilterParameters* par);
 	void tool_DCOffsetSample(const FilterParameters* par);
 	void tool_exciteSample(const FilterParameters* par);
+	void tool_bassboostSample(const FilterParameters* par);
 	void tool_rectangularSmoothSample(const FilterParameters* par);
 	void tool_triangularSmoothSample(const FilterParameters* par);
 	void tool_eqSample(const FilterParameters* par,bool selective);

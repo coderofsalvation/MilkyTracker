@@ -1812,6 +1812,8 @@ void SampleEditor::tool_FLPasteSample(const FilterParameters* par)
 
 void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 {
+
+	/*
 	if (isEmptySample())
 		return;
 
@@ -1838,6 +1840,7 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 	preFilter(&SampleEditor::tool_reverberateSample, par);
 
 	prepareUndo();
+
 
 
 	VRand rand;
@@ -1885,18 +1888,96 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 		}
 	}
 
-	/*
-	// mix verb + dry
-	for (pp_int32 i = sStart; i < sEnd; i++)
-	{
-		float f = getFloatSampleFromWaveform(i);
-		this->setFloatSampleInWaveform(i, reverb_buf_result[i]);
-	}*/
-
-
 	free(reverb_buf);
 	free(reverb_buf_result);
+*/
+	if (isEmptySample())
+		return;
 
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+	float sLength = sEnd - sStart;
+
+	preFilter(NULL, NULL);
+
+	prepareUndo();
+
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+
+	pp_int32 cLength = clipBoard->getWidth();
+	
+	/*
+	float j = 0.0f;
+	
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float frac = j - (float)floor(j);
+
+		pp_int16 s = clipBoard->getSampleWord((pp_int32)j);
+		float f1 = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+		s = clipBoard->getSampleWord((pp_int32)j + 1);
+		float f2 = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+
+		float f = (1.0f - frac) * f1 + frac * f2;
+
+		setFloatSampleInWaveform(i, f + getFloatSampleFromWaveform(i));
+		j += step;
+	}
+
+	finishUndo();
+
+	postFilter();
+	*/
+
+	// create IR float array
+	float* impulseResponse;
+	impulseResponse = (float*)malloc(cLength * sizeof(float));
+	float j = 0.0f;
+	float frac = j - (float)floor(j);
+	for (pp_int32 i = 0; i < cLength; i++) {
+		pp_int16 s = clipBoard->getSampleWord((pp_int32)i);
+		float f1 = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+		impulseResponse[i] = f1;
+	}
+
+	// create sample float array
+	float* smpin;
+	float* smpout;
+	smpin = (float*)malloc(sLength * sizeof(float));
+	smpout = (float*)malloc(sLength * sizeof(float));
+	for (pp_int32 i = 0; i < sLength; i++) {
+		smpin[i] = this->getFloatSampleFromWaveform(i);
+	}
+
+	convolve(smpin, impulseResponse, sLength, cLength, &smpout);
+
+	for (pp_int32 i = sStart; i < sLength; i++)
+	{
+		this->setFloatSampleInWaveform(i, smpout[i] );
+	}
+
+	free(impulseResponse);
+	free(smpin);
+	free(smpout);
 	finishUndo();
 
 	postFilter();
@@ -2180,6 +2261,59 @@ void SampleEditor::tool_exciteSample(const FilterParameters* par)
 		hpdata = (comp * tanh(hpdata / comp)) * boost;
 
 		setFloatSampleInWaveform(i, (x + hpdata) * 0.9);
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_bassboostSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_bassboostSample, par);
+	prepareUndo();
+
+	mp_sint32 i = 0;
+
+	float x = 0.0f;
+	
+	float gain1;
+	float cap = 0.0f;
+	float ratio = 0.4f;
+	float selectivity = 60.0f;
+	float gain2 = 0.8f;
+	
+
+	for (i = sStart; i < sEnd; i++)
+	{
+		x = getFloatSampleFromWaveform(i);
+
+		gain1 = 1.0 / (selectivity + 1.0);
+		cap = (x + cap * selectivity) * gain1;
+		x = __min(__max(-1.0, (x + cap * ratio) * gain2), 1.0);
+		setFloatSampleInWaveform(i,x);
 	}
 
 	finishUndo();

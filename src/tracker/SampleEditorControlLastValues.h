@@ -31,6 +31,8 @@ struct SampleEditorControlLastValues
 {
 	pp_int32 newSampleSize;
 	pp_int32 changeSignIgnoreBits;
+	pp_int32 frequencyBassboost;
+	pp_int32 frequencyExcite;
 	float boostSampleVolume;
 	float fadeSampleVolumeStart;
 	float fadeSampleVolumeEnd;
@@ -63,6 +65,9 @@ struct SampleEditorControlLastValues
 	void reset()
 	{
 		newSampleSize = invalidIntValue();
+		decimateBits = invalidIntValue();
+		decimateRate = invalidFloatValue();
+		frequencyBassboost = invalidIntValue();
 		changeSignIgnoreBits = invalidIntValue();
 		boostSampleVolume = invalidFloatValue();
 		fadeSampleVolumeStart = invalidFloatValue();
@@ -81,6 +86,12 @@ struct SampleEditorControlLastValues
 		PPDictionary result;
 		
 		result.store("newSampleSize", newSampleSize);
+
+		result.store("decimateBits", decimateBits);
+
+		result.store("decimateRate", decimateRate);
+
+		result.store("frequencyBassboost", frequencyBassboost);
 
 		result.store("changeSignIgnoreBits", changeSignIgnoreBits);
 

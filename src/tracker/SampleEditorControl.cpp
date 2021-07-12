@@ -33,6 +33,7 @@
 #include "TrackerConfig.h"
 #include "PlayerController.h"
 #include "DialogBase.h"
+#include "Convolve.h"
 
 #include <algorithm>
 #include <math.h>
@@ -138,7 +139,9 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry("Smooth (tri.)", MenuCommandIDTriangularSmooth);
 	subMenuAdvanced->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuAdvanced->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
+	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Exciter", MenuCommandIDExcite);
+	subMenuAdvanced->addEntry("Bass boost", MenuCommandIDBassboost);
 	subMenuAdvanced->addEntry("Reverberate", MenuCommandIDReverberate);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Resample" PPSTR_PERIODS, MenuCommandIDResample);
@@ -1703,6 +1706,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDEQ3Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ10Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDExcite, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDBassboost, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDReverberate, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDResample, isEmptySample);
 
@@ -1847,6 +1851,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDDecimate:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeDecimate);
+			break;
+
+		case MenuCommandIDBassboost:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeBassboost);
 			break;
 
 		case MenuCommandIDReverse:

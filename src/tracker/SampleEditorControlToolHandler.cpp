@@ -85,6 +85,13 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.decimateRate != SampleEditorControlLastValues::invalidIntValue() ? lastValues.decimateRate : 0.5f );
 			break;
 
+		case ToolHandlerResponder::SampleToolTypeBassboost:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Bass boost" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("frequency (hz) [30..300]:");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(30, 300, 2);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.frequencyBassboost != SampleEditorControlLastValues::invalidIntValue() ? lastValues.frequencyBassboost : 60.0f);
+			break;
+
 		case ToolHandlerResponder::SampleToolTypeChangeSign:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Change sign" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Ignore bits from MSB [0..]");
@@ -228,6 +235,15 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			par.setParameter(0, FilterParameters::Parameter(lastValues.decimateBits ));
 			par.setParameter(1, FilterParameters::Parameter(lastValues.decimateRate ));
 			sampleEditor->tool_decimateSample(&par);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeBassboost:
+		{
+			lastValues.frequencyBassboost = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			FilterParameters par(1);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.frequencyBassboost));
+			sampleEditor->tool_bassboostSample(&par);
 			break;
 		}
 		
