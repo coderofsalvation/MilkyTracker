@@ -3,6 +3,8 @@ configuration:
 
 image:
   - Ubuntu1604
+  - Ubuntu2004
+  - Ubuntu
   - Visual Studio 2017
 
 platform:
@@ -37,7 +39,9 @@ for:
 -
   matrix:
     only:
+      - image: Ubuntu
       - image: Ubuntu1604
+      - image: Ubuntu2004
 
   build_script:
   - sh: cmake ..
