@@ -25,10 +25,6 @@ before_build:
   - sh: cd build
   - sh: sudo apt-get update
   - sh: sudo apt-get install libjack-dev liblhasa-dev librtmidi-dev libsdl2-dev libzzip-dev -y
-  - sh: cmake ..
-  - sh: make
-  - cpack -C %configuration% -D CPACK_GENERATOR="ZIP"
-  - sh: exit 0
   - cmd: md c:\projects\milkytracker\build
   - cmd: cd c:\projects\milkytracker\build
   - cmd: if %platform% == Win32 cmake -G "Visual Studio 15 2017" -T v140_xp ..
@@ -37,6 +33,16 @@ before_build:
 build:
     project: c:\projects\milkytracker\build\MilkyTracker.sln
 
+for:
+-
+  matrix:
+    only:
+      - image: Ubuntu
+
+  build_script:
+  - sh: cmake ..
+  - sh: make
+  - sh: cpack -C %configuration% -D CPACK_GENERATOR="ZIP"
 
 after_build:
   # https://github.com/chocolatey/chocolatey/issues/431
