@@ -2,12 +2,12 @@ configuration:
   - Release
 
 image:
-  - Visual Studio 2017
   - Ubuntu
+  #  - Visual Studio 2017
 
 platform:
-  - Win32
   - x64
+  - Win32
 
 environment:
   APPVEYOR_YML_DISABLE_PS_LINUX: true
