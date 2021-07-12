@@ -23,6 +23,7 @@ before_build:
   - sh: ls -la
   - sh: mkdir build
   - sh: cd build
+  - sh: sudo apt-get update
   - sh: sudo apt-get install libjack-dev liblhasa-dev librtmidi-dev libsdl2-dev libzzip-dev -y
   - sh: cmake ..
   - cmd: md c:\projects\milkytracker\build
