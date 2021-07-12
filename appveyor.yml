@@ -20,11 +20,10 @@ install:
 
 before_build:
   - sh: if [ $PLATFORM == "Win32" ]; then exit 0; fi 
-  - sh: set
   - sh: ls -la
   - sh: mkdir build
   - sh: cd build
-  - sh: sudo apt-get install libjack-dev liblhasa-dev librtmidi-dev libsdl2-dev libzzip-dev
+  - sh: sudo apt-get install libjack-dev liblhasa-dev librtmidi-dev libsdl2-dev libzzip-dev -y
   - sh: cmake ..
   - cmd: md c:\projects\milkytracker\build
   - cmd: cd c:\projects\milkytracker\build
