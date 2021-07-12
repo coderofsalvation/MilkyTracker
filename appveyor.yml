@@ -2,8 +2,8 @@ configuration:
   - Release
 
 image:
-  - Ubuntu
-  #  - Visual Studio 2017
+  - Ubuntu1604
+  - Visual Studio 2017
 
 platform:
   - x64
