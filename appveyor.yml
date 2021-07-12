@@ -27,7 +27,7 @@ before_build:
   - sh: sudo apt-get install libjack-dev liblhasa-dev librtmidi-dev libsdl2-dev libzzip-dev -y
   - sh: cmake ..
   - sh: make
-  - cpack -C %configuration%
+  - cpack -C %configuration% -D CPACK_GENERATOR="ZIP"
   - sh: exit 0
   - cmd: md c:\projects\milkytracker\build
   - cmd: cd c:\projects\milkytracker\build
