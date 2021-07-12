@@ -22,7 +22,7 @@ before_build:
   - sh: if [ $platform -eq "Win32" ]; then exit 0; fi 
   - sh: set
   - sh: ls -la
-  - sh: mk build
+  - sh: mkdir build
   - sh: cd build
   - sh: cmake ..
   - cmd: md c:\projects\milkytracker\build
