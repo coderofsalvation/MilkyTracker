@@ -134,17 +134,22 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("DC normalize", MenuCommandIDDCNormalize);
 	subMenuAdvanced->addEntry("DC offset" PPSTR_PERIODS, MenuCommandIDDCOffset);
-	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Smooth (rect.)", MenuCommandIDRectangularSmooth);
 	subMenuAdvanced->addEntry("Smooth (tri.)", MenuCommandIDTriangularSmooth);
+	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
+	subMenuAdvanced->addEntry("Filter" , MenuCommandIDResonantFilter);
 	subMenuAdvanced->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuAdvanced->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
+
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Exciter", MenuCommandIDExcite);
 	subMenuAdvanced->addEntry("Bass boost", MenuCommandIDBassboost);
 	subMenuAdvanced->addEntry("Reverb", MenuCommandIDReverberate);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Resample" PPSTR_PERIODS, MenuCommandIDResample);
+	//subMenuAdvanced->addEntrzzzy(seperatorStringLarge, -1);
+	//subMenuAdvanced->addEntry("Test" , MenuCommandIDTest);
+
 
 	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuXPaste->setSubMenu(true);
@@ -1703,12 +1708,14 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDDCOffset, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDRectangularSmooth, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDTriangularSmooth, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDResonantFilter, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ3Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ10Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDExcite, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDBassboost, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDReverberate, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDResample, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDTest, isEmptySample);
 
 	subMenuXPaste->setState(MenuCommandIDMixPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDSubstract, sampleEditor->clipBoardIsEmpty() || isEmptySample);
@@ -1853,6 +1860,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeDecimate);
 			break;
 
+		case MenuCommandIDTest:
+			sampleEditor->tool_testSample(NULL);
+			break;
+
 		case MenuCommandIDBassboost:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeBassboost);
 			break;
@@ -1892,6 +1903,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDEQ3Band:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeEQ3Band);
+			break;
+
+		case MenuCommandIDResonantFilter:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResonantFilter);
 			break;
 
 		case MenuCommandIDEQ10Band:

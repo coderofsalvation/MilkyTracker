@@ -257,6 +257,7 @@ public:
 	void PHPasteSample();
 	void FLPasteSample();
 	void ReverberateSample();
+	void testSample();
 	void convertSampleResolution(bool convert);
 
 	// remember to stop playing before using this
@@ -327,6 +328,7 @@ public:
 	void tool_PHPasteSample(const FilterParameters* par);
 	void tool_FLPasteSample(const FilterParameters* par);
 	void tool_reverberateSample(const FilterParameters* par);
+	void tool_testSample(const FilterParameters* par);
 
 	// convert sample resolution
 	void tool_convertSampleResolution(const FilterParameters* par);
@@ -351,6 +353,7 @@ public:
 	void tool_triangularSmoothSample(const FilterParameters* par);
 	void tool_eqSample(const FilterParameters* par,bool selective);
 	void tool_eqSample(const FilterParameters* par);
+	void tool_resonantFilterSample(const FilterParameters* par);
 	
 	// generators
 	void tool_generateSilence(const FilterParameters* par);

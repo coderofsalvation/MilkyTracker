@@ -36,6 +36,9 @@ struct SampleEditorControlLastValues
 
 	pp_int32 reverbSize;
 	float reverbRatio;
+
+	float filterCutoff;
+	pp_int32 filterSteepness;
 	
 	float boostSampleVolume;
 	float fadeSampleVolumeStart;
@@ -86,6 +89,9 @@ struct SampleEditorControlLastValues
 
 		reverbSize = invalidIntValue();
 		reverbRatio = invalidFloatValue();
+
+		filterSteepness = invalidIntValue();
+		filterCutoff = invalidFloatValue();
 	}
 		
 	PPDictionary convertToDictionary()
@@ -100,6 +106,9 @@ struct SampleEditorControlLastValues
 
 		result.store("reverbSize", reverbSize);
 		result.store("reverbRatio", reverbRatio);
+
+		result.store("filterCutoff", filterCutoff);
+		result.store("filterSteepness", filterSteepness);
 	
 		result.store("frequencyBassboost", frequencyBassboost);
 

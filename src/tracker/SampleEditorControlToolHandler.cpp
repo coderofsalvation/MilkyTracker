@@ -92,7 +92,17 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(1, 200, 2);
 			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, 1.0f, 2);
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.reverbSize != SampleEditorControlLastValues::invalidIntValue() ? lastValues.reverbSize : 20);
-			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.reverbRatio != SampleEditorControlLastValues::invalidIntValue() ? lastValues.reverbRatio : 0.2f);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.reverbRatio != SampleEditorControlLastValues::invalidIntValue() ? lastValues.reverbRatio : 0.5f);
+			break;
+
+		case ToolHandlerResponder::SampleToolTypeResonantFilter:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Resonant Filter" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Cutoff [-1..LP..0..HP..1]");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Steepness [0..5]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-1.0f, 1.0f, 3);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0, 5, 2);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.filterCutoff != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.filterCutoff : 0.22);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.filterSteepness != SampleEditorControlLastValues::invalidIntValue() ? lastValues.filterSteepness : 3);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeBassboost:
@@ -256,6 +266,17 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			par.setParameter(0, FilterParameters::Parameter(lastValues.reverbSize));
 			par.setParameter(1, FilterParameters::Parameter(lastValues.reverbRatio));
 			sampleEditor->tool_reverberateSample(&par);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeResonantFilter:
+		{
+			lastValues.filterCutoff = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.filterSteepness = static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.filterCutoff));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.filterSteepness));
+			sampleEditor->tool_resonantFilterSample(&par);
 			break;
 		}
 

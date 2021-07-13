@@ -918,6 +918,12 @@ void SampleEditor::ReverberateSample()
 	tool_reverberateSample(&par);
 }
 
+void SampleEditor::testSample()
+{
+	FilterParameters par(0);
+	tool_testSample(&par);
+}
+
 void SampleEditor::convertSampleResolution(bool convert)
 {
 	FilterParameters par(1);
@@ -1813,84 +1819,6 @@ void SampleEditor::tool_FLPasteSample(const FilterParameters* par)
 void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 {
 
-	/*
-	if (isEmptySample())
-		return;
-
-	pp_int32 sStart = selectionStart;
-	pp_int32 sEnd = selectionEnd;
-
-	if (hasValidSelection())
-	{
-		if (sStart >= 0 && sEnd >= 0)
-		{
-			if (sEnd < sStart)
-			{
-				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
-			}
-		}
-	}
-	else
-	{
-		sStart = 0;
-		sEnd = sample->samplen;
-	}
-	float sLength = sEnd - sStart;
-
-	preFilter(&SampleEditor::tool_reverberateSample, par);
-
-	prepareUndo();
-
-
-
-	VRand rand;
-	rand.seed();
-	pp_int32 i;
-	float decay = 0.49;
-	pp_int32 delay = 1800;
-	pp_int32 reverb_samples = delay;
-	float hpdata = 0.0f;
-	float lpdata = 0.0f;
-	float cut = 0.1;
-	float* reverb_buf;
-	float* reverb_buf_result;
-	bool wetonly = true;
-	pp_int32 reverb_pos = 0;
-	float wet = 1.0f;
-	float dist = 0.2;
-	float f2;
-	float reflect = 0.4;
-	pp_int32 reflections = 1;
-
-	// reverb ringbuf
-	reverb_buf = (float*)malloc(reverb_samples * sizeof(float));
-	for (pp_int32 i = 0; i < reverb_samples; i++ ) reverb_buf[i] = 0.0f;
-	// reverb result buf
-	reverb_buf_result = (float*)malloc( sLength * sizeof(float));
-	for (pp_int32 i = 0; i < sLength; i++) reverb_buf_result[i] = 0.0f;
-
-	// reflections
-	for (pp_int32 r = 1; r < reflections+1; r++) {
-		for (pp_int32 i = sStart; i < sEnd; i++)
-		{
-			int ndelay = delay;// + (r * reflect);
-			if (i >= ndelay ){
-				float f = getFloatSampleFromWaveform(i - ndelay);
-				//(rand.white() * 0.05f)
-				f2 = (f * decay) + (reverb_buf[reverb_pos] * decay);
-				//lpdata = lpdata - (cut * (lpdata - f2));
-				//hpdata = lpdata - f2;
-				reverb_pos = (reverb_pos + 1) % reverb_samples;
-				reverb_buf[reverb_pos] = f2;
-				reverb_buf_result[i] = (dist * tanh(f2 / dist)) * wet;
-				this->setFloatSampleInWaveform(i, reverb_buf_result[i]);
-			}
-		}
-	}
-
-	free(reverb_buf);
-	free(reverb_buf_result);
-*/
 	if (isEmptySample())
 		return;
 
@@ -1922,7 +1850,7 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 	pp_int32 cLength = clipBoard->getWidth();
 	pp_int32 sLength = sEnd - sStart;
 	float ratio = par->getParameter(1).floatPart;
-	bool usePasteBuffer = false;  //
+	bool usePasteBuffer = false;  // optional: pastebuffer can be used as impulse response (not that useful though)
 	bool padSample = true; 	      // add silence to sample
 
 	if (usePasteBuffer && ClipBoard::getInstance()->isEmpty())
@@ -1960,30 +1888,6 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 		sLength = newSampleSize;
 		delete[] dst;
 	}
-
-	/*
-	float j = 0.0f;
-	
-	for (pp_int32 i = sStart; i < sEnd; i++)
-	{
-		float frac = j - (float)floor(j);
-
-		pp_int16 s = clipBoard->getSampleWord((pp_int32)j);
-		float f1 = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
-		s = clipBoard->getSampleWord((pp_int32)j + 1);
-		float f2 = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
-
-		float f = (1.0f - frac) * f1 + frac * f2;
-
-		setFloatSampleInWaveform(i, f + getFloatSampleFromWaveform(i));
-		j += step;
-	}
-
-	finishUndo();
-
-	postFilter();
-	*/
-
 	
 	// create sample float array
 	float* smpin;
@@ -2010,6 +1914,122 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 
 }
 
+void SampleEditor::tool_resonantFilterSample(const FilterParameters* par)
+{
+
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_resonantFilterSample, par);
+
+	prepareUndo();
+
+	pp_int32 sLength = sEnd - sStart;
+	
+	int steepness = 3;
+	VRand rand;
+	rand.seed();
+	float cutoff = par->getParameter(0).floatPart + (rand.white() * 0.05); // attempt to add slight drift so 'redo filter' won't create artifacts
+	float resonance = 0.4;
+	float amp = 0.9;
+	if (cutoff > 0.0f) amp = 0.73f;
+
+	for (pp_int32 i = 0; i < par->getParameter(1).intPart * 3; i++) {
+		for (pp_int32 j = 0; j < sLength; j++) {
+			this->setFloatSampleInWaveform(j, filter(this->getFloatSampleFromWaveform(j), cutoff, resonance) * amp);
+		}
+	}
+
+	finishUndo();
+
+	postFilter();
+
+}
+
+void SampleEditor::tool_testSample(const FilterParameters* par)
+{
+
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_testSample, par);
+
+	prepareUndo();
+
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+
+	pp_int32 cLength = clipBoard->getWidth();
+	pp_int32 sLength = sEnd - sStart;
+	float ratio = 1.0;// par->getParameter(1).floatPart;
+	bool usePasteBuffer = false; // optional: pasteBuffer can be used as impulse response
+
+	if (usePasteBuffer && ClipBoard::getInstance()->isEmpty())
+		return;
+
+	// create sample float array
+	float* smpin;
+	float* smpout;
+	smpin = (float*)malloc(sLength * sizeof(float));
+	smpout = (float*)malloc(sLength * sizeof(float));
+	int steepness = 3;
+	float amp = 0.95;
+	VRand rand;
+	rand.seed();
+	float cutoff = 0.05 + (rand.white() * 0.05); // add slight drift so 'redo filter' won't create artifacts
+	float resonance = 0.2;
+
+	if (cutoff < 0.0f) amp = 1.1f;
+	for (pp_int32 i = 0; i < steepness*3; i++) {
+		for (pp_int32 j = 0; j < sLength; j++) {
+			this->setFloatSampleInWaveform(j, filter(this->getFloatSampleFromWaveform(j), cutoff, resonance) * amp);
+		}
+	}
+
+	free(smpin);
+	free(smpout);
+	finishUndo();
+
+	postFilter();
+
+}
 
 void SampleEditor::tool_scaleSample(const FilterParameters* par)
 {
@@ -2262,7 +2282,7 @@ void SampleEditor::tool_exciteSample(const FilterParameters* par)
 
 	float x = 0.0f;
 	bool subtle = true;
-	float saturate = 0.5;
+	bool saturate = false;
 	float cut1 = 0.86;
 	float cut2 = 0.725;
 	float cut = cut1;
