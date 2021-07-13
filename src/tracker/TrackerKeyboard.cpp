@@ -1019,6 +1019,6 @@ void Tracker::eventKeyDownBinding_InvokePatternCapture()
 	sectionHDRecorder->insIndex = moduleEditor->currentInstrumentIndex;
 	sectionHDRecorder->fromOrder = getOrderListBoxIndex();
 	sectionHDRecorder->toOrder = getOrderListBoxIndex();
-  sectionHDRecorder->muting = true;
+  sectionHDRecorder->setSettingsAllowMuting(true);
 	sectionHDRecorder->exportWAVAsSample();
 }
