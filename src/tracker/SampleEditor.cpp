@@ -1894,9 +1894,6 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 	if (isEmptySample())
 		return;
 
-	if (ClipBoard::getInstance()->isEmpty())
-		return;
-
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
 
@@ -1915,16 +1912,55 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 		sStart = 0;
 		sEnd = sample->samplen;
 	}
-	float sLength = sEnd - sStart;
 
-	preFilter(NULL, NULL);
+	preFilter(&SampleEditor::tool_reverberateSample, par);
 
 	prepareUndo();
 
 	ClipBoard* clipBoard = ClipBoard::getInstance();
 
 	pp_int32 cLength = clipBoard->getWidth();
-	
+	pp_int32 sLength = sEnd - sStart;
+	float ratio = par->getParameter(1).floatPart;
+	bool usePasteBuffer = false;  //
+	bool padSample = true; 	      // add silence to sample
+
+	if (usePasteBuffer && ClipBoard::getInstance()->isEmpty())
+		return;
+
+	// create IR float array
+	float* impulseResponse;
+	pp_int16 reverb_size = par->getParameter(0).intPart; // 1..200
+	if (!usePasteBuffer) cLength = 100 * (reverb_size*10); //  100..100000
+	impulseResponse = (float*)malloc(cLength * sizeof(float));
+	float f;
+	VRand rand;
+	rand.seed();
+	for (pp_int32 i = 0; i < cLength; i++) {
+		if (usePasteBuffer) {
+			pp_int16 s = clipBoard->getSampleWord((pp_int32)i);
+			f = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+		}
+		else f = rand.white() * (1.0f - ((1.0f / (float)cLength) * (float)i));
+		impulseResponse[i] = f;
+	}
+
+	if (padSample) {
+		pp_int32 newSampleSize = sLength + cLength;
+		mp_sword * dst = new mp_sword[newSampleSize];
+		pp_int32 j = 0;
+
+		for (j = 0; j < newSampleSize; j++   ) dst[j] = 0;
+		for (j = sStart; j < sLength; j++    ) dst[j] = sample->getSampleValue(j);
+		
+		module->freeSampleMem((mp_ubyte*)sample->sample);
+		sample->sample = (mp_sbyte*)module->allocSampleMem(newSampleSize * 2);
+		memcpy(sample->sample, dst, newSampleSize * 2);
+		sample->samplen = newSampleSize;
+		sLength = newSampleSize;
+		delete[] dst;
+	}
+
 	/*
 	float j = 0.0f;
 	
@@ -1948,17 +1984,7 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 	postFilter();
 	*/
 
-	// create IR float array
-	float* impulseResponse;
-	impulseResponse = (float*)malloc(cLength * sizeof(float));
-	float j = 0.0f;
-	float frac = j - (float)floor(j);
-	for (pp_int32 i = 0; i < cLength; i++) {
-		pp_int16 s = clipBoard->getSampleWord((pp_int32)i);
-		float f1 = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
-		impulseResponse[i] = f1;
-	}
-
+	
 	// create sample float array
 	float* smpin;
 	float* smpout;
@@ -1972,7 +1998,7 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 
 	for (pp_int32 i = sStart; i < sLength; i++)
 	{
-		this->setFloatSampleInWaveform(i, smpout[i] );
+		this->setFloatSampleInWaveform(i, ((smpin[i]*(1.0f-ratio)) + (smpout[i]*ratio)) * 1.2 );
 	}
 
 	free(impulseResponse);

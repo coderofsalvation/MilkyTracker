@@ -342,6 +342,7 @@ private:
 			SampleToolTypePTBoost,
 			SampleToolTypeXFade,
 			SampleToolTypeDecimate,
+			SampleToolTypeReverberate,
 			SampleToolTypeBassboost,
 			SampleToolTypeChangeSign,
 			SampleToolTypeSwapByteOrder,

@@ -33,6 +33,10 @@ struct SampleEditorControlLastValues
 	pp_int32 changeSignIgnoreBits;
 	pp_int32 frequencyBassboost;
 	pp_int32 frequencyExcite;
+
+	pp_int32 reverbSize;
+	float reverbRatio;
+	
 	float boostSampleVolume;
 	float fadeSampleVolumeStart;
 	float fadeSampleVolumeEnd;
@@ -79,6 +83,9 @@ struct SampleEditorControlLastValues
 		hasEQ3BandValues = hasEQ10BandValues = false;
 		resampleInterpolationType = invalidIntValue();
 		adjustFtAndRelnote = true;
+
+		reverbSize = invalidIntValue();
+		reverbRatio = invalidFloatValue();
 	}
 		
 	PPDictionary convertToDictionary()
@@ -91,6 +98,9 @@ struct SampleEditorControlLastValues
 
 		result.store("decimateRate", decimateRate);
 
+		result.store("reverbSize", reverbSize);
+		result.store("reverbRatio", reverbRatio);
+	
 		result.store("frequencyBassboost", frequencyBassboost);
 
 		result.store("changeSignIgnoreBits", changeSignIgnoreBits);

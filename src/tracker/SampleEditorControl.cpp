@@ -142,7 +142,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Exciter", MenuCommandIDExcite);
 	subMenuAdvanced->addEntry("Bass boost", MenuCommandIDBassboost);
-	subMenuAdvanced->addEntry("Reverberate", MenuCommandIDReverberate);
+	subMenuAdvanced->addEntry("Reverb", MenuCommandIDReverberate);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Resample" PPSTR_PERIODS, MenuCommandIDResample);
 
@@ -1788,7 +1788,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		// Reverberate
 		case MenuCommandIDReverberate:
-			sampleEditor->ReverberateSample();
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeReverberate);
 			break;
 
 		// crop

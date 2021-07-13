@@ -85,6 +85,16 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.decimateRate != SampleEditorControlLastValues::invalidIntValue() ? lastValues.decimateRate : 0.5f );
 			break;
 
+		case ToolHandlerResponder::SampleToolTypeReverberate:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Reverb" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Size [1..200]");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Dry/wet ratio [0..1]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(1, 200, 2);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, 1.0f, 2);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.reverbSize != SampleEditorControlLastValues::invalidIntValue() ? lastValues.reverbSize : 20);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.reverbRatio != SampleEditorControlLastValues::invalidIntValue() ? lastValues.reverbRatio : 0.2f);
+			break;
+
 		case ToolHandlerResponder::SampleToolTypeBassboost:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Bass boost" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("frequency (hz) [30..300]:");
@@ -235,6 +245,17 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			par.setParameter(0, FilterParameters::Parameter(lastValues.decimateBits ));
 			par.setParameter(1, FilterParameters::Parameter(lastValues.decimateRate ));
 			sampleEditor->tool_decimateSample(&par);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeReverberate:
+		{
+			lastValues.reverbSize = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.reverbRatio = static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.reverbSize));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.reverbRatio));
+			sampleEditor->tool_reverberateSample(&par);
 			break;
 		}
 
