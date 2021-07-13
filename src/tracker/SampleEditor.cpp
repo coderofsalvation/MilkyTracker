@@ -2358,7 +2358,7 @@ void SampleEditor::tool_bassboostSample(const FilterParameters* par)
 
 		gain1 = 1.0 / (selectivity + 1.0);
 		cap = (x + cap * selectivity) * gain1;
-		x = __min(__max(-1.0, (x + cap * ratio) * gain2), 1.0);
+		x = MIN( MAX(-1.0, (x + cap * ratio) * gain2), 1.0);
 		setFloatSampleInWaveform(i,x);
 	}
 
