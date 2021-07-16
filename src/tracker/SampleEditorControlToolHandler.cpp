@@ -33,6 +33,7 @@
 #include "DialogResample.h"
 #include "DialogGroupSelection.h"
 #include "DialogEQ.h"
+#include "DialogFilter.h"
 #include "SimpleVector.h"
 #include "FilterParameters.h"
 
@@ -95,14 +96,33 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.reverbRatio != SampleEditorControlLastValues::invalidIntValue() ? lastValues.reverbRatio : 0.5f);
 			break;
 
-		case ToolHandlerResponder::SampleToolTypeResonantFilter:
+		case ToolHandlerResponder::SampleToolTypeResonantFilterLP:
+		case ToolHandlerResponder::SampleToolTypeResonantFilterHP:
+		case ToolHandlerResponder::SampleToolTypeResonantFilterBP:
+		case ToolHandlerResponder::SampleToolTypeResonantFilterNOTCH:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Resonant Filter" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
-			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Cutoff [-1..LP..0..HP..1]");
-			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Steepness [0..5]");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-1.0f, 1.0f, 3);
-			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0, 5, 2);
-			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.filterCutoff != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.filterCutoff : 0.22);
-			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.filterSteepness != SampleEditorControlLastValues::invalidIntValue() ? lastValues.filterSteepness : 3);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Cutoff [0..22500]");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Resonance [0-9]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 22500, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0, 9, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.filterCutoffA != SampleEditorControlLastValues::invalidIntValue() ? lastValues.filterCutoffA : 250);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.filterResonance != SampleEditorControlLastValues::invalidIntValue() ? lastValues.filterResonance: 3);
+			if (type == ToolHandlerResponder::SampleToolTypeResonantFilterLP)    lastValues.filterType = 0;
+			if (type == ToolHandlerResponder::SampleToolTypeResonantFilterHP)    lastValues.filterType = 1;
+			if (type == ToolHandlerResponder::SampleToolTypeResonantFilterBP)    lastValues.filterType = 2;
+			if (type == ToolHandlerResponder::SampleToolTypeResonantFilterNOTCH) lastValues.filterType = 3;
+			break;
+
+		case ToolHandlerResponder::SampleToolTypeResonantFilterSweeper:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Sweep between last filter" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			char label[200];
+			sprintf(label, "Sweep between %i Hz and ... ?", lastValues.filterCutoffA);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption(label);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Sweep iterations [1..1000]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 22500, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(1, 10000, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.filterCutoffB != SampleEditorControlLastValues::invalidIntValue() ? lastValues.filterCutoffB : 250);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.filterSweeps != SampleEditorControlLastValues::invalidIntValue() ? lastValues.filterSweeps : 1);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeBassboost:
@@ -269,13 +289,20 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			break;
 		}
 
-		case ToolHandlerResponder::SampleToolTypeResonantFilter:
+		case ToolHandlerResponder::SampleToolTypeResonantFilterLP:
+		case ToolHandlerResponder::SampleToolTypeResonantFilterHP:
+		case ToolHandlerResponder::SampleToolTypeResonantFilterBP:
+		case ToolHandlerResponder::SampleToolTypeResonantFilterNOTCH:
+		case ToolHandlerResponder::SampleToolTypeResonantFilterSweeper:
 		{
-			lastValues.filterCutoff = static_cast<DialogWithValues*>(dialog)->getValueOne();
-			lastValues.filterSteepness = static_cast<DialogWithValues*>(dialog)->getValueTwo();
-			FilterParameters par(2);
-			par.setParameter(0, FilterParameters::Parameter(lastValues.filterCutoff));
-			par.setParameter(1, FilterParameters::Parameter(lastValues.filterSteepness));
+			lastValues.filterCutoffA = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.filterResonance = static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			FilterParameters par(5);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.filterCutoffA));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.filterResonance));
+			par.setParameter(2, FilterParameters::Parameter(lastValues.filterType));
+			par.setParameter(3, FilterParameters::Parameter(lastValues.filterCutoffB));
+			par.setParameter(4, FilterParameters::Parameter( type == ToolHandlerResponder::SampleToolTypeResonantFilterSweeper ? lastValues.filterSweeps : 0));
 			sampleEditor->tool_resonantFilterSample(&par);
 			break;
 		}

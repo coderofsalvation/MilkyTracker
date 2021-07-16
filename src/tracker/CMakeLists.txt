@@ -24,8 +24,7 @@ add_executable(tracker
     AnimatedFXControl.cpp
     ColorExportImport.cpp
     ColorPaletteContainer.cpp
-	Convolve.cpp
-    DialogChannelSelector.cpp
+	DialogChannelSelector.cpp
     DialogEQ.cpp
     DialogGroupSelection.cpp
     DialogHandlers.cpp
@@ -67,6 +66,7 @@ add_executable(tracker
     RecorderLogic.cpp
     ResamplerHelper.cpp
     SampleEditor.cpp
+	  SampleEditorFx.cpp
     SampleEditorControl.cpp
     SampleEditorControlToolHandler.cpp
     SampleEditorResampler.cpp
@@ -112,8 +112,7 @@ add_executable(tracker
     ColorExportImport.h
     ColorPaletteContainer.h
     ControlIDs.h
-	Convolve.h
-    DialogChannelSelector.h
+	DialogChannelSelector.h
     DialogEQ.h
     DialogGroupSelection.h
     DialogHandlers.h
@@ -156,6 +155,7 @@ add_executable(tracker
     ResamplerHelper.h
     SIPButtons.h
     SampleEditor.h
+	  SampleEditorFx.h
     SampleEditorControl.h
     SampleEditorControlLastValues.h
     SampleEditorResampler.h

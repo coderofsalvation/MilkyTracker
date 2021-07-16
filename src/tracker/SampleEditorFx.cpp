@@ -1,8 +1,4 @@
-#include "Convolve.h"
-
-float lastOutput = 0.0f;
-float lastInput = 0.0f;
-float momentum = 0.0f;
+#include "SampleEditorFx.h"
 
 /*
 ** convolve.c
@@ -232,20 +228,34 @@ int convolve(float* x, float* h, int lenX, int lenH, float** output)
 }
 
 
-float filter(float input, float cutoff, float reso) {
-	bool highpass = true;
-	if (cutoff < 0.0f) {
-		highpass = false;
-		cutoff = -cutoff;
-	}
-	if (highpass) {
-		lastOutput += momentum - lastInput + input;
-		lastInput = input;
-		momentum = momentum * (1.0f - reso) - lastOutput * cutoff; // First number controls resonance; second controls cutoff frequency
-	}else {
-		float distanceToGo = input - lastOutput;
-		momentum += distanceToGo * cutoff; // Lower / higher number here will lower / raise the cutoff frequency
-		return lastOutput += momentum + distanceToGo * (1.0f-reso); // Higher number here (max 1) lessens resonance
-	}
-	return lastOutput;
+void filter(struct Filter* f, float input) {
+	float fs = 44100.0; // samplerate
+	float fCutoff = 2 * sin(PI * f->cutoff / fs);
+	f->lp = f->lp + fCutoff * f->bp;
+	f->hp = f->q * input - f->lp - f->q * f->bp;
+	f->bp = fCutoff * f->hp + f->bp;
+	f->notch = f->hp + f->lp;
 }
+
+void filter_init(struct Filter* f) {
+	f->lp = 0.0;
+	f->hp = 0.0;
+	f->bp = 0.0;
+	f->notch = 0.0;
+}
+
+/*
+void xfade(float* in, float* out, pp_int32 len, int fadein , int fadeout ) {
+	float* head;
+	float* tail;
+	pp_int32 lenFadeIn = floor(((float)100 / len)) * fadein;
+	pp_int32 lenFadeOut = floor(((float)100 / len)) * fadeout;
+	pp_int32 lenHead = floor(((float)100 / len)) * (len - (lenFadeIn + lenFadeOut));
+	head = malloc(lenHead, sizeof(float));
+	tail = malloc(lenFadeOut, sizeof(float));
+	printf("lenHead:%i lenFade:%i\n", lenHead, lenFadeOut)
+
+		free(head);
+	free(tail);
+}
+*/

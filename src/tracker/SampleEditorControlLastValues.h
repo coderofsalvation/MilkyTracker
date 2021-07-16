@@ -37,8 +37,11 @@ struct SampleEditorControlLastValues
 	pp_int32 reverbSize;
 	float reverbRatio;
 
-	float filterCutoff;
-	pp_int32 filterSteepness;
+	pp_int32 filterCutoffA;
+	pp_int32 filterCutoffB;
+	pp_int32 filterResonance;
+	pp_int32 filterType;
+	pp_int32 filterSweeps;
 	
 	float boostSampleVolume;
 	float fadeSampleVolumeStart;
@@ -55,6 +58,9 @@ struct SampleEditorControlLastValues
 	
 	bool hasEQ10BandValues;
 	float EQ10BandValues[10];
+
+	bool hasFilterFullValues;
+	float FilterFullValues[3];
 	
 	pp_int32 resampleInterpolationType;
 	bool adjustFtAndRelnote;
@@ -90,8 +96,11 @@ struct SampleEditorControlLastValues
 		reverbSize = invalidIntValue();
 		reverbRatio = invalidFloatValue();
 
-		filterSteepness = invalidIntValue();
-		filterCutoff = invalidFloatValue();
+		filterCutoffA = invalidIntValue();
+		filterCutoffB = invalidIntValue();
+		filterResonance = invalidIntValue();
+		filterSweeps = invalidIntValue();
+		filterType = invalidIntValue();
 	}
 		
 	PPDictionary convertToDictionary()
@@ -107,8 +116,8 @@ struct SampleEditorControlLastValues
 		result.store("reverbSize", reverbSize);
 		result.store("reverbRatio", reverbRatio);
 
-		result.store("filterCutoff", filterCutoff);
-		result.store("filterSteepness", filterSteepness);
+		result.store("filterCutoffA", filterCutoffA);
+		result.store("filterCutoffB", filterCutoffB);
 	
 		result.store("frequencyBassboost", frequencyBassboost);
 

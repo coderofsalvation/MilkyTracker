@@ -34,7 +34,7 @@
 #include "EditorBase.h"
 #include "Undo.h"
 #include "Singleton.h"
-#include "Convolve.h"
+#include "SampleEditorFx.h"
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))

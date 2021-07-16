@@ -1944,21 +1944,40 @@ void SampleEditor::tool_resonantFilterSample(const FilterParameters* par)
 	prepareUndo();
 
 	pp_int32 sLength = sEnd - sStart;
-	
-	int steepness = 3;
-	VRand rand;
-	rand.seed();
-	float cutoff = par->getParameter(0).floatPart + (rand.white() * 0.05); // attempt to add slight drift so 'redo filter' won't create artifacts
-	float resonance = 0.4;
-	float amp = 0.9;
-	if (cutoff > 0.0f) amp = 0.73f;
+	struct Filter f;
+	float cutoff_a = (float)par->getParameter(0).intPart;
+	float cutoff_b = (float)par->getParameter(3).intPart;
+	int   sweeps = par->getParameter(4).intPart;
+	int   ftype = par->getParameter(2).intPart; // LP:0 HP:1 BP:2 NOTCH:3
+	float pos;
+	float out;
+	float fQ = (float)par->getParameter(1).intPart / 10.0f;
+	filter_init(&f);
+	f.q = ((float)(1.0f - fQ));
+	f.cutoff = cutoff_a;
+	if (!sweeps) cutoff_b = cutoff_a;
 
-	for (pp_int32 i = 0; i < par->getParameter(1).intPart * 3; i++) {
-		for (pp_int32 j = 0; j < sLength; j++) {
-			this->setFloatSampleInWaveform(j, filter(this->getFloatSampleFromWaveform(j), cutoff, resonance) * amp);
-		}
+	float amp = 1.0 + (10.0f * (tan(fQ * 1.5) * 0.1)); // compensate resonance
+	float sweepstep = 1.0f / (float)sLength;
+	if (cutoff_b > cutoff_a) {
+		float tmp = cutoff_a;
+		cutoff_a = cutoff_b;
+		cutoff_b = tmp;
 	}
+	float cutoff_size = cutoff_a - cutoff_b;
 
+	for (int i = 0; i < sLength; i++) {
+
+		float in = this->getFloatSampleFromWaveform(sStart + i);
+		filter(&f, in);
+		switch (ftype) {
+			case 0: out = f.lp;    break;
+			case 1: out = f.hp;    break;
+			case 2: out = f.bp;    break;
+			case 3: out = f.notch; break;
+		}
+		this->setFloatSampleInWaveform(sStart + i, out * amp );
+	}
 	finishUndo();
 
 	postFilter();
@@ -2016,12 +2035,14 @@ void SampleEditor::tool_testSample(const FilterParameters* par)
 	float cutoff = 0.05 + (rand.white() * 0.05); // add slight drift so 'redo filter' won't create artifacts
 	float resonance = 0.2;
 
+	/*
 	if (cutoff < 0.0f) amp = 1.1f;
 	for (pp_int32 i = 0; i < steepness*3; i++) {
 		for (pp_int32 j = 0; j < sLength; j++) {
 			this->setFloatSampleInWaveform(j, filter(this->getFloatSampleFromWaveform(j), cutoff, resonance) * amp);
 		}
 	}
+	*/
 
 	free(smpin);
 	free(smpout);

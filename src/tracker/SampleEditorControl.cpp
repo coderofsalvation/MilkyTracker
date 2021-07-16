@@ -33,7 +33,7 @@
 #include "TrackerConfig.h"
 #include "PlayerController.h"
 #include "DialogBase.h"
-#include "Convolve.h"
+#include "SampleEditorFx.h"
 
 #include <algorithm>
 #include <math.h>
@@ -137,9 +137,14 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry("Smooth (rect.)", MenuCommandIDRectangularSmooth);
 	subMenuAdvanced->addEntry("Smooth (tri.)", MenuCommandIDTriangularSmooth);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
-	subMenuAdvanced->addEntry("Filter" , MenuCommandIDResonantFilter);
-	subMenuAdvanced->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
+	subMenuAdvanced->addEntry(" 3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuAdvanced->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
+	subMenuAdvanced->addEntry("LP Filter", MenuCommandIDResonantFilterLP);
+	subMenuAdvanced->addEntry("HP Filter", MenuCommandIDResonantFilterHP);
+	subMenuAdvanced->addEntry("BP Filter", MenuCommandIDResonantFilterBP);
+	subMenuAdvanced->addEntry("Notch Filter", MenuCommandIDResonantFilterNOTCH);
+	//subMenuAdvanced->addEntry("Filter Sweeper", MenuCommandIDResonantFilterSweeper);
+
 
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Exciter", MenuCommandIDExcite);
@@ -150,7 +155,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	//subMenuAdvanced->addEntrzzzy(seperatorStringLarge, -1);
 	//subMenuAdvanced->addEntry("Test" , MenuCommandIDTest);
 
-
+	
 	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuXPaste->setSubMenu(true);
 	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
@@ -1708,7 +1713,9 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDDCOffset, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDRectangularSmooth, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDTriangularSmooth, isEmptySample);
-	subMenuAdvanced->setState(MenuCommandIDResonantFilter, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDResonantFilterLP, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDResonantFilterHP, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDResonantFilterSweeper, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ3Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ10Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDExcite, isEmptySample);
@@ -1905,8 +1912,24 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeEQ3Band);
 			break;
 
-		case MenuCommandIDResonantFilter:
-			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResonantFilter);
+		case MenuCommandIDResonantFilterLP:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResonantFilterLP);
+			break;
+
+		case MenuCommandIDResonantFilterHP:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResonantFilterHP);
+			break;
+
+		case MenuCommandIDResonantFilterBP:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResonantFilterBP);
+			break;
+
+		case MenuCommandIDResonantFilterNOTCH:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResonantFilterNOTCH);
+			break;
+
+		case MenuCommandIDResonantFilterSweeper:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResonantFilterSweeper);
 			break;
 
 		case MenuCommandIDEQ10Band:
