@@ -33,7 +33,6 @@
 #include "DialogResample.h"
 #include "DialogGroupSelection.h"
 #include "DialogEQ.h"
-#include "DialogFilter.h"
 #include "SimpleVector.h"
 #include "FilterParameters.h"
 
