@@ -37,6 +37,12 @@ struct SampleEditorControlLastValues
 	pp_int32 reverbSize;
 	float reverbRatio;
 
+	pp_int32 sizeFadeIn;
+	pp_int32 sizeFadeOut;
+
+	pp_int32 vocodeBands;
+	pp_int32 vocodeEnvelope;
+
 	pp_int32 filterCutoffA;
 	pp_int32 filterCutoffB;
 	pp_int32 filterResonance;
@@ -96,11 +102,17 @@ struct SampleEditorControlLastValues
 		reverbSize = invalidIntValue();
 		reverbRatio = invalidFloatValue();
 
+		sizeFadeIn = invalidIntValue();
+		sizeFadeOut = invalidIntValue();
+
 		filterCutoffA = invalidIntValue();
 		filterCutoffB = invalidIntValue();
 		filterResonance = invalidIntValue();
 		filterSweeps = invalidIntValue();
 		filterType = invalidIntValue();
+
+		vocodeBands = invalidIntValue();
+		vocodeEnvelope = invalidIntValue();
 	}
 		
 	PPDictionary convertToDictionary()
@@ -118,6 +130,13 @@ struct SampleEditorControlLastValues
 
 		result.store("filterCutoffA", filterCutoffA);
 		result.store("filterCutoffB", filterCutoffB);
+
+		result.store("vocodeBands", vocodeBands);
+		result.store("vocodeEnvelope", vocodeEnvelope);
+
+
+		result.store("sizeFadeIn", sizeFadeIn);
+		result.store("sizeFadeOut", sizeFadeOut);
 	
 		result.store("frequencyBassboost", frequencyBassboost);
 

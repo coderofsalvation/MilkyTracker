@@ -261,6 +261,7 @@ public:
 	void FLPasteSample();
 	void ReverberateSample();
 	void testSample();
+	void seamlessLoopSample();
 	void convertSampleResolution(bool convert);
 
 	// remember to stop playing before using this
@@ -332,6 +333,7 @@ public:
 	void tool_FLPasteSample(const FilterParameters* par);
 	void tool_reverberateSample(const FilterParameters* par);
 	void tool_testSample(const FilterParameters* par);
+	void tool_vocodeSample(const FilterParameters* par);
 
 	// convert sample resolution
 	void tool_convertSampleResolution(const FilterParameters* par);
@@ -342,6 +344,7 @@ public:
 	void tool_compressSample(const FilterParameters* par);
 	void tool_decimateSample(const FilterParameters* par);
 	void tool_reverseSample(const FilterParameters* par);
+	void tool_seamlessLoopSample(const FilterParameters* par);
 	void tool_PTboostSample(const FilterParameters* par);
 	bool isValidxFadeSelection();
 	void tool_xFadeSample(const FilterParameters* par);

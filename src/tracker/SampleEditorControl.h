@@ -68,6 +68,7 @@ private:
 	Tracker* tracker;
 	PPContextMenu* editMenuControl;
 	PPContextMenu* subMenuAdvanced;
+	PPContextMenu* subMenuFilterEQ;
 	PPContextMenu* subMenuXPaste;
 	PPContextMenu* subMenuGenerators;
 	PPContextMenu* subMenuPT;
@@ -291,6 +292,8 @@ private:
 		MenuCommandIDVolumeBoost,
 		MenuCommandIDVolumeFade,
 		MenuCommandIDReverse,
+		MenuCommandIDSeamlessLoop,
+		MenuCommandIDVocode,
 		MenuCommandIDPTBoost,
 		MenuCommandIDXFade,
 		MenuCommandIDChangeSign,
@@ -350,6 +353,7 @@ private:
 			SampleToolTypeDecimate,
 			SampleToolTypeReverberate,
 			SampleToolTypeBassboost,
+			SampleToolTypeSeamlessLoop,
 			SampleToolTypeChangeSign,
 			SampleToolTypeSwapByteOrder,
 			SampleToolTypeResample,
@@ -360,6 +364,7 @@ private:
 			SampleToolTypeEQ3Band,
 			SampleToolTypeEQ10Band,
 			SampleToolTypeSelectiveEQ10Band,
+			SampleToolTypeVocode,
 			SampleToolTypeResonantFilterLP,
 			SampleToolTypeResonantFilterHP,
 			SampleToolTypeResonantFilterBP,

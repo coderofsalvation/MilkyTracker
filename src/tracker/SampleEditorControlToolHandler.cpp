@@ -219,6 +219,31 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.waveFormNumPeriods != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.waveFormNumPeriods : 1.0f);
 			break;
 		}
+
+		case ToolHandlerResponder::SampleToolTypeSeamlessLoop:
+		{
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Generate waveform" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Fade in length [0..50%]:");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Fade out length [0..50%]:");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0,50,0);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0, 50, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.sizeFadeIn != SampleEditorControlLastValues::invalidIntValue() ? lastValues.sizeFadeIn : 25);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.sizeFadeOut != SampleEditorControlLastValues::invalidIntValue() ? lastValues.sizeFadeOut : 25);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeVocode:
+		{
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Vocode" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("bands [8/16]");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("release [1-6]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(8, 16, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(1, 6, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.vocodeBands != SampleEditorControlLastValues::invalidIntValue() ? lastValues.vocodeBands : 8);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.vocodeEnvelope != SampleEditorControlLastValues::invalidIntValue() ? lastValues.vocodeEnvelope: 1);
+			break;
+		}
+
 		default:
 			break;
 	}
@@ -315,6 +340,16 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			break;
 		}
 		
+		case ToolHandlerResponder::SampleToolTypeVocode:
+		{
+			lastValues.vocodeBands = (pp_int32)static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.vocodeEnvelope = (pp_int32)static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.vocodeBands));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.vocodeEnvelope));
+			sampleEditor->tool_vocodeSample(&par);
+			break;
+		}
 
 		case ToolHandlerResponder::SampleToolTypeChangeSign:
 		{
@@ -402,6 +437,17 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			par.setParameter(0, FilterParameters::Parameter(lastValues.waveFormVolume/100.0f));
 			par.setParameter(1, FilterParameters::Parameter(lastValues.waveFormNumPeriods));
 			sampleEditor->tool_generateSine(&par);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeSeamlessLoop:
+		{
+			lastValues.sizeFadeIn = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.sizeFadeOut = static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.sizeFadeIn));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.sizeFadeOut));
+			sampleEditor->tool_seamlessLoopSample(&par);
 			break;
 		}
 		
