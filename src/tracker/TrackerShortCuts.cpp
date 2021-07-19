@@ -89,7 +89,7 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 	if (event->getID() == eKeyDown)
 	{
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
-		pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr())+1);
+		pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr()) + 1);
 		switch (keyCode)
 		{
 			case VK_F1:
@@ -107,7 +107,7 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 			{
 				if (::getKeyModifier())
 					goto processBindings;
-					
+
 				if (static_cast<PPControl*>(getPatternEditorControl()) != screen->getFocusedControl())
 				{
 					getPatternEditorControl()->dispatchEvent(event);
@@ -117,57 +117,169 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 
 			default:
 			{
-processBindings:
-				pp_int32 keyModifier = ::getKeyModifier(); 
+			processBindings:
+				pp_int32 keyModifier = ::getKeyModifier();
 				bool res = executeBinding(eventKeyDownBindings, keyCode);
 
 				if (res && !isActiveEditing())
 					event->cancel();
-					
+
 				if (res || keyModifier)
 					break;
-			
+
 				if (editMode == EditModeMilkyTracker)
 				{
 					if (sectionDiskMenu->isFileBrowserVisible() &&
 						sectionDiskMenu->fileBrowserHasFocus())
 						break;
 				}
-			
+
 				PatternEditorControl* patternEditorControl = getPatternEditorControl();
 
 				// translate key to note
 				pp_int32 note = patternEditorControl->ScanCodeToNote(scanCode);
 
-				recorderLogic->sendNoteDownToPatternEditor(event, note, patternEditorControl);	
+				recorderLogic->sendNoteDownToPatternEditor(event, note, patternEditorControl);
 				break;
 			}
 
+			case VK_UP:
+			case VK_DOWN:
+			case VK_LEFT:
+			case VK_RIGHT:
+			case VK_HOME:
+			case VK_END:
+			case VK_PRIOR:
+			case VK_NEXT: 
+			case VK_OEM_PLUS:
+			case VK_OEM_MINUS: {
+				if (screen->getModalControl())
+					break;
+
+				if (!::getKeyModifier() ||
+					::getKeyModifier() == KeyModifierALT ||
+					::getKeyModifier() == (KeyModifierSHIFT | KeyModifierALT))
+				{
+					getPatternEditorControl()->dispatchEvent(event);
+					event->cancel();
+				}
+				else if (::getKeyModifier() == KeyModifierCTRL)
+				{
+					switch (keyCode)
+					{
+						// Select instrument using Shift+Up/Down
+						case VK_UP:
+						case VK_DOWN:
+						case VK_NEXT:
+						case VK_PRIOR:
+							listBoxInstruments->dispatchEvent(event);
+							event->cancel();
+							break;
+
+							// Select new order using Ctrl+Left/Right
+						case VK_LEFT:
+						{
+							selectPreviousOrder();
+							event->cancel();
+							break;
+						}
+						case VK_RIGHT:
+						{
+							selectNextOrder();
+							event->cancel();
+							break;
+						}
+
+						// insert/delete  new order using  + / - 
+						case VK_OEM_PLUS:
+							moduleEditor->insertNewOrderPosition(listBoxOrderList->getSelectedIndex());
+							updateOrderlist();
+							event->cancel();
+							break;
+
+						case VK_OEM_MINUS:
+							moduleEditor->deleteOrderPosition(listBoxOrderList->getSelectedIndex());
+							updateOrderlist();
+							event->cancel();
+							break;
+					}
+				}
+				else if (::getKeyModifier() == (KeyModifierSHIFT | KeyModifierCTRL))
+				{
+					switch (keyCode)
+					{
+						// Select sample using CTRL+Shift+Up/Down
+					case VK_UP:
+					case VK_DOWN:
+					case VK_NEXT:
+					case VK_PRIOR:
+						listBoxSamples->dispatchEvent(event);
+						event->cancel();
+						break;
+
+						// Select pattern using Ctrl+SHIFT+Left/Right
+					case VK_LEFT:
+						moduleEditor->decreaseOrderPosition(listBoxOrderList->getSelectedIndex());
+						updateOrderlist();
+						event->cancel();
+						break;
+
+					case VK_RIGHT:
+						moduleEditor->increaseOrderPosition(listBoxOrderList->getSelectedIndex());
+						updateOrderlist();
+						event->cancel();
+						break;
+
+					}
+				}
+				else if (::getKeyModifier() == (KeyModifierSHIFT))
+				{
+					switch (keyCode)
+					{
+
+						// plus key increases pattern step
+					case VK_OEM_PLUS:
+						getPatternEditorControl()->increaseRowInsertAdd();
+						updatePatternAddAndOctave();
+						event->cancel();
+						break;
+
+						// minus key increases pattern step
+					case VK_OEM_MINUS:
+						getPatternEditorControl()->decreaseRowInsertAdd();
+						updatePatternAddAndOctave();
+						event->cancel();
+						break;
+					}
+				}
+			}
+
 		}
-	}
-	else if (event->getID() == eKeyUp)
-	{
-		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr()); 
-		pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr())+1);
-		
-		switch (keyCode)
+
+		if (event->getID() == eKeyUp)
 		{
-			case VK_SPACE:
+			pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
+			pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr()) + 1);
+
+			switch (keyCode)
 			{
-				playerLogic->finishTraceAndRowPlay();
-				break;
+				case VK_SPACE:
+				{
+					playerLogic->finishTraceAndRowPlay();
+					break;
+				}
+
+				default:
+				{
+					PatternEditorControl* patternEditorControl = getPatternEditorControl();
+
+					pp_int32 note = patternEditorControl->ScanCodeToNote(scanCode);
+
+					recorderLogic->sendNoteUpToPatternEditor(event, note, patternEditorControl);
+				}
 			}
-				
-			default:
-			{
-				PatternEditorControl* patternEditorControl = getPatternEditorControl();
-				
-				pp_int32 note = patternEditorControl->ScanCodeToNote(scanCode);				
-				
-				recorderLogic->sendNoteUpToPatternEditor(event, note, patternEditorControl);	
-			}
+
 		}
-		
 	}
 }
 
