@@ -48,6 +48,15 @@
 #include "SectionTranspose.h"
 #include "SectionDiskMenu.h"
 
+#ifndef VK_OEM_PLUS
+#define VK_OEM_PLUS       0xBB   // '+' any country
+#define VK_OEM_COMMA      0xBC   // ',' any country
+#define VK_OEM_MINUS      0xBD   // '-' any country
+#define VK_OEM_PERIOD     0xBE   // '.' any country
+#define VK_OEM_2          0xBF   // '/?' for US
+#define VK_OEM_3          0xC0   // '`~' for US
+#endif
+
 void Tracker::sendNoteDown(mp_sint32 note, pp_int32 volume/* = -1*/)
 {
 	if (volume != -1 && volume > 255)
