@@ -151,8 +151,8 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 			case VK_END:
 			case VK_PRIOR:
 			case VK_NEXT: 
-			case SDLK_EQUALS:
-			case SDLK_MINUS: {
+			case SC_TICK:
+			case SC_SS: {
 				if (screen->getModalControl())
 					break;
 
@@ -191,13 +191,13 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 						}
 
 						// insert/delete  new order using  + / - 
-						case SDLK_EQUALS:
+						case SC_TICK:
 							moduleEditor->insertNewOrderPosition(listBoxOrderList->getSelectedIndex());
 							updateOrderlist();
 							event->cancel();
 							break;
 
-						case SDLK_MINUS:
+						case SC_SS:
 							moduleEditor->deleteOrderPosition(listBoxOrderList->getSelectedIndex());
 							updateOrderlist();
 							event->cancel();
@@ -238,14 +238,14 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 					{
 
 						// plus key increases pattern step
-					case SDLK_EQUALS:
+					case SC_TICK:
 						getPatternEditorControl()->increaseRowInsertAdd();
 						updatePatternAddAndOctave();
 						event->cancel();
 						break;
 
 						// minus key increases pattern step
-					case SDLK_MINUS:
+					case SC_SS:
 						getPatternEditorControl()->decreaseRowInsertAdd();
 						updatePatternAddAndOctave();
 						event->cancel();
