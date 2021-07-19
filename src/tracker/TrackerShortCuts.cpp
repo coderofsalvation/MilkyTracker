@@ -48,15 +48,6 @@
 #include "SectionTranspose.h"
 #include "SectionDiskMenu.h"
 
-#ifndef VK_OEM_PLUS
-#define VK_OEM_PLUS       0xBB   // '+' any country
-#define VK_OEM_COMMA      0xBC   // ',' any country
-#define VK_OEM_MINUS      0xBD   // '-' any country
-#define VK_OEM_PERIOD     0xBE   // '.' any country
-#define VK_OEM_2          0xBF   // '/?' for US
-#define VK_OEM_3          0xC0   // '`~' for US
-#endif
-
 void Tracker::sendNoteDown(mp_sint32 note, pp_int32 volume/* = -1*/)
 {
 	if (volume != -1 && volume > 255)
@@ -160,8 +151,8 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 			case VK_END:
 			case VK_PRIOR:
 			case VK_NEXT: 
-			case VK_OEM_PLUS:
-			case VK_OEM_MINUS: {
+			case SDLK_EQUALS:
+			case SDLK_MINUS: {
 				if (screen->getModalControl())
 					break;
 
@@ -200,13 +191,13 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 						}
 
 						// insert/delete  new order using  + / - 
-						case VK_OEM_PLUS:
+						case SDLK_EQUALS:
 							moduleEditor->insertNewOrderPosition(listBoxOrderList->getSelectedIndex());
 							updateOrderlist();
 							event->cancel();
 							break;
 
-						case VK_OEM_MINUS:
+						case SDLK_MINUS:
 							moduleEditor->deleteOrderPosition(listBoxOrderList->getSelectedIndex());
 							updateOrderlist();
 							event->cancel();
@@ -247,14 +238,14 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 					{
 
 						// plus key increases pattern step
-					case VK_OEM_PLUS:
+					case SDLK_EQUALS:
 						getPatternEditorControl()->increaseRowInsertAdd();
 						updatePatternAddAndOctave();
 						event->cancel();
 						break;
 
 						// minus key increases pattern step
-					case VK_OEM_MINUS:
+					case SDLK_MINUS:
 						getPatternEditorControl()->decreaseRowInsertAdd();
 						updatePatternAddAndOctave();
 						event->cancel();
