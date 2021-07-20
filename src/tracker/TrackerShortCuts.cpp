@@ -151,6 +151,8 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 			case VK_END:
 			case VK_PRIOR:
 			case VK_NEXT: 
+      case SC_PLUS:
+      case SC_MINUS:
 			case SC_TICK:
 			case SC_SS: {
 				if (screen->getModalControl())
@@ -226,12 +228,14 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 					{
 						// insert/delete  new order using  + / - 
 						case SC_TICK:
+						case SC_PLUS:
 							moduleEditor->insertNewOrderPosition(listBoxOrderList->getSelectedIndex());
 							updateOrderlist();
 							event->cancel();
 							break;
 
 						case SC_SS:
+						case SC_PLUS:
 							moduleEditor->deleteOrderPosition(listBoxOrderList->getSelectedIndex());
 							updateOrderlist();
 							event->cancel();
