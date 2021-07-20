@@ -190,18 +190,6 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 							break;
 						}
 
-						// insert/delete  new order using  + / - 
-						case SC_TICK:
-							moduleEditor->insertNewOrderPosition(listBoxOrderList->getSelectedIndex());
-							updateOrderlist();
-							event->cancel();
-							break;
-
-						case SC_SS:
-							moduleEditor->deleteOrderPosition(listBoxOrderList->getSelectedIndex());
-							updateOrderlist();
-							event->cancel();
-							break;
 					}
 				}
 				else if (::getKeyModifier() == (KeyModifierSHIFT | KeyModifierCTRL))
@@ -236,21 +224,18 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 				{
 					switch (keyCode)
 					{
+						// insert/delete  new order using  + / - 
+						case SC_TICK:
+							moduleEditor->insertNewOrderPosition(listBoxOrderList->getSelectedIndex());
+							updateOrderlist();
+							event->cancel();
+							break;
 
-						// plus key increases pattern step
-					case SC_TICK:
-						getPatternEditorControl()->increaseRowInsertAdd();
-						updatePatternAddAndOctave();
-						event->cancel();
-						break;
-
-						// minus key increases pattern step
-					case SC_SS:
-						getPatternEditorControl()->decreaseRowInsertAdd();
-						updatePatternAddAndOctave();
-						event->cancel();
-						break;
-					}
+						case SC_SS:
+							moduleEditor->deleteOrderPosition(listBoxOrderList->getSelectedIndex());
+							updateOrderlist();
+							event->cancel();
+							break;
 				}
 			}
 
