@@ -86,10 +86,14 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeBitshift:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Decimate sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
-			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Bits [1..16]");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(1, 16, 0);
-			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.decimateBits != SampleEditorControlLastValues::invalidIntValue() ? lastValues.decimateBits : 16);
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Bitshift sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Byte offset [0..1]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 1, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Bitshift [0..6]");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0, 6, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.bitshiftByte!= SampleEditorControlLastValues::invalidIntValue() ? lastValues.bitshiftByte : 0);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.bitshift    != SampleEditorControlLastValues::invalidIntValue() ? lastValues.bitshift     : 0);
+
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeReverberate:
@@ -326,9 +330,11 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 
 		case ToolHandlerResponder::SampleToolTypeBitshift:
 		{
-			lastValues.decimateBits = static_cast<DialogWithValues*>(dialog)->getValueOne();
-			FilterParameters par(1);
-			par.setParameter(0, FilterParameters::Parameter(lastValues.decimateBits));
+			lastValues.bitshiftByte = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.bitshift     = static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.bitshiftByte));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.bitshift));
 			sampleEditor->tool_bitshiftSample(&par);
 			break;
 		}

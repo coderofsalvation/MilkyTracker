@@ -1622,14 +1622,20 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 	e.samplerate = 44100;
 	e.release = 0.0001 + (0.1 / 9) * par->getParameter(1).intPart;
 	
-	float out;
+	
+	/*
 	struct Filter f;
 	float lastE = 0.0f;
 	float last = 0.0f;
 	f.cutoff = 300;
 	f.q = 0.3;
 	filter_init(&f);
-	
+	*/
+
+	float prevOutput, Fc, dt; // Previous output and cutoff frequency in Hz
+	prevOutput = 0.0f;
+	float out = 0.0;
+
 	for (pp_int32 i = sStart; i < sEnd; i++)
 	{
 		float in = this->getFloatSampleFromWaveform(sStart+i);
@@ -1637,7 +1643,8 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 		float y = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
 		envelope_follow(y, &e);
 
-		// filter
+		/*
+		// (broken) filter
 		float zerocross = ((in >= 0.0 && last <= 0.0) || (in <= 0.0 && last >= 0.0));
 		if ( (lastE < e.output || lastE > e.output) && zerocross ) {
 			f.cutoff = e.output * (e.samplerate / 3);
@@ -1654,7 +1661,21 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 			case 2: out = f.bp;    break;
 			case 3: out = f.notch; break;
 		}
-		setFloatSampleInWaveform(sStart+i, out); // *FIXME* this needs to be improved..output is crackled because of cutoffchanges
+		*/
+
+		//Fc is the cutoff frequency in Hz
+		//dt is the time between last filter time
+		dt = 1.0 / (e.samplerate*2);
+		Fc = (e.samplerate / 3) * e.output;
+		const float tau = 1.0f / (2.0f * PI * Fc); // Time constant
+		const float alpha = dt / (tau + dt); // See (10) in http://techteach.no/simview/lowpass_filter/doc/filter_algorithm.pdf
+		
+		for (int j = 0; j < 1; j++) { // oversampling for steeper filter
+			// y(n) = y(n-1) + alpha*(u(n) - y(n-1))
+			out = prevOutput + alpha * (in - prevOutput);
+			prevOutput = out;
+		}
+		setFloatSampleInWaveform(sStart+i, out);
 	}
 
 	finishUndo();
@@ -2671,44 +2692,50 @@ void SampleEditor::tool_decimateSample(const FilterParameters* par)
 
 void SampleEditor::tool_bitshiftSample(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
-
-	pp_int32 sStart = selectionStart;
-	pp_int32 sEnd = selectionEnd;
-
-	if (hasValidSelection())
-	{
-		if (sStart >= 0 && sEnd >= 0)
-		{
-			if (sEnd < sStart)
-			{
-				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
-			}
-		}
-	}
-	else
-	{
-		sStart = 0;
-		sEnd = sample->samplen;
-	}
+	if (isEmptySample() || sample->type & 8 ) return;
 
 	preFilter(&SampleEditor::tool_bitshiftSample, par);
 
 	prepareUndo();
 
-	int bits1 = par->getParameter(0).intPart;
-	int bits2 = 0;
+	mp_sword *samplebuf;
+	int byteN    = par->getParameter(0).intPart;
+	int bitshift = par->getParameter(1).intPart;
 	
-	for (int i = sStart; i < sEnd; i++)
+	// backup 16bit sample
+	samplebuf = (mp_sword*)malloc(sample->samplen * sizeof(mp_sword));
+	for (int i = 0; i < sample->samplen; i++) samplebuf[i] = sample->getSampleValue(i);
+	
+	// convert current sample to 8bit
+	mp_sbyte* buffer = new mp_sbyte[sample->samplen];
+	for (mp_sint32 i = 0; i < (signed)sample->samplen; i++)
+		buffer[i] = (mp_sbyte)(sample->getSampleValue(i) >> 8);
+	module->freeSampleMem((mp_ubyte*)sample->sample);
+	sample->type &= ~16;
+	sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen);
+	memcpy(sample->sample, buffer, sample->samplen);
+	delete[] buffer;
+
+	for (int i = 0; i < sample->samplen; i++)
 	{
-		pp_int16 f = sample->getSampleValue(i);
-		pp_int8 one = f  & 0xFF;                // get first byte
-		pp_int8 two = (f >> 8  ) & 0xFF;        // get second byte
-		pp_int8 a = one >> bits1;               // bits=2 will get the 6bit smp
-		pp_int8 b = bits2 ? two >> bits2 : two; //  will get the 6bit smp
-		sample->setSampleValue(i, a);
+		mp_sword f = samplebuf[i];
+		mp_sbyte one = f & 0xFF;      // get first byte
+		mp_sbyte two = f >> 8;        // get second byte
+		mp_sbyte in = byteN == 0 ? one : two;
+		switch (bitshift) {  // just to be safe (no idea whether '>> bitshift' works on all compilers)
+			case 0: break;
+			case 1: in = in >> 1; break;
+			case 2: in = in >> 2; break;
+			case 3: in = in >> 3; break;
+			case 4: in = in >> 4; break;
+			case 5: in = in >> 5; break;
+			case 6: in = in >> 6; break;
+			case 7: in = in >> 7; break;
+		}
+		sample->setSampleValue(i, in);
 	}
+
+	free(samplebuf);
 
 	finishUndo();
 

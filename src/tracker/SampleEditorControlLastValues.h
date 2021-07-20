@@ -51,6 +51,9 @@ struct SampleEditorControlLastValues
 	pp_int32 mFilterType;
 	pp_int32 mFilterRelease;
 
+	int bitshift;
+	int bitshiftByte;
+
 	float exciteFreq;
 	float exciteAliase;
 	
@@ -124,6 +127,9 @@ struct SampleEditorControlLastValues
 
 		exciteFreq = invalidFloatValue();
 		exciteAliase = invalidFloatValue();
+
+		bitshift = invalidIntValue();
+		bitshiftByte = invalidIntValue();
 	}
 		
 	PPDictionary convertToDictionary()
@@ -173,6 +179,11 @@ struct SampleEditorControlLastValues
 		result.store("resampleInterpolationType", resampleInterpolationType);
 		
 		result.store("adjustFtAndRelnote", adjustFtAndRelnote);
+
+		result.store("bitshift", bitshift);
+		result.store("bitshiftByte", bitshiftByte);
+		
+		
 		return result;
 	}
 	
