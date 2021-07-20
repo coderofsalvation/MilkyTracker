@@ -79,10 +79,17 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Decimate sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Bits [1..16]");
 			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Decimate [0..1]");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(1, 16, 2);
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(1, 16, 0);
 			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, 1.0f, 2);
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.decimateBits != SampleEditorControlLastValues::invalidIntValue() ? lastValues.decimateBits : 16);
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.decimateRate != SampleEditorControlLastValues::invalidIntValue() ? lastValues.decimateRate : 0.5f );
+			break;
+
+		case ToolHandlerResponder::SampleToolTypeBitshift:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Decimate sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Bits [1..16]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(1, 16, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.decimateBits != SampleEditorControlLastValues::invalidIntValue() ? lastValues.decimateBits : 16);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeReverberate:
@@ -93,6 +100,16 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, 1.0f, 2);
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.reverbSize != SampleEditorControlLastValues::invalidIntValue() ? lastValues.reverbSize : 20);
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.reverbRatio != SampleEditorControlLastValues::invalidIntValue() ? lastValues.reverbRatio : 0.5f);
+			break;
+
+		case ToolHandlerResponder::SampleToolTypeExcite:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Excite high frequencies" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Freq area [0..2] (>1 modulates)");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Aliase [0..1]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0.0f, 10.0f, 2);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, 1.0f, 2);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.exciteFreq != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.exciteFreq : 0.86);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.exciteAliase != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.exciteAliase : 0.1f);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeResonantFilterLP:
@@ -112,16 +129,21 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			if (type == ToolHandlerResponder::SampleToolTypeResonantFilterNOTCH) lastValues.filterType = 3;
 			break;
 
-		case ToolHandlerResponder::SampleToolTypeResonantFilterSweeper:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Sweep between last filter" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
-			char label[200];
-			sprintf(label, "Sweep between %i Hz and ... ?", lastValues.filterCutoffA);
-			static_cast<DialogWithValues*>(dialog)->setValueOneCaption(label);
-			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Sweep iterations [1..1000]");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 22500, 0);
-			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(1, 10000, 0);
-			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.filterCutoffB != SampleEditorControlLastValues::invalidIntValue() ? lastValues.filterCutoffB : 250);
-			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.filterSweeps != SampleEditorControlLastValues::invalidIntValue() ? lastValues.filterSweeps : 1);
+		case ToolHandlerResponder::SampleToolTypeModulateFilter:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Filter Modulate" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Type [0=LP 1=HP 2=BP 3=NOTCH]");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Release [0..9]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 1, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0, 9, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.mFilterType != SampleEditorControlLastValues::invalidIntValue() ? lastValues.mFilterType : 0);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.mFilterRelease != SampleEditorControlLastValues::invalidIntValue() ? lastValues.mFilterRelease : 3);
+			break;
+
+		case ToolHandlerResponder::SampleToolTypeModulateEnvelope:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Filter Modulate" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Release [0..9]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 9, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.mFilterRelease != SampleEditorControlLastValues::invalidIntValue() ? lastValues.mFilterRelease : 3);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeBassboost:
@@ -227,8 +249,8 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Fade out length [0..50%]:");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0,50,0);
 			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0, 50, 0);
-			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.sizeFadeIn != SampleEditorControlLastValues::invalidIntValue() ? lastValues.sizeFadeIn : 25);
-			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.sizeFadeOut != SampleEditorControlLastValues::invalidIntValue() ? lastValues.sizeFadeOut : 25);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.sizeFadeIn != SampleEditorControlLastValues::invalidIntValue() ? lastValues.sizeFadeIn : 50);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.sizeFadeOut != SampleEditorControlLastValues::invalidIntValue() ? lastValues.sizeFadeOut : 50);
 			break;
 		}
 
@@ -302,6 +324,15 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			break;
 		}
 
+		case ToolHandlerResponder::SampleToolTypeBitshift:
+		{
+			lastValues.decimateBits = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			FilterParameters par(1);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.decimateBits));
+			sampleEditor->tool_bitshiftSample(&par);
+			break;
+		}
+
 		case ToolHandlerResponder::SampleToolTypeReverberate:
 		{
 			lastValues.reverbSize = static_cast<DialogWithValues*>(dialog)->getValueOne();
@@ -317,7 +348,6 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		case ToolHandlerResponder::SampleToolTypeResonantFilterHP:
 		case ToolHandlerResponder::SampleToolTypeResonantFilterBP:
 		case ToolHandlerResponder::SampleToolTypeResonantFilterNOTCH:
-		case ToolHandlerResponder::SampleToolTypeResonantFilterSweeper:
 		{
 			lastValues.filterCutoffA = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			lastValues.filterResonance = static_cast<DialogWithValues*>(dialog)->getValueTwo();
@@ -326,8 +356,27 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			par.setParameter(1, FilterParameters::Parameter(lastValues.filterResonance));
 			par.setParameter(2, FilterParameters::Parameter(lastValues.filterType));
 			par.setParameter(3, FilterParameters::Parameter(lastValues.filterCutoffB));
-			par.setParameter(4, FilterParameters::Parameter( type == ToolHandlerResponder::SampleToolTypeResonantFilterSweeper ? lastValues.filterSweeps : 0));
 			sampleEditor->tool_resonantFilterSample(&par);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeModulateFilter:
+		{
+			lastValues.mFilterType = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.mFilterRelease = static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			FilterParameters par(5);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.mFilterType));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.mFilterRelease));
+			sampleEditor->tool_modulateFilterSample(&par);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeModulateEnvelope:
+		{
+			lastValues.mFilterRelease = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			FilterParameters par(5);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.mFilterRelease));
+			sampleEditor->tool_modulateEnvelopeSample(&par);
 			break;
 		}
 
@@ -348,6 +397,17 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			par.setParameter(0, FilterParameters::Parameter(lastValues.vocodeBands));
 			par.setParameter(1, FilterParameters::Parameter(lastValues.vocodeEnvelope));
 			sampleEditor->tool_vocodeSample(&par);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeExcite:
+		{
+			lastValues.exciteFreq = (float)static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.exciteAliase = (float)static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.exciteFreq));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.exciteAliase));
+			sampleEditor->tool_exciteSample(&par);
 			break;
 		}
 

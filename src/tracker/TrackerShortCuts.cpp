@@ -90,6 +90,28 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 	{
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
 		pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr()) + 1);
+
+		if (::getKeyModifier() == (KeyModifierSHIFT)) {
+
+			switch (scanCode)
+			{
+				// insert/delete  new order using  + / - 
+				case SC_TICK: {
+					moduleEditor->insertNewOrderPosition(listBoxOrderList->getSelectedIndex());
+					updateOrderlist();
+					event->cancel();
+					break;
+				}
+
+				case SC_SS: {
+					moduleEditor->deleteOrderPosition(listBoxOrderList->getSelectedIndex());
+					updateOrderlist();
+					event->cancel();
+					break;
+				}
+			}
+		}
+
 		switch (keyCode)
 		{
 			case VK_F1:
@@ -219,27 +241,6 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 					}
 				}
 			}
-			if (::getKeyModifier() == (KeyModifierSHIFT))
-      {
-        switch (scanCode)
-        {
-          // insert/delete  new order using  + / - 
-          case SC_TICK:
-          case SC_PLUS:
-            moduleEditor->insertNewOrderPosition(listBoxOrderList->getSelectedIndex());
-            updateOrderlist();
-            event->cancel();
-            break;
-
-          case SC_SS:
-          case SC_PLUS:
-            moduleEditor->deleteOrderPosition(listBoxOrderList->getSelectedIndex());
-            updateOrderlist();
-            event->cancel();
-            break;
-        }
-      }
-
 		}
 
 		if (event->getID() == eKeyUp)

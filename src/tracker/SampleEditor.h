@@ -331,10 +331,12 @@ public:
 	void tool_FMPasteSample(const FilterParameters* par);
 	void tool_PHPasteSample(const FilterParameters* par);
 	void tool_FLPasteSample(const FilterParameters* par);
+	void tool_FilterPasteSample(const FilterParameters* par);
 	void tool_reverberateSample(const FilterParameters* par);
 	void tool_testSample(const FilterParameters* par);
 	void tool_vocodeSample(const FilterParameters* par);
-
+	void tool_modulateFilterSample(const FilterParameters* par);
+	void tool_modulateEnvelopeSample(const FilterParameters* par);
 	// convert sample resolution
 	void tool_convertSampleResolution(const FilterParameters* par);
 	
@@ -343,6 +345,7 @@ public:
 	void tool_normalizeSample(const FilterParameters* par);
 	void tool_compressSample(const FilterParameters* par);
 	void tool_decimateSample(const FilterParameters* par);
+	void tool_bitshiftSample(const FilterParameters* par);
 	void tool_reverseSample(const FilterParameters* par);
 	void tool_seamlessLoopSample(const FilterParameters* par);
 	void tool_PTboostSample(const FilterParameters* par);

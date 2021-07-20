@@ -244,6 +244,31 @@ void filter_init(struct Filter* f) {
 	f->notch = 0.0;
 }
 
+	static float output = 0.0;
+
+void envelope_follow(float input, struct EnvelopeFollow* e) {
+	float scalar = pow(0.5, 1.0 / ( (e->release) * (e->samplerate) ) );
+
+	float inputAbs = fabs(input);
+
+	if (input >= e->output)
+	{
+		/* When we hit a peak, ride the peak to the top. */
+		e->output = input;
+	}
+	else
+	{
+		/* Exponential decay of output when signal is low. */
+		e->output = e->output * scalar;//
+		/*
+		** When current gets close to 0.0, set current to 0.0 to prevent FP underflow
+		** which can cause a severe performance degradation due to a flood
+		** of interrupts.
+		*/
+		if (e->output < VERY_SMALL_FLOAT) e->output = 0.0;
+	}
+}
+
 /*
 void xfade(float* in, float* out, pp_int32 len, int fadein , int fadeout ) {
 	float* head;

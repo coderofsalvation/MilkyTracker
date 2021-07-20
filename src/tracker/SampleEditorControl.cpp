@@ -121,14 +121,14 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFilterEQ = new PPContextMenu(5, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
 	subMenuFilterEQ->addEntry(" 3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuFilterEQ->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
-	subMenuFilterEQ->addEntry("Exciter", MenuCommandIDExcite);
+	subMenuFilterEQ->addEntry(seperatorStringLarge, -1);
+	subMenuFilterEQ->addEntry("Excite", MenuCommandIDExcite);
 	subMenuFilterEQ->addEntry("Bass boost", MenuCommandIDBassboost);
+	subMenuFilterEQ->addEntry(seperatorStringLarge, -1);
 	subMenuFilterEQ->addEntry("Lowpass", MenuCommandIDResonantFilterLP);
 	subMenuFilterEQ->addEntry("Highpass", MenuCommandIDResonantFilterHP);
 	subMenuFilterEQ->addEntry("Bandpass", MenuCommandIDResonantFilterBP);
 	subMenuFilterEQ->addEntry("Notch", MenuCommandIDResonantFilterNOTCH);
-
-	//subMenuAdvanced->addEntry("Filter Sweeper", MenuCommandIDResonantFilterSweeper);
 
 
 	subMenuAdvanced = new PPContextMenu(5, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
@@ -143,6 +143,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry("Cross-fade", MenuCommandIDXFade);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Decimate", MenuCommandIDDecimate);
+	subMenuAdvanced->addEntry("Bitshift", MenuCommandIDBitshift);
 	subMenuAdvanced->addEntry("Change sign", MenuCommandIDChangeSign);
 	subMenuAdvanced->addEntry("Swap byte order", MenuCommandIDSwapByteOrder);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
@@ -165,9 +166,11 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuXPaste->setSubMenu(true);
 	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
 	subMenuXPaste->addEntry("Substract", MenuCommandIDSubstract);
-	subMenuXPaste->addEntry("Amp Modulate", MenuCommandIDAMPaste);
-	subMenuXPaste->addEntry("Freq Modulate", MenuCommandIDFMPaste);
-	subMenuXPaste->addEntry("Phase Modulate", MenuCommandIDPHPaste);
+	subMenuXPaste->addEntry("Modulate Amp", MenuCommandIDAMPaste);
+	subMenuXPaste->addEntry("Modulate Freq", MenuCommandIDFMPaste);
+	subMenuXPaste->addEntry("Modulate Phase", MenuCommandIDPHPaste);
+	subMenuXPaste->addEntry("Modulate Filter", MenuCommandIDMFilter);
+	subMenuXPaste->addEntry("Modulate Envelope", MenuCommandIDMEnvelope);
 	subMenuXPaste->addEntry("Flanger", MenuCommandIDFLPaste);
 	subMenuXPaste->addEntry("Selective EQ" PPSTR_PERIODS, MenuCommandIDSelectiveEQ10Band);
 	subMenuXPaste->addEntry("Vocode", MenuCommandIDVocode);
@@ -192,18 +195,19 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Undo", MenuCommandIDUndo);
 	editMenuControl->addEntry("Redo", MenuCommandIDRedo);
 	editMenuControl->addEntry(seperatorStringMed, -1);
+	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced);
+	editMenuControl->addEntry("EQ Filter  \x10", 0xFFFF, subMenuFilterEQ);
+	editMenuControl->addEntry("Protracker \x10", 0xFFFF, subMenuPT);
+	editMenuControl->addEntry("Generators \x10", 0xFFFF, subMenuGenerators);
+	editMenuControl->addEntry("Paste      \x10", 0xFFFF, subMenuXPaste);
+	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Cut", MenuCommandIDCut);
 	editMenuControl->addEntry("Copy", MenuCommandIDCopy);
 	editMenuControl->addEntry("Paste", MenuCommandIDPaste);
 	editMenuControl->addEntry("Crop", MenuCommandIDCrop);
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
 	editMenuControl->addEntry("Loop range", MenuCommandIDLoopRange);
-	editMenuControl->addEntry(seperatorStringMed, -1);
-	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced);
-	editMenuControl->addEntry("EQ Filter  \x10", 0xFFFF, subMenuFilterEQ);
-	editMenuControl->addEntry("Protracker \x10", 0xFFFF, subMenuPT);
-	editMenuControl->addEntry("Generators \x10", 0xFFFF, subMenuGenerators);
-	editMenuControl->addEntry("Paste      \x10", 0xFFFF, subMenuXPaste);
+
 
 	// Create tool handler responder
 	toolHandlerResponder = new ToolHandlerResponder(*this);
@@ -1712,6 +1716,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDNormalize, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDCompress, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDDecimate, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDBitshift, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFade, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeBoost, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDReverse, isEmptySample);
@@ -1725,10 +1730,13 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDTriangularSmooth, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDResonantFilterLP, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDResonantFilterHP, isEmptySample);
-	subMenuAdvanced->setState(MenuCommandIDResonantFilterSweeper, isEmptySample);
 
 	subMenuFilterEQ->setState(MenuCommandIDEQ3Band, isEmptySample);
 	subMenuFilterEQ->setState(MenuCommandIDEQ10Band, isEmptySample);
+	subMenuFilterEQ->setState(MenuCommandIDResonantFilterLP, isEmptySample);
+	subMenuFilterEQ->setState(MenuCommandIDResonantFilterHP, isEmptySample);
+	subMenuFilterEQ->setState(MenuCommandIDResonantFilterBP, isEmptySample);
+	subMenuFilterEQ->setState(MenuCommandIDResonantFilterNOTCH, isEmptySample);
 	subMenuFilterEQ->setState(MenuCommandIDExcite, isEmptySample);
 	subMenuFilterEQ->setState(MenuCommandIDBassboost, isEmptySample);
 	subMenuFilterEQ->setState(MenuCommandIDReverberate, isEmptySample);
@@ -1743,6 +1751,8 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuXPaste->setState(MenuCommandIDFLPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDSelectiveEQ10Band, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDVocode, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDMFilter, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDMEnvelope, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 
 	subMenuPT->setState(MenuCommandIDPTBoost, isEmptySample);
 
@@ -1806,6 +1816,16 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		// PH-paste
 		case MenuCommandIDPHPaste:
 			sampleEditor->PHPasteSample();
+			break;
+
+		// Module Filter paste 
+		case MenuCommandIDMFilter:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeModulateFilter);
+			break;
+
+		// Module Envelope paste 
+		case MenuCommandIDMEnvelope:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeModulateEnvelope);
 			break;
 
 		// FL-paste
@@ -1880,6 +1900,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeDecimate);
 			break;
 
+		case MenuCommandIDBitshift:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeBitshift);
+			break;
+
 		case MenuCommandIDTest:
 			sampleEditor->tool_testSample(NULL);
 			break;
@@ -1945,10 +1969,6 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResonantFilterNOTCH);
 			break;
 
-		case MenuCommandIDResonantFilterSweeper:
-			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResonantFilterSweeper);
-			break;
-
 		case MenuCommandIDEQ10Band:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeEQ10Band);
 			break;
@@ -1962,7 +1982,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			break;
 
 		case MenuCommandIDExcite:
-			sampleEditor->tool_exciteSample(NULL);
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeExcite);
 			break;
 
 		case MenuCommandIDGenerateSilence:

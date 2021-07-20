@@ -1583,6 +1583,138 @@ void SampleEditor::tool_AMPasteSample(const FilterParameters* par)
 
 }
 
+void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_modulateFilterSample, par);
+
+	prepareUndo();
+
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+	int type = par->getParameter(0).intPart;
+
+	struct EnvelopeFollow e;
+	e.output = 0.0;
+	e.samplerate = 44100;
+	e.release = 0.0001 + (0.1 / 9) * par->getParameter(1).intPart;
+	
+	float out;
+	struct Filter f;
+	float lastE = 0.0f;
+	float last = 0.0f;
+	f.cutoff = 300;
+	f.q = 0.3;
+	filter_init(&f);
+	
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float in = this->getFloatSampleFromWaveform(sStart+i);
+		pp_int16 s = clipBoard->getSampleWord((pp_int32)i % clipBoard->getWidth() );
+		float y = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+		envelope_follow(y, &e);
+
+		// filter
+		float zerocross = ((in >= 0.0 && last <= 0.0) || (in <= 0.0 && last >= 0.0));
+		if ( (lastE < e.output || lastE > e.output) && zerocross ) {
+			f.cutoff = e.output * (e.samplerate / 3);
+			filter_init(&f);	
+			// pre-feed filter, otherwise the filter has nothing in its buffers
+			filter(&f, f.hp + f.lp);
+		}
+		lastE = e.output;
+		last = in;
+		filter(&f, in);
+		switch (type) {
+			case 0: out = f.lp;    break;
+			case 1: out = f.hp;    break;
+			case 2: out = f.bp;    break;
+			case 3: out = f.notch; break;
+		}
+		setFloatSampleInWaveform(sStart+i, out); // *FIXME* this needs to be improved..output is crackled because of cutoffchanges
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_modulateEnvelopeSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_modulateEnvelopeSample, par);
+
+	prepareUndo();
+
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+	int type = par->getParameter(0).intPart;
+
+	struct EnvelopeFollow e;
+	e.output = 0.0;
+	e.samplerate = 44100;
+	e.release = 0.0001 + (0.1 / 9) * par->getParameter(0).intPart;
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float in = this->getFloatSampleFromWaveform(sStart + i);
+		pp_int16 s = clipBoard->getSampleWord((pp_int32)i % clipBoard->getWidth());
+		float y = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+		envelope_follow(y, &e);
+		setFloatSampleInWaveform(sStart + i, in * e.output);
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+
 void SampleEditor::tool_FMPasteSample(const FilterParameters* par)
 {
 	if (isEmptySample())
@@ -2008,13 +2140,14 @@ void SampleEditor::tool_seamlessLoopSample(const FilterParameters* par)
 	float y;
 	int fadein = 25;
 	int fadeout = 25;
-	samplebuf = (float*)malloc(sample->samplen * sizeof(float));
+	pp_int32 sLength = sample->samplen;
+	samplebuf = (float*)malloc(sLength * sizeof(float));
 	pp_int32 lenFadeIn = floor(((float)sample->samplen / 100.0f) * fadein);
 	pp_int32 lenFadeOut = floor(((float)sample->samplen / 100.0f) * fadeout);
 	pp_int32 newSampleSize = sample->samplen - lenFadeOut;
 
 	// copy sample
-	for (int i = 0; i < sample->samplen; i++) samplebuf[i] = this->getFloatSampleFromWaveform(i);
+	for (int i = 0; i < sLength; i++) samplebuf[i] = this->getFloatSampleFromWaveform(i);
 	// create new (shorter) sample
 	module->freeSampleMem((mp_ubyte*)sample->sample);
 	sample->sample = (mp_sbyte*)module->allocSampleMem(newSampleSize * 2);
@@ -2023,9 +2156,10 @@ void SampleEditor::tool_seamlessLoopSample(const FilterParameters* par)
 
 		float amp_fadein = ((1.0f / lenFadeIn) * (float)i);
 		float amp_fadeout = ((1.0f / lenFadeOut) * (float)i);
+		y = 0.0f;
 		if (i < lenFadeIn)   y = samplebuf[i] * amp_fadein;
 		else y = samplebuf[i];
-		if (i < lenFadeOut)  y += samplebuf[(newSampleSize - lenFadeOut) + i] * (1.0f - amp_fadeout);
+		if (i < lenFadeOut)  y += samplebuf[(sLength - lenFadeOut) + i] * (1.0f - amp_fadeout);
 		this->setFloatSampleInWaveform(i, y);
 	}
 	// enable forward loop
@@ -2166,7 +2300,7 @@ void SampleEditor::tool_vocodeSample(const FilterParameters* par)
 	param[4] = (1.0f / 9.0)* par->getParameter(1).intPart; // envelope
 	param[5] = 0.5f;   // filter q
 	param[6] = 1.0f;
-	param[1] = 0.40f + (param[4]*0.6);  //output dB
+	
 
 	//filter coeffs and buffers - seems it's faster to leave this global than make local copy 
 	float f[bands][13]; //[0-8][0 1 2 | 0 1 2 3 | 0 1 2 3 | val rate]
@@ -2186,6 +2320,7 @@ void SampleEditor::tool_vocodeSample(const FilterParameters* par)
 		f[5][2] = 700.0f;
 		f[6][2] = 390.0f;
 		f[7][2] = 190.0f;
+		param[1] = 0.40f + (param[4] * 0.6);  //output dB
 	}
 	else
 	{
@@ -2206,6 +2341,7 @@ void SampleEditor::tool_vocodeSample(const FilterParameters* par)
 		f[13][2] = 350.0f; //+155
 		f[14][2] = 195.0f; //+100
 		f[15][2] = 95.0f;
+		param[1] = 0.40f;  //output dB
 	}
 
 	for (i = 0; i < nbnd; i++) for (int j = 3; j < 12; j++) f[i][j] = 0.0f; //zero band filters and envelopes
@@ -2533,6 +2669,52 @@ void SampleEditor::tool_decimateSample(const FilterParameters* par)
 	postFilter();
 }
 
+void SampleEditor::tool_bitshiftSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_bitshiftSample, par);
+
+	prepareUndo();
+
+	int bits1 = par->getParameter(0).intPart;
+	int bits2 = 0;
+	
+	for (int i = sStart; i < sEnd; i++)
+	{
+		pp_int16 f = sample->getSampleValue(i);
+		pp_int8 one = f  & 0xFF;                // get first byte
+		pp_int8 two = (f >> 8  ) & 0xFF;        // get second byte
+		pp_int8 a = one >> bits1;               // bits=2 will get the 6bit smp
+		pp_int8 b = bits2 ? two >> bits2 : two; //  will get the 6bit smp
+		sample->setSampleValue(i, a);
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
 void SampleEditor::tool_exciteSample(const FilterParameters* par)
 {
 	if (isEmptySample())
@@ -2564,10 +2746,10 @@ void SampleEditor::tool_exciteSample(const FilterParameters* par)
 
 	float x = 0.0f;
 	bool subtle = true;
-	bool saturate = false;
+	float aliase = par->getParameter(1).floatPart ;
 	float cut1 = 0.86;
 	float cut2 = 0.725;
-	float cut = cut1;
+	float cut = par->getParameter(0).floatPart;
 	float boost = 15.0;
 	float comp = 0.05;
 	float lpdata = 0.0;
@@ -2581,9 +2763,9 @@ void SampleEditor::tool_exciteSample(const FilterParameters* par)
 		lpdata = lpdata - (cut * (lpdata - x));
 		hpdata = lpdata - x;
 		// introduce partial aliasing
-		if (saturate) {
+		if (aliase > 0.0f) {
 			n += 1;
-			if ((n % 2) == 0) hpdata = hpdata * (saturate + 1.0);
+			if ((n % 2) == 0) hpdata = hpdata * (aliase+1.0f);
 		}
 		// maximize
 		hpdata = (comp * tanh(hpdata / comp)) * boost;

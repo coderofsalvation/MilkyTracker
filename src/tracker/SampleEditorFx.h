@@ -16,6 +16,10 @@ typedef struct { real Re; real Im; } complex;
 #define PI 3.14159265358979323846264338327950288
 #endif
 
+#ifndef VERY_SMALL_FLOAT
+#define VERY_SMALL_FLOAT 1.0e-30F
+#endif
+
 struct Filter {
 	float lp;     // lowpass output
 	float hp;     // highpass output
@@ -23,6 +27,12 @@ struct Filter {
 	float notch;  // notch output
 	float cutoff; // hz
 	float q;      // 0-1
+};
+
+struct EnvelopeFollow {
+	float output;
+	float samplerate;
+	float release; // time in seconds for output to decay to half value after an impulse
 };
 
 extern void print_vector(const char* title, complex* x, int n);
@@ -33,7 +43,9 @@ extern int convolve(float* x, float* h, int lenX, int lenH, float** output);
 
 extern void filter(struct Filter* f, float input);
 extern void filter_init(struct Filter* f);
-extern void xfade(float* in, float* out, pp_int32 len, int fadein /*percent*/, int fadeout /*percent*/);
+//extern void xfade(float* in, float* out, pp_int32 len, int fadein /*percent*/, int fadeout /*percent*/);
+
+extern void envelope_follow(float input, struct EnvelopeFollow* e);
 
 class SampleEditorFx
 {

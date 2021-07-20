@@ -47,7 +47,12 @@ struct SampleEditorControlLastValues
 	pp_int32 filterCutoffB;
 	pp_int32 filterResonance;
 	pp_int32 filterType;
-	pp_int32 filterSweeps;
+
+	pp_int32 mFilterType;
+	pp_int32 mFilterRelease;
+
+	float exciteFreq;
+	float exciteAliase;
 	
 	float boostSampleVolume;
 	float fadeSampleVolumeStart;
@@ -108,11 +113,17 @@ struct SampleEditorControlLastValues
 		filterCutoffA = invalidIntValue();
 		filterCutoffB = invalidIntValue();
 		filterResonance = invalidIntValue();
-		filterSweeps = invalidIntValue();
 		filterType = invalidIntValue();
+
+
+		mFilterType = invalidIntValue();
+		mFilterRelease  = invalidIntValue();
 
 		vocodeBands = invalidIntValue();
 		vocodeEnvelope = invalidIntValue();
+
+		exciteFreq = invalidFloatValue();
+		exciteAliase = invalidFloatValue();
 	}
 		
 	PPDictionary convertToDictionary()
@@ -134,10 +145,15 @@ struct SampleEditorControlLastValues
 		result.store("vocodeBands", vocodeBands);
 		result.store("vocodeEnvelope", vocodeEnvelope);
 
+		result.store("exciteFreq", exciteFreq);
+		result.store("exciteAliase", exciteAliase);
 
 		result.store("sizeFadeIn", sizeFadeIn);
 		result.store("sizeFadeOut", sizeFadeOut);
-	
+
+		result.store("mFilterType", mFilterType);
+		result.store("mFilterRelease", mFilterRelease);
+
 		result.store("frequencyBassboost", frequencyBassboost);
 
 		result.store("changeSignIgnoreBits", changeSignIgnoreBits);
