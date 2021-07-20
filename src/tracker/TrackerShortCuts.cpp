@@ -236,6 +236,7 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 							updateOrderlist();
 							event->cancel();
 							break;
+          }
 				}
 			}
 
