@@ -150,11 +150,7 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 			case VK_HOME:
 			case VK_END:
 			case VK_PRIOR:
-			case VK_NEXT: 
-      case SC_PLUS:
-      case SC_MINUS:
-			case SC_TICK:
-			case SC_SS: {
+			case VK_NEXT: {
 				if (screen->getModalControl())
 					break;
 
@@ -222,27 +218,27 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 
 					}
 				}
-				else if (::getKeyModifier() == (KeyModifierSHIFT))
-				{
-					switch (keyCode)
-					{
-						// insert/delete  new order using  + / - 
-						case SC_TICK:
-						case SC_PLUS:
-							moduleEditor->insertNewOrderPosition(listBoxOrderList->getSelectedIndex());
-							updateOrderlist();
-							event->cancel();
-							break;
-
-						case SC_SS:
-						case SC_PLUS:
-							moduleEditor->deleteOrderPosition(listBoxOrderList->getSelectedIndex());
-							updateOrderlist();
-							event->cancel();
-							break;
-          }
-				}
 			}
+			if (::getKeyModifier() == (KeyModifierSHIFT))
+      {
+        switch (scanCode)
+        {
+          // insert/delete  new order using  + / - 
+          case SC_TICK:
+          case SC_PLUS:
+            moduleEditor->insertNewOrderPosition(listBoxOrderList->getSelectedIndex());
+            updateOrderlist();
+            event->cancel();
+            break;
+
+          case SC_SS:
+          case SC_PLUS:
+            moduleEditor->deleteOrderPosition(listBoxOrderList->getSelectedIndex());
+            updateOrderlist();
+            event->cancel();
+            break;
+        }
+      }
 
 		}
 
