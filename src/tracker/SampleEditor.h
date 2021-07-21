@@ -327,6 +327,7 @@ public:
 	void tool_clearSample(const FilterParameters* par);
 	void tool_mixPasteSample(const FilterParameters* par);
 	void tool_substractSample(const FilterParameters* par);
+	void tool_repeatSample(const FilterParameters* par);
 	void tool_AMPasteSample(const FilterParameters* par);
 	void tool_FMPasteSample(const FilterParameters* par);
 	void tool_PHPasteSample(const FilterParameters* par);

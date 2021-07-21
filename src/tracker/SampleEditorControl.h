@@ -282,6 +282,7 @@ private:
 		MenuCommandIDCrop = 99,
 		MenuCommandIDMixPaste,
 		MenuCommandIDSubstract,
+		MenuCommandIDRepeat,
 		MenuCommandIDAMPaste,
 		MenuCommandIDFMPaste,
 		MenuCommandIDPHPaste,
@@ -346,6 +347,7 @@ private:
 		enum SampleToolTypes
 		{
 			SampleToolTypeNone,
+			SampleToolTypeRepeat,
 			SampleToolTypeNew,
 			SampleToolTypeVolume,
 			SampleToolTypeFade,

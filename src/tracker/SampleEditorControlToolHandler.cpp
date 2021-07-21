@@ -270,6 +270,16 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			break;
 		}
 
+		case ToolHandlerResponder::SampleToolTypeRepeat:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Repeat paste" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("how many times:");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 1024, 0);
+			if (lastValues.bitshift != SampleEditorControlLastValues::invalidIntValue())
+				static_cast<DialogWithValues*>(dialog)->setValueOne((float)lastValues.bitshift);
+			else
+				static_cast<DialogWithValues*>(dialog)->setValueOne(2);
+			break;
+
 		default:
 			break;
 	}
@@ -338,6 +348,17 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			sampleEditor->tool_bitshiftSample(&par);
 			break;
 		}
+
+		case ToolHandlerResponder::SampleToolTypeRepeat:
+		{
+			lastValues.bitshift = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			FilterParameters par(1);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.bitshift));
+			sampleEditor->tool_repeatSample(&par);
+			break;
+		}
+
+		
 
 		case ToolHandlerResponder::SampleToolTypeReverberate:
 		{

@@ -165,6 +165,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuXPaste->setSubMenu(true);
 	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
+	subMenuXPaste->addEntry("Repeat", MenuCommandIDRepeat);
 	subMenuXPaste->addEntry("Substract", MenuCommandIDSubstract);
 	subMenuXPaste->addEntry("Modulate Amp", MenuCommandIDAMPaste);
 	subMenuXPaste->addEntry("Modulate Freq", MenuCommandIDFMPaste);
@@ -1728,8 +1729,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDDCOffset, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDRectangularSmooth, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDTriangularSmooth, isEmptySample);
-	subMenuAdvanced->setState(MenuCommandIDResonantFilterLP, isEmptySample);
-	subMenuAdvanced->setState(MenuCommandIDResonantFilterHP, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDReverberate, isEmptySample);
 
 	subMenuFilterEQ->setState(MenuCommandIDEQ3Band, isEmptySample);
 	subMenuFilterEQ->setState(MenuCommandIDEQ10Band, isEmptySample);
@@ -1739,11 +1739,11 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuFilterEQ->setState(MenuCommandIDResonantFilterNOTCH, isEmptySample);
 	subMenuFilterEQ->setState(MenuCommandIDExcite, isEmptySample);
 	subMenuFilterEQ->setState(MenuCommandIDBassboost, isEmptySample);
-	subMenuFilterEQ->setState(MenuCommandIDReverberate, isEmptySample);
 	subMenuFilterEQ->setState(MenuCommandIDResample, isEmptySample);
 	subMenuFilterEQ->setState(MenuCommandIDTest, isEmptySample);
 
 	subMenuXPaste->setState(MenuCommandIDMixPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDRepeat, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDSubstract, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDAMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDFMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
@@ -1796,6 +1796,11 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		// mix-paste
 		case MenuCommandIDMixPaste:
 			sampleEditor->mixPasteSample();
+			break;
+
+		// mix-paste
+		case MenuCommandIDRepeat:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeRepeat);
 			break;
 
 		// mix-paste

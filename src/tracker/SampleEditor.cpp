@@ -1526,6 +1526,29 @@ void SampleEditor::tool_substractSample(const FilterParameters* par)
 
 }
 
+void SampleEditor::tool_repeatSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	preFilter(&SampleEditor::tool_repeatSample, par);
+
+	prepareUndo();
+
+	int repeat = par->getParameter(0).intPart;
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+	for( int i = 0; i < repeat; i++)
+		clipBoard->paste(*sample, *module, getSelectionStart());
+
+	finishUndo();
+
+	postFilter();
+
+}
+
 void SampleEditor::tool_AMPasteSample(const FilterParameters* par)
 {
 	if (isEmptySample())
