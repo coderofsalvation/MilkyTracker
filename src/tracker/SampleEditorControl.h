@@ -350,6 +350,7 @@ private:
 			SampleToolTypeRepeat,
 			SampleToolTypeNew,
 			SampleToolTypeVolume,
+			SampleToolTypeCompress,
 			SampleToolTypeFade,
 			SampleToolTypeNormalize,
 			SampleToolTypeReverse,

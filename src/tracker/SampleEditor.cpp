@@ -2619,13 +2619,9 @@ void SampleEditor::tool_compressSample(const FilterParameters* par)
 
 	prepareUndo();
 
-	float maxLevel = ((par == NULL) ? 1.0f : par->getParameter(0).floatPart);
-	float max = 0.0f;
-
 	pp_int32 i;
-
 	float peak = 0.0f;
-	
+
 	// find peak value (pre)
 	for (i = sStart; i < sEnd; i++)
 	{
@@ -2633,23 +2629,60 @@ void SampleEditor::tool_compressSample(const FilterParameters* par)
 		if (ppfabs(f) > peak) peak = ppfabs(f);
 	}
 
+	float max = 0.0f;
 	float compress = peak * 0.66;
+	boolean limit = par->getParameter(0).intPart == 0;
+	boolean compensate = par->getParameter(1).intPart == 0;
+	float last  = 0.0;
+	float wpeak = 0.0;
+	int zerocross[2];
+	zerocross[0] = -1;
+	zerocross[1] = -1;
+	float treshold = 0.8;
+	float peakTreshold = peak * treshold;
 
-	// compress
-	for (i = sStart; i < sEnd; i++)
-	{
-		float f = getFloatSampleFromWaveform(i);
-		float b = compress * tanh(f / compress);       // upward compression
-		if (ppfabs(f-b) > max) max = ppfabs(f-b);
-		setFloatSampleInWaveform(i, b);
+	if (limit) {
+		// scaling limiter inspired by awesome 'TAP scaling limiter'
+		for (i = sStart; i < sEnd; i++) {
+			float f = getFloatSampleFromWaveform(i);
+			if (ZEROCROSS(f, last)) {
+				zerocross[0] = zerocross[1];
+				zerocross[1] = i;
+				if (zerocross[0] >= 0 && zerocross[1] > 0) {                   // detected waveset 
+					wpeak = 0;
+					for (int j = zerocross[0]; j < zerocross[1]; j++) {        // get peak from waveset
+						float w = getFloatSampleFromWaveform(j);
+						if (ppfabs(w) > wpeak) wpeak = ppfabs(w);
+					}
+					if (wpeak > peakTreshold) {                                    // scale down waveset if wpeak exceeds treshold
+						for (int j = zerocross[0]; j < zerocross[1]; j++) {
+							float b = getFloatSampleFromWaveform(j) * (peakTreshold / wpeak);
+							this->setFloatSampleInWaveform(j,b );
+						}
+					}
+				}
+			}
+			last = f;
+		}
 	}
+	else {
+		// saturated compress
+		for (i = sStart; i < sEnd; i++)
+		{
+			float f = getFloatSampleFromWaveform(i);
+			float b = compress * tanh(f / compress);
+			if (ppfabs(f - b) > max) max = ppfabs(f - b);
+			setFloatSampleInWaveform(i, b);
+		}
 
-	float scale = 1.0f + max; // compensate levels
-	
-	for (i = sStart; i < sEnd; i++)
-	{
-		float f = getFloatSampleFromWaveform(i);
-		setFloatSampleInWaveform(i, f * scale);
+	}
+	if (compensate) {
+		float scale = limit ? (peak/peakTreshold) : (peak / (peak-max) ); // compensate levels
+		for (i = sStart; i < sEnd; i++)
+		{
+			float f = getFloatSampleFromWaveform(i);
+			setFloatSampleInWaveform(i, f * scale);
+		}
 	}
 
 	finishUndo();

@@ -65,6 +65,17 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.boostSampleVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.boostSampleVolume : 100.0f);
 			break;
 
+		case ToolHandlerResponder::SampleToolTypeCompress:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Compress sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("type:  [0=clean 1=dirty]:");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 1, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("output:  [0=compensate 1=limit]:");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0, 1, 0);
+
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.compress != SampleEditorControlLastValues::invalidIntValue() ? lastValues.compress : 0 );
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.compressCompensate != SampleEditorControlLastValues::invalidIntValue() ? lastValues.compressCompensate : 0);
+			break;
+
 		case ToolHandlerResponder::SampleToolTypeFade:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Fade sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter start volume in percent:");
@@ -315,6 +326,18 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			sampleEditor->tool_scaleSample(&par);
 			break;
 		}
+
+		case ToolHandlerResponder::SampleToolTypeCompress:
+		{
+			lastValues.compress = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.compressCompensate = static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.compress) );
+			par.setParameter(1, FilterParameters::Parameter(lastValues.compressCompensate));
+			sampleEditor->tool_compressSample(&par);
+			break;
+		}
+
 
 		case ToolHandlerResponder::SampleToolTypeFade:
 		{

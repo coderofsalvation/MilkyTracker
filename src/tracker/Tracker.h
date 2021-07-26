@@ -20,6 +20,8 @@
  *
  */
 
+#define DEV 1
+
 #ifndef TRACKER__H
 #define TRACKER__H
 

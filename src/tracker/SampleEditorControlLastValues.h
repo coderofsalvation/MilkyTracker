@@ -51,6 +51,9 @@ struct SampleEditorControlLastValues
 	pp_int32 mFilterType;
 	pp_int32 mFilterRelease;
 
+	pp_int32 compress;
+	pp_int32 compressCompensate;
+
 	int bitshift;
 	int bitshiftByte;
 
@@ -107,17 +110,20 @@ struct SampleEditorControlLastValues
 		resampleInterpolationType = invalidIntValue();
 		adjustFtAndRelnote = true;
 
+	
+		sizeFadeIn = invalidIntValue();
+		sizeFadeOut = invalidIntValue();
+
 		reverbSize = invalidIntValue();
 		reverbRatio = invalidFloatValue();
 
-		sizeFadeIn = invalidIntValue();
-		sizeFadeOut = invalidIntValue();
+		compress = invalidIntValue();
+		compressCompensate = invalidIntValue();
 
 		filterCutoffA = invalidIntValue();
 		filterCutoffB = invalidIntValue();
 		filterResonance = invalidIntValue();
 		filterType = invalidIntValue();
-
 
 		mFilterType = invalidIntValue();
 		mFilterRelease  = invalidIntValue();
@@ -142,24 +148,6 @@ struct SampleEditorControlLastValues
 
 		result.store("decimateRate", decimateRate);
 
-		result.store("reverbSize", reverbSize);
-		result.store("reverbRatio", reverbRatio);
-
-		result.store("filterCutoffA", filterCutoffA);
-		result.store("filterCutoffB", filterCutoffB);
-
-		result.store("vocodeBands", vocodeBands);
-		result.store("vocodeEnvelope", vocodeEnvelope);
-
-		result.store("exciteFreq", exciteFreq);
-		result.store("exciteAliase", exciteAliase);
-
-		result.store("sizeFadeIn", sizeFadeIn);
-		result.store("sizeFadeOut", sizeFadeOut);
-
-		result.store("mFilterType", mFilterType);
-		result.store("mFilterRelease", mFilterRelease);
-
 		result.store("frequencyBassboost", frequencyBassboost);
 
 		result.store("changeSignIgnoreBits", changeSignIgnoreBits);
@@ -182,8 +170,29 @@ struct SampleEditorControlLastValues
 
 		result.store("bitshift", bitshift);
 		result.store("bitshiftByte", bitshiftByte);
-		
-		
+
+		result.store("sizeFadeIn", sizeFadeIn);
+		result.store("sizeFadeOut", sizeFadeOut);
+
+		result.store("reverbSize", reverbSize);
+		result.store("reverbRatio", reverbRatio);
+
+		result.store("filterCutoffA", filterCutoffA);
+		result.store("filterCutoffB", filterCutoffB);
+
+		result.store("vocodeBands", vocodeBands);
+		result.store("vocodeEnvelope", vocodeEnvelope);
+
+		result.store("exciteFreq", exciteFreq);
+		result.store("exciteAliase", exciteAliase);
+
+
+		result.store("mFilterType", mFilterType);
+		result.store("mFilterRelease", mFilterRelease);
+
+		result.store("compress", compress);
+		result.store("compressCompensate", compressCompensate);
+
 		return result;
 	}
 	

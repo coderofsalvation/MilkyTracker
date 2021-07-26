@@ -121,6 +121,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFilterEQ = new PPContextMenu(5, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
 	subMenuFilterEQ->addEntry(" 3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuFilterEQ->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
+#ifdef DEV
 	subMenuFilterEQ->addEntry(seperatorStringLarge, -1);
 	subMenuFilterEQ->addEntry("Excite", MenuCommandIDExcite);
 	subMenuFilterEQ->addEntry("Bass boost", MenuCommandIDBassboost);
@@ -129,6 +130,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFilterEQ->addEntry("Highpass", MenuCommandIDResonantFilterHP);
 	subMenuFilterEQ->addEntry("Bandpass", MenuCommandIDResonantFilterBP);
 	subMenuFilterEQ->addEntry("Notch", MenuCommandIDResonantFilterNOTCH);
+#endif
 
 
 	subMenuAdvanced = new PPContextMenu(5, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
@@ -136,13 +138,19 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry("Volume boost" PPSTR_PERIODS, MenuCommandIDVolumeBoost);
 	subMenuAdvanced->addEntry("Volume fade" PPSTR_PERIODS, MenuCommandIDVolumeFade);
 	subMenuAdvanced->addEntry("Normalize", MenuCommandIDNormalize);
+#ifdef DEV
 	subMenuAdvanced->addEntry("Compress", MenuCommandIDCompress);
+#endif
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Backwards", MenuCommandIDReverse);
+#ifdef DEV
 	subMenuAdvanced->addEntry("Seamless loop", MenuCommandIDSeamlessLoop);
+#endif
 	subMenuAdvanced->addEntry("Cross-fade", MenuCommandIDXFade);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
+#ifdef DEV
 	subMenuAdvanced->addEntry("Decimate", MenuCommandIDDecimate);
+#endif
 	subMenuAdvanced->addEntry("Bitshift", MenuCommandIDBitshift);
 	subMenuAdvanced->addEntry("Change sign", MenuCommandIDChangeSign);
 	subMenuAdvanced->addEntry("Swap byte order", MenuCommandIDSwapByteOrder);
@@ -152,30 +160,37 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry("Smooth (rect.)", MenuCommandIDRectangularSmooth);
 	subMenuAdvanced->addEntry("Smooth (tri.)", MenuCommandIDTriangularSmooth);
 
-
+#ifdef DEV
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Reverb", MenuCommandIDReverberate);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
+#endif
 	subMenuAdvanced->addEntry("Resample" PPSTR_PERIODS, MenuCommandIDResample);
-	
+#ifdef DEV	
 	//subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	//subMenuAdvanced->addEntry("Test" , MenuCommandIDTest);
-
+#endif
 	
 	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuXPaste->setSubMenu(true);
 	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
+#ifdef DEV
 	subMenuXPaste->addEntry("Repeat", MenuCommandIDRepeat);
+#endif
 	subMenuXPaste->addEntry("Substract", MenuCommandIDSubstract);
 	subMenuXPaste->addEntry("Modulate Amp", MenuCommandIDAMPaste);
 	subMenuXPaste->addEntry("Modulate Freq", MenuCommandIDFMPaste);
 	subMenuXPaste->addEntry("Modulate Phase", MenuCommandIDPHPaste);
+#ifdef DEV
 	subMenuXPaste->addEntry("Modulate Filter", MenuCommandIDMFilter);
 	subMenuXPaste->addEntry("Modulate Envelope", MenuCommandIDMEnvelope);
+#endif
 	subMenuXPaste->addEntry("Flanger", MenuCommandIDFLPaste);
 	subMenuXPaste->addEntry("Selective EQ" PPSTR_PERIODS, MenuCommandIDSelectiveEQ10Band);
+#ifdef DEV
 	subMenuXPaste->addEntry("Vocode", MenuCommandIDVocode);
 	subMenuXPaste->addEntry("Capture pattern" PPSTR_PERIODS, MenuCommandIDCapturePattern);
+#endif
 
 
 	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
@@ -1898,7 +1913,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			break;
 
 		case MenuCommandIDCompress:
-			sampleEditor->tool_compressSample(NULL);
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeCompress);
 			break;
 
 		case MenuCommandIDDecimate:
