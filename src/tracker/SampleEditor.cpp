@@ -2632,8 +2632,8 @@ void SampleEditor::tool_compressSample(const FilterParameters* par)
 
 	float max = 0.0f;
 	float compress = peak * 0.66;
-	boolean limit = par->getParameter(0).intPart == 0;
-	boolean compensate = par->getParameter(1).intPart == 0;
+	bool limit = par->getParameter(0).intPart == 0;
+	bool compensate = par->getParameter(1).intPart == 0;
 	float last  = 0.0;
 	float wpeak = 0.0;
 	int zerocross[2];

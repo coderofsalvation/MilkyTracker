@@ -31,7 +31,7 @@ class SampleEditorScript{
       int l=0;
       f=fopen(file.getStrBuffer(),"r");
       if (f==0) {
-        sprintf(err, "could not find/run \"%s\"..sorry.\n",file);
+        sprintf(err, "could not find/run \"%s\"..sorry.\n",file.getStrBuffer());
         return 1;
       }
       fgets(s,BUFSIZ,f);
@@ -57,7 +57,7 @@ class SampleEditorScript{
 		remove(fout.getStrBuffer());
 		return system(cmd);
       } else {
-        sprintf(err,"File \"%s\" is not in shebang format.\n",file);
+        sprintf(err,"File \"%s\" is not in shebang format.\n",file.getStrBuffer());
         return 1;
       }
     }
