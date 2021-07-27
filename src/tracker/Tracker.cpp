@@ -2789,8 +2789,8 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 				PPString fin = "c:\\Temp\\in.wav";   // todo: improve this std::filesystem::temp_directory_path()) + string("\\in.wav") ?
 				PPString fout = "c:\\Temp\\out.wav";
 			#else
-				string in = string("/tmp/in.wav");        // lets assume something unixy here
-				string out = string("/tmp/out.wav");
+				PPString fin = "/tmp/in.wav";        // lets assume something unixy here
+				PPString fout ="/tmp/out.wav";
             #endif
 			
 			sectionSamples->sampleEditorControl->lastValues.script = loadingParameters.filename;
