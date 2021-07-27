@@ -48,7 +48,8 @@ struct FileTypes
 		FileTypeInstrumentXI,
 		FileTypeSongAllSamples,
 		FileTypeSampleWAV,
-		FileTypeSampleIFF
+		FileTypeSampleIFF,
+		FileTypeScript
 	};
 	
 	Types type;

@@ -40,6 +40,7 @@
 #include "EQConstants.h"
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
+#include "Tracker.h"
 
 SampleEditor::ClipBoard::ClipBoard() :
 		buffer(NULL)
@@ -3985,6 +3986,26 @@ void SampleEditor::tool_generateSawtooth(const FilterParameters* par)
 	}
 
 	finishUndo();	
+
+	postFilter();
+}
+
+void SampleEditor::tool_runScript(const FilterParameters* par)
+{
+	preFilter( &SampleEditor::tool_runScript, par);
+
+	prepareUndo();
+
+	pp_int32 i;
+	PPString file = PPString(par->getParameter(0).stringPart);
+	PPString fin = PPString(par->getParameter(1).stringPart);
+	PPString fout = PPString(par->getParameter(2).stringPart);
+	
+
+	int ok	= this->script.init(fin, fout);
+	ok		= this->script.exec(file, fin, fout);
+	if (ok == 0 ) this->script.update(fin,fout);
+	finishUndo();
 
 	postFilter();
 }

@@ -450,6 +450,7 @@ public:
 	bool getFullScreenFlagFromDatabase();
 	pp_int32 getScreenScaleFactorFromDatabase();
 	bool getShowSplashFlagFromDatabase();
+	void getSelectedInstrument(int* instrument, int* sample);
 
 	void showSplash();
 	void hideSplash();

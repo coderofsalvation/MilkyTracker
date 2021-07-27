@@ -54,6 +54,10 @@ struct SampleEditorControlLastValues
 	pp_int32 compress;
 	pp_int32 compressCompensate;
 
+	PPString script;
+	PPString scriptFin;
+	PPString scriptFout;
+
 	int bitshift;
 	int bitshiftByte;
 
@@ -109,6 +113,10 @@ struct SampleEditorControlLastValues
 		hasEQ3BandValues = hasEQ10BandValues = false;
 		resampleInterpolationType = invalidIntValue();
 		adjustFtAndRelnote = true;
+
+		script = "";
+		scriptFin = "";
+		scriptFout = "";
 
 	
 		sizeFadeIn = invalidIntValue();
@@ -185,6 +193,10 @@ struct SampleEditorControlLastValues
 
 		result.store("exciteFreq", exciteFreq);
 		result.store("exciteAliase", exciteAliase);
+
+		result.store("script", script);
+		result.store("scriptFin", scriptFin);
+		result.store("scriptFout", scriptFout);
 
 
 		result.store("mFilterType", mFilterType);

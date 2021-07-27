@@ -71,8 +71,7 @@ private:
 	PPContextMenu* subMenuFilterEQ;
 	PPContextMenu* subMenuXPaste;
 	PPContextMenu* subMenuGenerators;
-	PPContextMenu* subMenuPT;
-
+	
 	// extent
 	pp_int32 selectionStartNew, selectionEndNew;
 	pp_int32 selectionDragPivot;
@@ -325,7 +324,8 @@ private:
 		MenuCommandIDGenerateSine,
 		MenuCommandIDGenerateSquare,
 		MenuCommandIDGenerateTriangle,
-		MenuCommandIDGenerateSawtooth
+		MenuCommandIDGenerateSawtooth,
+		MenuCommandIDScript
 	};
 	
 	void executeMenuCommand(pp_int32 commandId);

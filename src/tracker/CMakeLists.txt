@@ -156,6 +156,7 @@ add_executable(tracker
     SIPButtons.h
     SampleEditor.h
 	  SampleEditorFx.h
+	  SampleEditorScript.h
     SampleEditorControl.h
     SampleEditorControlLastValues.h
     SampleEditorResampler.h

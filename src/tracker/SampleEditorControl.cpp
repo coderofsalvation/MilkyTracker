@@ -125,6 +125,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFilterEQ->addEntry(seperatorStringLarge, -1);
 	subMenuFilterEQ->addEntry("Excite", MenuCommandIDExcite);
 	subMenuFilterEQ->addEntry("Bass boost", MenuCommandIDBassboost);
+	subMenuFilterEQ->addEntry("Protracker boost", MenuCommandIDPTBoost);
 	subMenuFilterEQ->addEntry(seperatorStringLarge, -1);
 	subMenuFilterEQ->addEntry("Lowpass", MenuCommandIDResonantFilterLP);
 	subMenuFilterEQ->addEntry("Highpass", MenuCommandIDResonantFilterHP);
@@ -193,9 +194,6 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 #endif
 
 
-	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
-	subMenuPT->addEntry("Boost", MenuCommandIDPTBoost);
-
 	subMenuGenerators = new PPContextMenu(7, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuGenerators->addEntry("Noise" PPSTR_PERIODS, MenuCommandIDGenerateNoise);
 	subMenuGenerators->addEntry("Sine" PPSTR_PERIODS, MenuCommandIDGenerateSine);
@@ -213,16 +211,20 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced);
 	editMenuControl->addEntry("EQ Filter  \x10", 0xFFFF, subMenuFilterEQ);
-	editMenuControl->addEntry("Protracker \x10", 0xFFFF, subMenuPT);
 	editMenuControl->addEntry("Generators \x10", 0xFFFF, subMenuGenerators);
 	editMenuControl->addEntry("Paste      \x10", 0xFFFF, subMenuXPaste);
 	editMenuControl->addEntry(seperatorStringMed, -1);
+	editMenuControl->addEntry("Script", MenuCommandIDScript);
+	editMenuControl->addEntry(seperatorStringMed, -1);
+	/*
 	editMenuControl->addEntry("Cut", MenuCommandIDCut);
 	editMenuControl->addEntry("Copy", MenuCommandIDCopy);
 	editMenuControl->addEntry("Paste", MenuCommandIDPaste);
 	editMenuControl->addEntry("Crop", MenuCommandIDCrop);
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
+	*/
 	editMenuControl->addEntry("Loop range", MenuCommandIDLoopRange);
+	
 
 
 	// Create tool handler responder
@@ -250,7 +252,6 @@ SampleEditorControl::~SampleEditorControl()
 	delete subMenuAdvanced;
 	delete subMenuFilterEQ;
 	delete subMenuXPaste;
-	delete subMenuPT;
 	delete subMenuGenerators;
 }
 
@@ -1252,7 +1253,6 @@ pp_int32 SampleEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 			 sender == reinterpret_cast<PPObject*>(subMenuAdvanced) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuFilterEQ) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuXPaste) ||
-			 sender == reinterpret_cast<PPObject*>(subMenuPT) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuGenerators)) &&
 			 event->getID() == eCommand)
 	{
@@ -1769,8 +1769,6 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuXPaste->setState(MenuCommandIDMFilter, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDMEnvelope, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 
-	subMenuPT->setState(MenuCommandIDPTBoost, isEmptySample);
-
 	subMenuGenerators->setState(MenuCommandIDGenerateNoise, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateSine, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateSquare, isEmptySample);
@@ -1886,6 +1884,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		// Invoke tools
 		case MenuCommandIDNew:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeNew);
+			break;
+
+		case MenuCommandIDScript:
+			this->tracker->loadTypeWithDialog(FileTypes::FileTypeScript, false, true);
 			break;
 
 		case MenuCommandIDCapturePattern:

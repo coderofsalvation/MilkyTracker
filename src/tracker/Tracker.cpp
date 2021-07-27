@@ -48,6 +48,7 @@
 #include "Decompressor.h"
 #include "Zapper.h"
 #include "TitlePageManager.h"
+#include "FilterParameters.h"
 
 // Sections
 #include "SectionSwitcher.h"
@@ -2778,6 +2779,34 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 			sectionSamples->updateAfterLoad();
 			break;
 		}
+
+		case FileTypes::FileTypeScript:
+		{
+			sectionSamples->sampleEditorControl->sampleEditor->script.tracker      = this;
+			sectionSamples->sampleEditorControl->sampleEditor->script.moduleEditor = moduleEditor;
+
+			#if defined(WINDOWS) || defined(WIN32)            // C++ >= v17
+				PPString fin = "c:\\Temp\\in.wav";   // todo: improve this std::filesystem::temp_directory_path()) + string("\\in.wav") ?
+				PPString fout = "c:\\Temp\\out.wav";
+			#else
+				string in = string("/tmp/in.wav");        // lets assume something unixy here
+				string out = string("/tmp/out.wav");
+            #endif
+			
+			sectionSamples->sampleEditorControl->lastValues.script = loadingParameters.filename;
+			sectionSamples->sampleEditorControl->lastValues.scriptFin = fin;
+			sectionSamples->sampleEditorControl->lastValues.scriptFout = fout;
+
+			FilterParameters par(3);
+			par.setParameter(0, FilterParameters::Parameter((char *)sectionSamples->sampleEditorControl->lastValues.script.getStrBuffer()));
+			par.setParameter(1, FilterParameters::Parameter((char *)sectionSamples->sampleEditorControl->lastValues.scriptFin.getStrBuffer()));
+			par.setParameter(2, FilterParameters::Parameter((char *)sectionSamples->sampleEditorControl->lastValues.scriptFout.getStrBuffer()));
+
+			sectionSamples->sampleEditorControl->sampleEditor->tool_runScript(&par);
+
+			sectionSamples->updateAfterLoad();
+			break;
+		}
 			
 	}
 	
@@ -2827,6 +2856,12 @@ bool Tracker::loadTypeWithDialog(FileTypes eLoadType, bool suspendPlayer/* = tru
 		{
 			openPanel = new PPOpenPanel(screen, "Open Sample");
 			openPanel->addExtensions(fileExtProvider.getSampleExtensions());
+			break;
+		}
+
+		case FileTypes::FileTypeScript:
+		{
+			openPanel = new PPOpenPanel(screen, "Open Script");
 			break;
 		}
 	}
@@ -3223,5 +3258,10 @@ void Tracker::estimateSongLength(bool signalWait/* = false*/)
 void Tracker::signalWaitState(bool b)
 {
 	screen->signalWaitState(b, TrackerConfig::colorThemeMain);	
+}
+
+void Tracker::getSelectedInstrument( int *instrument, int *sample ) {
+	*instrument = listBoxInstruments->getSelectedIndex();
+	*sample = listBoxSamples->getSelectedIndex();
 }
 

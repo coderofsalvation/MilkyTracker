@@ -35,6 +35,7 @@
 #include "Undo.h"
 #include "Singleton.h"
 #include "SampleEditorFx.h"
+#include "SampleEditorScript.h"
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
@@ -59,10 +60,12 @@ public:
 		pp_int32 selectionEnd;
 		
 		pp_int32 selectionWidth;
-		
+
+	
 		ClipBoard();
 		
 	public:
+
 		~ClipBoard();
 		
 		void makeCopy(TXMSample& sample, XModule& module, pp_int32 selectionStart, pp_int32 selectionEnd, bool cut = false);
@@ -109,7 +112,7 @@ public:
 private:
 	TXMSample* sample;
 	TXMSample lastSample;
-	
+
 	// Current selection
 	pp_int32 selectionStart, selectionEnd;
 	
@@ -366,7 +369,10 @@ public:
 	void tool_eqSample(const FilterParameters* par,bool selective);
 	void tool_eqSample(const FilterParameters* par);
 	void tool_resonantFilterSample(const FilterParameters* par);
-	
+
+	SampleEditorScript script;
+	void tool_runScript(const FilterParameters* par);
+
 	// generators
 	void tool_generateSilence(const FilterParameters* par);
 	void tool_generateNoise(const FilterParameters* par);
