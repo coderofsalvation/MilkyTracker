@@ -11,7 +11,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <direct.h>
 #include "Tracker.h"
 #include "ModuleEditor.h"
 
