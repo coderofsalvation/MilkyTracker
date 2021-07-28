@@ -53,7 +53,7 @@ class SampleEditorScript{
 		}else {
 			snprintf(cmd, BUFSIZ, "%s \"%s\" \"%s\" \"%s\"", launcher, file.getStrBuffer(), fin.getStrBuffer(), fout.getStrBuffer());
 		}
-		// remove last produced out.wav file
+		// remove last produced out.wav file since certain utilities don't like leftovers
 		remove(fout.getStrBuffer());
 		return system(cmd);
       } else {
@@ -79,6 +79,12 @@ class SampleEditorScript{
 	void update(PPString fin, PPString fout) {
 		int selected_instrument;
 		int selected_sample;
+		
+		// return if fout does not exist 
+		FILE* ffout = fopen(fout.getStrBuffer(), "r");
+		if ( ffout  == NULL) return;
+		fclose(ffout);
+
 		tracker->getSelectedInstrument(&selected_instrument, &selected_sample);
 		moduleEditor->loadSample(
 			fout,
