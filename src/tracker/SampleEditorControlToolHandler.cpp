@@ -120,11 +120,11 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 		case ToolHandlerResponder::SampleToolTypeExcite:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Excite high frequencies" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Freq area [0..2] (>1 modulates)");
-			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Aliase [0..1]");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Noise [0..1]");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0.0f, 10.0f, 2);
-			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, 1.0f, 2);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, 1.0f, 1);
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.exciteFreq != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.exciteFreq : 0.86);
-			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.exciteAliase != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.exciteAliase : 0.1f);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.exciteAliase != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.exciteAliase : 0.0f);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeResonantFilterLP:
