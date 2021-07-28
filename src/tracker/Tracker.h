@@ -208,16 +208,6 @@ private:
 	// - message boxes ---------------------------------------------------------
 	PPMessageBoxContainer* messageBoxContainerGeneric;
 
-	enum MessageBoxTypes
-	{
-		MessageBox_OK,
-		MessageBox_YESNO,
-		MessageBox_YESNOCANCEL
-	};
-	void showMessageBox(pp_int32 id, const PPString& caption, MessageBoxTypes type, bool update = true);
-	void showMessageBoxSized(pp_int32 id, const PPString& caption, MessageBoxTypes type, pp_int32 width = -1, pp_int32 height = -1, bool update = true);
-	void showQuitMessageBox(const char* caption, const char* cpationOk, const char* captionCancel);
-
 	// - software input panel --------------------------------------------------
 	PPContainer* inputContainerCurrent;
 	PPContainer* inputContainerDefault;
@@ -442,6 +432,17 @@ public:
 	void initUI();
 
 	void setModuleNumChannels(pp_uint32 numChannels);
+
+	// allow all sections to easily give feedback to the user
+	enum MessageBoxTypes
+	{
+		MessageBox_OK,
+		MessageBox_YESNO,
+		MessageBox_YESNOCANCEL
+	};
+	void showMessageBox(pp_int32 id, const PPString& caption, MessageBoxTypes type, bool update = true);
+	void showMessageBoxSized(pp_int32 id, const PPString& caption, MessageBoxTypes type, pp_int32 width = -1, pp_int32 height = -1, bool update = true);
+	void showQuitMessageBox(const char* caption, const char* cpationOk, const char* captionCancel);
 
 	// PPEvent listener
 	pp_int32 handleEvent(PPObject* sender, PPEvent* event);

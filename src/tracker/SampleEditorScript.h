@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include "Tracker.h"
 #include "ModuleEditor.h"
+#include "ControlIDs.h"
 
 #define BUFSIZE 255
 
@@ -31,7 +32,7 @@ class SampleEditorScript{
       int l=0;
       f=fopen(file.getStrBuffer(),"r");
       if (f==0) {
-        sprintf(err, "could not find/run \"%s\"..sorry.\n",file.getStrBuffer());
+        tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, "could not open script", Tracker::MessageBox_OK);
         return 1;
       }
       fgets(s,BUFSIZ,f);
@@ -55,9 +56,12 @@ class SampleEditorScript{
 		}
 		// remove last produced out.wav file since certain utilities don't like leftovers
 		remove(fout.getStrBuffer());
-		return system(cmd);
+		int ok = system(cmd);
+		sprintf(err, ":( script error: %i", ok);
+		if( ok != 0) tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, err, Tracker::MessageBox_OK);
+		return ok;
       } else {
-        sprintf(err,"File \"%s\" is not in shebang format.\n",file.getStrBuffer());
+       tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, "script is missing shebang", Tracker::MessageBox_OK);
         return 1;
       }
     }
