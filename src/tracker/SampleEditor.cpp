@@ -1635,6 +1635,7 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 		sStart = 0;
 		sEnd = sample->samplen;
 	}
+	pp_int32 sLength = sEnd - sStart;
 
 	preFilter(&SampleEditor::tool_modulateFilterSample, par);
 
@@ -1673,7 +1674,7 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 	
   if( sweeps > 0 ){
     sweepbuf = (float*)malloc(sLength * sizeof(float));
-    for (int i = 0; i < sLength; i++) sweepbuf[i] = sin( i *( (PI*2) / (sLength/sweeps)) ); // generate sweeps
+    for (int i = sStart; i < sEnd; i++) sweepbuf[i] = sin( i *( (PI*2) / (sLength/sweeps)) ); // generate sweeps
   }
 
 	for (pp_int32 i = sStart; i < sEnd; i++)
