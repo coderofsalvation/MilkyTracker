@@ -139,7 +139,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFX->addEntry("Highpass", MenuCommandIDResonantFilterHP);
 	subMenuFX->addEntry("Bandpass", MenuCommandIDResonantFilterBP);
 	subMenuFX->addEntry("Notch", MenuCommandIDResonantFilterNOTCH);
-	subMenuFX->addEntry("Sweep", MenuCommandIDFilterSweep);
+	subMenuFX->addEntry("Filter sweep", MenuCommandIDFilterSweep);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Reverb", MenuCommandIDReverberate);
 #endif

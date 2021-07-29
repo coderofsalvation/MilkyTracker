@@ -1705,6 +1705,13 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 		y1 = y;
 	}
 
+	// enable forward loop
+	if (!getLoopType()){
+    sample->loopstart = sStart;
+    sample->looplen = sEnd;
+    setLoopType(1);
+  }
+
   if( sweeps > 0 ) free(sweepbuf);
 
 	finishUndo();
@@ -2213,9 +2220,11 @@ void SampleEditor::tool_seamlessLoopSample(const FilterParameters* par)
 		this->setFloatSampleInWaveform(i, y);
 	}
 	// enable forward loop
-	sample->loopstart = 0;
-	sample->looplen = sample->samplen;
-	setLoopType(1);
+	if (!getLoopType()){
+    sample->loopstart = 0;
+    sample->looplen = sample->samplen;
+    setLoopType(1);
+  }
 
 	free(samplebuf);
 
