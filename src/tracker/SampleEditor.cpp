@@ -1701,6 +1701,8 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 		y1 = y;
 	}
 
+  if( sweeps > 0 ) free(sweepbuf);
+
 	finishUndo();
 
 	postFilter();
