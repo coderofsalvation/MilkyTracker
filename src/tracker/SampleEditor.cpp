@@ -1612,8 +1612,10 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 	if (isEmptySample())
 		return;
 
-	if (ClipBoard::getInstance()->isEmpty())
+  int sweeps = par->getParameter(1).intPart;
+	if (ClipBoard::getInstance()->isEmpty() && sweeps == 0){
 		return;
+  }
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -1638,12 +1640,12 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 
 	prepareUndo();
 
-	ClipBoard* clipBoard = ClipBoard::getInstance();
-
 	struct EnvelopeFollow e;
+	float* sweepbuf;
 	e.output = 0.0;
 	e.samplerate = 44100; /* TODO: somehow set this dynamically? */
 	e.release = 0.0112;
+	ClipBoard* clipBoard = ClipBoard::getInstance();
 	
 	// inspired by sandy999999's github JUCE example
 	// Difference equation for wah wah filter (1-G) x[n]  -(1-G)   x(n-2] + 2Gcos(thetha) y[n-1]  -(2G-1) y[n-2]
@@ -1659,7 +1661,7 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 	float y2 = 0;
 
 	float intensity = par->getParameter(0).floatPart; // min: 0.05 max
-	float g = par->getParameter(1).floatPart;
+	float g = 0.5; //resonance 
 
 	if (g > 0.95) g = 0.95;
 	float theta = intensity * (2 * PI); // min: 
@@ -1668,12 +1670,21 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 	float b2 = -(1 - g);
 	float a2 = -(2 * g - 1);
 	float dry = 0.15;
+	
+  if( sweeps > 0 ){
+    sweepbuf = (float*)malloc(sLength * sizeof(float));
+    for (int i = 0; i < sLength; i++) sweepbuf[i] = sin( i *( (PI*2) / (sLength/sweeps)) ); // generate sweeps
+  }
 
 	for (pp_int32 i = sStart; i < sEnd; i++)
 	{
 		// update envelope
-		pp_int16 s = clipBoard->getSampleWord((pp_int32)i % clipBoard->getWidth());
-		float sy = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+    float sy;
+    if( sweeps > 0 ) sy = sweepbuf[i];
+    else{
+      pp_int16 s = clipBoard->getSampleWord((pp_int32)i % clipBoard->getWidth());
+      float sy = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+    }
 		envelope_follow(sy, &e);
 
 		// apply envelope to filter

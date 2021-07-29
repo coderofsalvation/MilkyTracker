@@ -421,9 +421,9 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		case ToolHandlerResponder::SampleToolTypeModulateFilter:
 		{
 			lastValues.mFilterRange = static_cast<DialogWithValues*>(dialog)->getValueOne();
-			if (type == ToolHandlerResponder::SampleToolTypeFilterSweep) {
-				lastValues.mFilterSweeps = static_cast<DialogWithValues*>(dialog)->getValueTwo();
-			}
+      lastValues.mFilterSweeps = (type == ToolHandlerResponder::SampleToolTypeFilterSweep) ?
+                                 static_cast<DialogWithValues*>(dialog)->getValueTwo()     :
+                                 0;
 			FilterParameters par(2);
 			par.setParameter(0, FilterParameters::Parameter(lastValues.mFilterRange));
 			par.setParameter(1, FilterParameters::Parameter(lastValues.mFilterSweeps));
