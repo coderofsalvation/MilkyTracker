@@ -11,11 +11,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sstream>
+#include <string>
 #include "Tracker.h"
 #include "ModuleEditor.h"
 #include "ControlIDs.h"
 
 #define BUFSIZE 255
+
+
+class MilkyMacro; // forward declaration 
 
 class SampleEditorScript{
   private:
@@ -97,6 +102,35 @@ class SampleEditorScript{
 			ModuleEditor::SampleFormatTypeWAV
 		);
 	}
+
 };
+
+using namespace std;
+
+class MilkyMacro {
+  public:
+
+    bool MACRO( const char *funcall, float *v, int nvars, string line ){
+      return sscanf( line.c_str(), funcall, &v[0], &v[1], &v[2], &v[3], &v[4], &v[5] ) == nvars ? true : false;
+    }
+
+    bool run( string script, SampleEditor *s ){
+      istringstream s( string(script) + string("\n") );
+      string line;    
+      MilkyMacro mm;
+      while (getline(s, line)){
+        float v[] = {0.0, 0.0, 0.0, 0.0, 0.0 };
+        if( MACRO("volume %f", (float *)&v, 3, line) ){
+          FilterParameters par(2);
+          par.setParameter( 0, FilterParameters::Parameter( (float)v[0] ) );
+          par.setParameter( 1, FilterParameters::Parameter( (float)v[0] ) );
+          s->tool_scaleSample(&par);
+        }
+
+      }
+    }
+
+};
+
 
 #endif

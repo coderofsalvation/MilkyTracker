@@ -295,7 +295,6 @@ private:
 	PatternEditorControl* getPatternEditorControl() { return patternEditorControl; }
 	void updatePatternEditorControl(bool repaint = true, bool fast = false);
 	PatternEditor* getPatternEditor();
-	SampleEditor* getSampleEditor();
 	EnvelopeEditor* getEnvelopeEditor();
 
 	pp_int32 getOrderListBoxIndex();
@@ -443,6 +442,7 @@ public:
 	void showMessageBox(pp_int32 id, const PPString& caption, MessageBoxTypes type, bool update = true);
 	void showMessageBoxSized(pp_int32 id, const PPString& caption, MessageBoxTypes type, pp_int32 width = -1, pp_int32 height = -1, bool update = true);
 	void showQuitMessageBox(const char* caption, const char* cpationOk, const char* captionCancel);
+	SampleEditor* getSampleEditor();
 
 	// PPEvent listener
 	pp_int32 handleEvent(PPObject* sender, PPEvent* event);
