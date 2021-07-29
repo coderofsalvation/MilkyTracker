@@ -1674,7 +1674,7 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 	
   if( sweeps > 0 ){
     sweepbuf = (float*)malloc(sLength * sizeof(float));
-    for (int i = sStart; i < sEnd; i++) sweepbuf[i] = sin( i *( (PI*2) / (sLength/sweeps)) ); // generate sweeps
+    for (int i = 0; i < sLength; i++) sweepbuf[i] = asin(cos(i * ((2*PI)/((sLength)/sweeps))));
   }
 
 	for (pp_int32 i = sStart; i < sEnd; i++)
@@ -3924,7 +3924,7 @@ void SampleEditor::tool_generateTriangle(const FilterParameters* par)
 	pp_int32 i;
 
 	const float numPeriods = par->getParameter(1).floatPart;
-	const float amplify = par->getParameter(0).floatPart;
+	const float amplify = par->getParameter(1).floatPart;
 
 	// generate triangle wave here
 	for (i = sStart; i < sEnd; i++)
