@@ -144,21 +144,28 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			if (type == ToolHandlerResponder::SampleToolTypeResonantFilterNOTCH) lastValues.filterType = 3;
 			break;
 
+		case ToolHandlerResponder::SampleToolTypeFilterSweep:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Sweep filter" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Intensity [0..1]");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Sweeps [1..100]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0.0, 1.0, 1);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(1, 100, 0);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.mFilterRange != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.mFilterRange : 1.0);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.mFilterSweeps != SampleEditorControlLastValues::invalidIntValue() ? lastValues.mFilterSweeps : 1);
+			break;
+
 		case ToolHandlerResponder::SampleToolTypeModulateFilter:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Filter Modulate" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
-			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Type [0=LP 1=HP 2=BP 3=NOTCH]");
-			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Release [0..9]");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 1, 0);
-			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0, 9, 0);
-			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.mFilterType != SampleEditorControlLastValues::invalidIntValue() ? lastValues.mFilterType : 0);
-			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.mFilterRelease != SampleEditorControlLastValues::invalidIntValue() ? lastValues.mFilterRelease : 3);
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Filter Modulate" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Intensity [0..1]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0.0, 1.0, 1);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.mFilterRange != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.mFilterRange : 1.0);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeModulateEnvelope:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Filter Modulate" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Release [0..9]");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 9, 0);
-			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.mFilterRelease != SampleEditorControlLastValues::invalidIntValue() ? lastValues.mFilterRelease : 3);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.mFilterSweeps != SampleEditorControlLastValues::invalidIntValue() ? lastValues.mFilterSweeps : 3);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeBassboost:
@@ -410,22 +417,25 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			break;
 		}
 
+		case ToolHandlerResponder::SampleToolTypeFilterSweep:
 		case ToolHandlerResponder::SampleToolTypeModulateFilter:
 		{
-			lastValues.mFilterType = static_cast<DialogWithValues*>(dialog)->getValueOne();
-			lastValues.mFilterRelease = static_cast<DialogWithValues*>(dialog)->getValueTwo();
-			FilterParameters par(5);
-			par.setParameter(0, FilterParameters::Parameter(lastValues.mFilterType));
-			par.setParameter(1, FilterParameters::Parameter(lastValues.mFilterRelease));
+			lastValues.mFilterRange = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			if (type == ToolHandlerResponder::SampleToolTypeFilterSweep) {
+				lastValues.mFilterSweeps = static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			}
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.mFilterRange));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.mFilterSweeps));
 			sampleEditor->tool_modulateFilterSample(&par);
 			break;
 		}
 
 		case ToolHandlerResponder::SampleToolTypeModulateEnvelope:
 		{
-			lastValues.mFilterRelease = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.mFilterSweeps = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			FilterParameters par(5);
-			par.setParameter(0, FilterParameters::Parameter(lastValues.mFilterRelease));
+			par.setParameter(0, FilterParameters::Parameter(lastValues.mFilterSweeps));
 			sampleEditor->tool_modulateEnvelopeSample(&par);
 			break;
 		}

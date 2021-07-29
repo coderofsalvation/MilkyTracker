@@ -139,6 +139,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFX->addEntry("Highpass", MenuCommandIDResonantFilterHP);
 	subMenuFX->addEntry("Bandpass", MenuCommandIDResonantFilterBP);
 	subMenuFX->addEntry("Notch", MenuCommandIDResonantFilterNOTCH);
+	subMenuFX->addEntry("Sweep", MenuCommandIDFilterSweep);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Reverb", MenuCommandIDReverberate);
 #endif
@@ -1751,6 +1752,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuFX->setState(MenuCommandIDResonantFilterHP, isEmptySample);
 	subMenuFX->setState(MenuCommandIDResonantFilterBP, isEmptySample);
 	subMenuFX->setState(MenuCommandIDResonantFilterNOTCH, isEmptySample);
+	subMenuFX->setState(MenuCommandIDFilterSweep, isEmptySample);
 	subMenuFX->setState(MenuCommandIDExcite, isEmptySample);
 	subMenuFX->setState(MenuCommandIDBassboost, isEmptySample);
 	subMenuFX->setState(MenuCommandIDResample, isEmptySample);
@@ -1989,6 +1991,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDResonantFilterNOTCH:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResonantFilterNOTCH);
+			break;
+
+		case MenuCommandIDFilterSweep:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeFilterSweep);
 			break;
 
 		case MenuCommandIDEQ10Band:

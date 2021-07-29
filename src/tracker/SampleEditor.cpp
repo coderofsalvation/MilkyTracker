@@ -1639,67 +1639,55 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 	prepareUndo();
 
 	ClipBoard* clipBoard = ClipBoard::getInstance();
-	int type = par->getParameter(0).intPart;
 
 	struct EnvelopeFollow e;
 	e.output = 0.0;
-	e.samplerate = 44100;
-	e.release = 0.0001 + (0.1 / 9) * par->getParameter(1).intPart;
+	e.samplerate = 44100; /* TODO: somehow set this dynamically? */
+	e.release = 0.0112;
 	
-	
-	/*
-	struct Filter f;
-	float lastE = 0.0f;
-	float last = 0.0f;
-	f.cutoff = 300;
-	f.q = 0.3;
-	filter_init(&f);
-	*/
+	// inspired by sandy999999's github JUCE example
+	// Difference equation for wah wah filter (1-G) x[n]  -(1-G)   x(n-2] + 2Gcos(thetha) y[n-1]  -(2G-1) y[n-2]
+	// Represented in variables:               b0 *  x  +  b2     *  x2   +     a1       * y1   +   a2   *  y2
 
-	float prevOutput, Fc, dt; // Previous output and cutoff frequency in Hz
-	prevOutput = 0.0f;
-	float out = 0.0;
+	//Plugin states
+	float x = 0;
+	float x1 = 0;
+	float x2 = 0;
+
+	float y = 0;
+	float y1 = 0;
+	float y2 = 0;
+
+	float intensity = par->getParameter(0).floatPart; // min: 0.05 max
+	float g = par->getParameter(1).floatPart;
+
+	if (g > 0.95) g = 0.95;
+	float theta = intensity * (2 * PI); // min: 
+	
+	float b0 = (1 - g);
+	float b2 = -(1 - g);
+	float a2 = -(2 * g - 1);
+	float dry = 0.15;
 
 	for (pp_int32 i = sStart; i < sEnd; i++)
 	{
-		float in = this->getFloatSampleFromWaveform(sStart+i);
-		pp_int16 s = clipBoard->getSampleWord((pp_int32)i % clipBoard->getWidth() );
-		float y = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
-		envelope_follow(y, &e);
+		// update envelope
+		pp_int16 s = clipBoard->getSampleWord((pp_int32)i % clipBoard->getWidth());
+		float sy = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+		envelope_follow(sy, &e);
 
-		/*
-		// (broken) filter
-		float zerocross = ((in >= 0.0 && last <= 0.0) || (in <= 0.0 && last >= 0.0));
-		if ( (lastE < e.output || lastE > e.output) && zerocross ) {
-			f.cutoff = e.output * (e.samplerate / 3);
-			filter_init(&f);	
-			// pre-feed filter, otherwise the filter has nothing in its buffers
-			filter(&f, f.hp + f.lp);
-		}
-		lastE = e.output;
-		last = in;
-		filter(&f, in);
-		switch (type) {
-			case 0: out = f.lp;    break;
-			case 1: out = f.hp;    break;
-			case 2: out = f.bp;    break;
-			case 3: out = f.notch; break;
-		}
-		*/
-
-		//Fc is the cutoff frequency in Hz
-		//dt is the time between last filter time
-		dt = 1.0 / (e.samplerate*2);
-		Fc = (e.samplerate / 3) * e.output;
-		const float tau = 1.0f / (2.0f * PI * Fc); // Time constant
-		const float alpha = dt / (tau + dt); // See (10) in http://techteach.no/simview/lowpass_filter/doc/filter_algorithm.pdf
+		// apply envelope to filter
+		float a1 = 2 * g * cos(theta * e.output );
+		float x = this->getFloatSampleFromWaveform(sStart + i);
 		
-		for (int j = 0; j < 1; j++) { // oversampling for steeper filter
-			// y(n) = y(n-1) + alpha*(u(n) - y(n-1))
-			out = prevOutput + alpha * (in - prevOutput);
-			prevOutput = out;
-		}
-		setFloatSampleInWaveform(sStart+i, out);
+		y = b0 * x + b2 * x2 + a1 * y1 + a2 * y2;
+		this->setFloatSampleInWaveform(sStart + i, y +(x*dry) );
+
+		x2 = x1;
+		x1 = x;
+
+		y2 = y1;
+		y1 = y;
 	}
 
 	finishUndo();

@@ -48,8 +48,8 @@ struct SampleEditorControlLastValues
 	pp_int32 filterResonance;
 	pp_int32 filterType;
 
-	pp_int32 mFilterType;
-	pp_int32 mFilterRelease;
+	float mFilterRange;
+	pp_int32 mFilterSweeps;
 
 	pp_int32 compress;
 	pp_int32 compressCompensate;
@@ -133,8 +133,8 @@ struct SampleEditorControlLastValues
 		filterResonance = invalidIntValue();
 		filterType = invalidIntValue();
 
-		mFilterType = invalidIntValue();
-		mFilterRelease  = invalidIntValue();
+		mFilterRange = invalidFloatValue();
+		mFilterSweeps  = invalidIntValue();
 
 		vocodeBands = invalidIntValue();
 		vocodeEnvelope = invalidIntValue();
@@ -199,8 +199,8 @@ struct SampleEditorControlLastValues
 		result.store("scriptFout", scriptFout);
 
 
-		result.store("mFilterType", mFilterType);
-		result.store("mFilterRelease", mFilterRelease);
+		result.store("mFilterRange", mFilterRange);
+		result.store("mFilterSweeps", mFilterSweeps);
 
 		result.store("compress", compress);
 		result.store("compressCompensate", compressCompensate);
