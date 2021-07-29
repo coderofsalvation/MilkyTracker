@@ -1675,7 +1675,7 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
   if( sweeps > 0 ){
     sweepbuf = (float*)malloc(sLength * sizeof(float));
     for (int i = 0; i < sLength; i++){ 
-      sweepbuf[i] = asin(cos(i * ((2*PI)/((sLength)/sweeps))));
+      sweepbuf[i] = asin(cos(i * (PI/((sLength)/sweeps))));
       sweepbuf[i] = fabs( sweepbuf[i] ) / 2.0; // range 0..1
     }
   }
