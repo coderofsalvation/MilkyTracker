@@ -320,6 +320,7 @@ private:
 		MenuCommandIDExcite,
 		MenuCommandIDBassboost,
 		MenuCommandIDCapturePattern,
+		MenuCommandIDGenerateRandomNote,
 		MenuCommandIDGenerateSilence,
 		MenuCommandIDGenerateNoise,
 		MenuCommandIDGenerateSine,

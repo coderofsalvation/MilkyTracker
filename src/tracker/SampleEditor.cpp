@@ -41,6 +41,7 @@
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
 #include "Tracker.h"
+#include "SoundGenerator.h"
 
 SampleEditor::ClipBoard::ClipBoard() :
 		buffer(NULL)
@@ -732,6 +733,24 @@ pp_int32 SampleEditor::getRelNoteNum() const
 {
 	return sample ? sample->relnote : 0;
 }
+
+void SampleEditor::setRelNoteNum(pp_int32 num)
+{
+	if (sample == NULL)
+		return;
+	mp_sbyte before = sample->relnote;
+
+	pp_int32 relnote = sample->relnote;
+	relnote = num;
+	if (relnote > 71)
+		relnote = 71;
+	if (relnote < -48)
+		relnote = -48;
+	sample->relnote = (mp_sbyte)relnote;
+
+	notifyChanges(sample->relnote != before);
+}
+
 
 void SampleEditor::increaseRelNoteNum(pp_int32 offset)
 {
@@ -2052,8 +2071,7 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 	bool usePasteBuffer = false;  // optional: pastebuffer can be used as impulse response (not that useful though)
 	bool padSample = true; 	      // add silence to sample
 
-	if (usePasteBuffer && ClipBoard::getInstance()->isEmpty())
-		return;
+	//if (usePasteBuffer && ClipBoard::getInstance()->isEmpty()) return;
 
 	// create IR float array
 	float* impulseResponse;
@@ -2062,7 +2080,7 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 	impulseResponse = (float*)malloc(cLength * sizeof(float));
 	float f;
 	VRand rand;
-	rand.seed();
+	rand.seed(1);
 	for (pp_int32 i = 0; i < cLength; i++) {
 		if (usePasteBuffer) {
 			pp_int16 s = clipBoard->getSampleWord((pp_int32)i);
@@ -4004,25 +4022,90 @@ void SampleEditor::tool_generateSawtooth(const FilterParameters* par)
 	postFilter();
 }
 
+// we're running scripts here so scripts can benefit from the 'redo filter' & undo/redo features
 void SampleEditor::tool_runScript(const FilterParameters* par)
 {
-	preFilter( &SampleEditor::tool_runScript, par);
-
-	prepareUndo();
-
 	pp_int32 i;
 	PPString file = PPString(par->getParameter(0).stringPart);
 	PPString fin = PPString(par->getParameter(1).stringPart);
 	PPString fout = PPString(par->getParameter(2).stringPart);
 	
-
 	int ok	= this->script.init(fin, fout);
-	ok		= this->script.exec(file, fin, fout);
-	if (ok == 0 ) this->script.update(fin,fout);
+	ok = this->script.exec(file, fin, fout);								// MILKYMACRO-FILE OR EXTERNAL SCRIPTING LANGUAGE
+	if ( this->script.outputFile ) this->script.update(fin, fout);
+	
+	// push undo/redo here (otherwise 'redo filter' can't reload the script since its buried by all the later actions pushed to the undotrack)
+	preFilter(&SampleEditor::tool_runScript, par);
+	prepareUndo();
+	finishUndo();
+	postFilter();
+}
+
+void SampleEditor::tool_synthRandomNote(const FilterParameters* par) {
+	FilterParameters _par(1);
+	_par.setParameter(0, FilterParameters::Parameter( "random" ) );
+	tool_synth(&_par);
+	setRelNoteNum(24);
+}
+
+void SampleEditor::tool_synth(const FilterParameters* par)
+{
+	preFilter(&SampleEditor::tool_synth, par);
+
+	prepareUndo();
+	
+	pp_int32 sLength = 7500;
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (isEmptySample()) {
+		sample->samplen = sLength;
+		sample->loopstart = 0;
+		sample->looplen = sample->samplen;
+		sample->type |= 16;
+		sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen * 2);
+		memset(sample->sample, 0, sample->samplen * 2);
+	}else {
+		if (hasValidSelection())
+		{
+			if (sStart >= 0 && sEnd >= 0)
+			{
+				if (sEnd < sStart)
+				{
+					pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+				}
+			}
+		}
+		else
+		{
+			sStart = 0;
+			sEnd = sample->samplen;
+		}
+	}
+	sLength = sEnd - sStart;
+	stringstream input;
+	list<SoundGenerator *> list_generator;
+	string synthdef = string(par->getParameter(0).stringPart);
+	if( synthdef == string("random") ) synthdef = SoundGenerator::randomNote();
+	input << synthdef;
+	
+	::srand(1); // seed rand to 1 so random() calls are reproducable by milkymacro's
+	SoundGenerator *g = SoundGenerator::factory(input);
+	if (g) {
+		list_generator.push_front(g);
+		for (int i = 0; i < sLength; i++) {
+			float left = 0.0;
+			float right = 0.0;
+			for (auto generator : list_generator) generator->next(left, right);
+			this->setFloatSampleInWaveform(i, left *1.2);
+		}
+	}
+
 	finishUndo();
 
 	postFilter();
 }
+
 
 bool SampleEditor::tool_canApplyLastFilter() const
 {

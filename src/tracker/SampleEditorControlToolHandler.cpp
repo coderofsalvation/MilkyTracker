@@ -113,7 +113,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Dry/wet ratio [0..1]");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(1, 200, 2);
 			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, 1.0f, 2);
-			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.reverbSize != SampleEditorControlLastValues::invalidIntValue() ? lastValues.reverbSize : 20);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.reverbSize != SampleEditorControlLastValues::invalidIntValue() ? lastValues.reverbSize : 100);
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.reverbRatio != SampleEditorControlLastValues::invalidIntValue() ? lastValues.reverbRatio : 0.5f);
 			break;
 

@@ -82,6 +82,8 @@ class PPDialogBase;
 class DialogResponder;
 class ToolInvokeHelper;
 
+class MilkyMacro;
+
 struct TMixerSettings;
 
 // Key binding forwards
@@ -466,6 +468,8 @@ public:
 
 	void sendNoteDown(pp_int32 note, pp_int32 volume = -1);
 	void sendNoteUp(pp_int32 note);
+
+	bool runMacro(MilkyMacro *m, PPString line);
 
 private:
 	void switchEditMode(EditModes mode);

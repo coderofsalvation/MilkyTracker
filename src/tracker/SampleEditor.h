@@ -31,11 +31,12 @@
 #ifndef __SAMPLEEDITOR_H__
 #define __SAMPLEEDITOR_H__
 
+#include <list>
 #include "EditorBase.h"
 #include "Undo.h"
 #include "Singleton.h"
 #include "SampleEditorFx.h"
-#include "SampleEditorScript.h"
+#include "Script.h"
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
@@ -238,6 +239,7 @@ public:
 
 	pp_int32 getRelNoteNum() const;
 	void increaseRelNoteNum(pp_int32 offset);
+	void setRelNoteNum( pp_int32 num);
 	pp_int32 getFinetune() const;
 	void setFinetune(pp_int32 finetune);
 	
@@ -370,7 +372,10 @@ public:
 	void tool_eqSample(const FilterParameters* par);
 	void tool_resonantFilterSample(const FilterParameters* par);
 
-	SampleEditorScript script;
+	void tool_synth(const FilterParameters* par);
+	void tool_synthRandomNote(const FilterParameters* par);
+
+	Script script;
 	void tool_runScript(const FilterParameters* par);
 
 	// generators

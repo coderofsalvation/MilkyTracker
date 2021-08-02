@@ -2782,8 +2782,9 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 
 		case FileTypes::FileTypeScript:
 		{
-			sectionSamples->sampleEditorControl->sampleEditor->script.tracker      = this;
-			sectionSamples->sampleEditorControl->sampleEditor->script.moduleEditor = moduleEditor;
+			sectionSamples->sampleEditorControl->sampleEditor->script.tracker       = this;
+			sectionSamples->sampleEditorControl->sampleEditor->script.macro.tracker = this;
+			sectionSamples->sampleEditorControl->sampleEditor->script.moduleEditor  = moduleEditor;
 
 			#if defined(WINDOWS) || defined(WIN32)            // C++ >= v17
 				PPString fin = "c:\\Temp\\in.wav";   // todo: improve this std::filesystem::temp_directory_path()) + string("\\in.wav") ?
@@ -3264,4 +3265,6 @@ void Tracker::getSelectedInstrument( int *instrument, int *sample ) {
 	*instrument = listBoxInstruments->getSelectedIndex();
 	*sample = listBoxSamples->getSelectedIndex();
 }
+
+#include "MilkyMacro.cpp" 
 

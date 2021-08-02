@@ -105,6 +105,7 @@ add_executable(tracker
     Undo.cpp
     VRand.cpp
     Zapper.cpp
+	MilkyMacro.cpp
 
     # Headers
     ${PROJECT_BINARY_DIR}/src/tracker/version.h
@@ -155,8 +156,9 @@ add_executable(tracker
     ResamplerHelper.h
     SIPButtons.h
     SampleEditor.h
-	  SampleEditorFx.h
-	  SampleEditorScript.h
+	SampleEditorFx.h
+	Script.h
+	SoundGenerator.h
     SampleEditorControl.h
     SampleEditorControlLastValues.h
     SampleEditorResampler.h

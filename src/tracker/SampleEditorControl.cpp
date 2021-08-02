@@ -178,8 +178,8 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
 #ifdef DEV
 	subMenuXPaste->addEntry("Repeat", MenuCommandIDRepeat);
-#endif
 	subMenuXPaste->addEntry("Substract", MenuCommandIDSubstract);
+#endif
 	subMenuXPaste->addEntry("Modulate Amp", MenuCommandIDAMPaste);
 	subMenuXPaste->addEntry("Modulate Freq", MenuCommandIDFMPaste);
 	subMenuXPaste->addEntry("Modulate Phase", MenuCommandIDPHPaste);
@@ -196,13 +196,16 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 
 
 	subMenuGenerators = new PPContextMenu(7, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+#ifdef DEV
+	subMenuGenerators->addEntry("Random Synth" PPSTR_PERIODS, MenuCommandIDGenerateRandomNote);
+#endif
 	subMenuGenerators->addEntry("Noise" PPSTR_PERIODS, MenuCommandIDGenerateNoise);
 	subMenuGenerators->addEntry("Sine" PPSTR_PERIODS, MenuCommandIDGenerateSine);
 	subMenuGenerators->addEntry("Square" PPSTR_PERIODS, MenuCommandIDGenerateSquare);
 	subMenuGenerators->addEntry("Triangle" PPSTR_PERIODS, MenuCommandIDGenerateTriangle);
 	subMenuGenerators->addEntry("Sawtooth" PPSTR_PERIODS, MenuCommandIDGenerateSawtooth);
 	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
-	
+
 	// build context menu
 	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain, true);
 	editMenuControl->addEntry("New" PPSTR_PERIODS, MenuCommandIDNew);
@@ -217,13 +220,13 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Script", MenuCommandIDScript);
 	editMenuControl->addEntry(seperatorStringMed, -1);
-	/*
+
 	editMenuControl->addEntry("Cut", MenuCommandIDCut);
 	editMenuControl->addEntry("Copy", MenuCommandIDCopy);
 	editMenuControl->addEntry("Paste", MenuCommandIDPaste);
 	editMenuControl->addEntry("Crop", MenuCommandIDCrop);
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
-	*/
+	
 	editMenuControl->addEntry("Loop range", MenuCommandIDLoopRange);
 	
 
@@ -2011,6 +2014,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDExcite:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeExcite);
+			break;
+
+		case MenuCommandIDGenerateRandomNote:
+			sampleEditor->tool_synthRandomNote(NULL);
 			break;
 
 		case MenuCommandIDGenerateSilence:
