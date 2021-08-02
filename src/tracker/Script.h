@@ -40,7 +40,9 @@ public:
 	
 	bool MACRO(const char* funcall, float* v, string line) {
 		string fc = string(funcall);
-		int nvars = std::count( fc.begin(), fc.end(), '%');
+		int nvars = 0;
+		for (int i = 0; i < fc.size(); i++)
+			if (fc[i] == '%') nvars++;
 		return sscanf(line.c_str(), funcall, &v[0], &v[1], &v[2], &v[3], &v[4], &v[5]) == nvars ? true : false;
 	}
 
