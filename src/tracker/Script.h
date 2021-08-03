@@ -127,7 +127,9 @@ class Script{
 		}
 		// notify errors
 		if (ok != 0 || err.length() > 0) {
-			err = err.length() > 0 ? err : string("exitcode: ") + to_string(ok);
+			char num[50];
+			sprintf(num, "%i", ok);
+			err = err.length() > 0 ? err : string("exitcode: ") + string(num);
 			tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, err.c_str(), Tracker::MessageBox_OK);
 		}
 		return ok;
