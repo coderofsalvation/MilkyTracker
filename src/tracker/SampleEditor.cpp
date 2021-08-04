@@ -42,6 +42,7 @@
 #include "SampleEditorResampler.h"
 #include "Tracker.h"
 #include "SoundGenerator.h"
+#include <time.h>
 
 SampleEditor::ClipBoard::ClipBoard() :
 		buffer(NULL)
@@ -1660,11 +1661,7 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 
 	prepareUndo();
 
-	struct EnvelopeFollow e;
 	float* sweepbuf;
-	e.output = 0.0;
-	e.samplerate = 44100; /* TODO: somehow set this dynamically? */
-	e.release = 0.0112;
 	ClipBoard* clipBoard = ClipBoard::getInstance();
 	
 	// inspired by sandy999999's github JUCE example
@@ -1681,41 +1678,48 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 	float y2 = 0;
 
 	float intensity = par->getParameter(0).floatPart; // min: 0.05 max
-	float g = 0.5; //resonance 
-
+	float g = 0.5;
+	
 	if (g > 0.95) g = 0.95;
-	float theta = intensity * (2 * PI); // min: 
 	
 	float b0 = (1 - g);
 	float b2 = -(1 - g);
 	float a2 = -(2 * g - 1);
 	float dry = 0.15;
 	
-  if( sweeps > 0 ){
-    sweepbuf = (float*)malloc(sLength * sizeof(float));
-    for (int i = 0; i < sLength; i++){ 
-      sweepbuf[i] = asin(cos(i * (PI/((sLength)/sweeps))));
-      sweepbuf[i] = fabs( sweepbuf[i] ) / 2.0; // range 0..1
-    }
-  }
+	if( sweeps > 0 ){
+		sweepbuf = (float*)malloc(sLength * sizeof(float));
+		for (int i = 0; i < sLength; i++){ 
+			sweepbuf[i] = fabs( asin(cos(i * (PI/((sLength)/sweeps)))) ) / 1.6; // range 0..1
+			sweepbuf[i] *= intensity;
+		}
+	}
+
+	struct EnvelopeFollow e;
+	e.output = 0.0;
+	e.samplerate = 44100;
+	e.release = 0.01;
+	float boost = 0.0;
 
 	for (pp_int32 i = sStart; i < sEnd; i++)
 	{
 		// update envelope
-    float sy;
-    if( sweeps > 0 ) sy = sweepbuf[i];
-    else{
-      pp_int16 s = clipBoard->getSampleWord((pp_int32)i % clipBoard->getWidth());
-      float sy = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
-    }
+		float sy = 0.0;
+		if( sweeps > 0 ) sy = sweepbuf[i];
+		else{
+		  pp_int16 s = clipBoard->getSampleWord((pp_int32)i % (clipBoard->getWidth()));
+		  sy = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+		  sy = (sy + 1.0) / 2.0; // 0..1
+		}
 		envelope_follow(sy, &e);
-
+		
 		// apply envelope to filter
-		float a1 = 2 * g * cos(theta * e.output );
+		float a1 = 2 * g * (sweeps > 0 ? sy : (-e.output+1.0) );
 		float x = this->getFloatSampleFromWaveform(sStart + i);
 		
 		y = b0 * x + b2 * x2 + a1 * y1 + a2 * y2;
-		this->setFloatSampleInWaveform(sStart + i, y +(x*dry) );
+		boost = sweeps > 0 ? (-e.output + 1.0) * y : e.output * y;
+		this->setFloatSampleInWaveform(sStart + i, (y + boost) + ((x * dry)) );
 
 		x2 = x1;
 		x1 = x;
@@ -1781,6 +1785,7 @@ void SampleEditor::tool_modulateEnvelopeSample(const FilterParameters* par)
 		float in = this->getFloatSampleFromWaveform(sStart + i);
 		pp_int16 s = clipBoard->getSampleWord((pp_int32)i % clipBoard->getWidth());
 		float y = s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+		y = (y+1.0)/ 2.0;
 		envelope_follow(y, &e);
 		setFloatSampleInWaveform(sStart + i, in * e.output);
 	}
@@ -2040,24 +2045,8 @@ void SampleEditor::tool_reverberateSample(const FilterParameters* par)
 	if (isEmptySample())
 		return;
 
-	pp_int32 sStart = selectionStart;
-	pp_int32 sEnd = selectionEnd;
-
-	if (hasValidSelection())
-	{
-		if (sStart >= 0 && sEnd >= 0)
-		{
-			if (sEnd < sStart)
-			{
-				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
-			}
-		}
-	}
-	else
-	{
-		sStart = 0;
-		sEnd = sample->samplen;
-	}
+	pp_int32 sStart = 0;
+	pp_int32 sEnd = sample->samplen;
 
 	preFilter(&SampleEditor::tool_reverberateSample, par);
 
@@ -4034,7 +4023,7 @@ void SampleEditor::tool_runScript(const FilterParameters* par)
 	ok = this->script.exec(file, fin, fout);								// MILKYMACRO-FILE OR EXTERNAL SCRIPTING LANGUAGE
 	if ( this->script.outputFile ) this->script.update(fin, fout);
 	
-	// push undo/redo here (otherwise 'redo filter' can't reload the script since its buried by all the later actions pushed to the undotrack)
+	// push undo/redo here (otherwise 'redo filter' can't reload the script since its buried by all the earlier actions pushed to the undotrack)
 	preFilter(&SampleEditor::tool_runScript, par);
 	prepareUndo();
 	finishUndo();
@@ -4045,65 +4034,112 @@ void SampleEditor::tool_synthRandomNote(const FilterParameters* par) {
 	FilterParameters _par(1);
 	_par.setParameter(0, FilterParameters::Parameter( "random" ) );
 	tool_synth(&_par);
-	setRelNoteNum(24);
 }
 
 void SampleEditor::tool_synth(const FilterParameters* par)
 {
-	preFilter(&SampleEditor::tool_synth, par);
+	SoundGenerator g;
+	bool seamless = false;
+	pp_int32 sLength = 19000;
+	pp_int32 sStart = 0;
+	pp_int32 sEnd = sLength;
+	float* buf;
+	buf = (float*)malloc(sLength * sizeof(float));
 
-	prepareUndo();
-	
-	pp_int32 sLength = 7500;
-	pp_int32 sStart = selectionStart;
-	pp_int32 sEnd = selectionEnd;
-
-	if (isEmptySample()) {
+	if (isEmptySample() || sample->samplen != sLength) {
 		sample->samplen = sLength;
 		sample->loopstart = 0;
 		sample->looplen = sample->samplen;
 		sample->type |= 16;
 		sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen * 2);
 		memset(sample->sample, 0, sample->samplen * 2);
-	}else {
-		if (hasValidSelection())
-		{
-			if (sStart >= 0 && sEnd >= 0)
-			{
-				if (sEnd < sStart)
-				{
-					pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+	}
+	setRelNoteNum(24);
+
+	if ( string(par->getParameter(0).stringPart) == string("random")) {
+		srand(time(NULL)); // randomize seed
+		int r1 = rand() % 5;
+		int r2 = rand() % 3;
+		bool reverb = (rand() % 3) == 0;
+		bool flange = (rand() % 3) == 0;
+		seamless = (r2 == 0);
+		int ok = g.generateRandom( &buf[0], sLength, seamless );
+		for (int i = 0; i < sLength; i++) {
+			setFloatSampleInWaveform(sStart + i, buf[i]);
+		}
+		// apply random fx
+		switch (r1) {
+			case 0: {
+				FilterParameters _par(2);
+				_par.setParameter(0, FilterParameters::Parameter(1.0f) );
+				_par.setParameter(1, FilterParameters::Parameter(1) );
+				tool_modulateFilterSample(&_par);
+				break;
+			}
+			case 1: {
+				FilterParameters _par(2);
+				for (int j = 0; j < 2; j++){
+					_par.setParameter(0, FilterParameters::Parameter(1));
+					_par.setParameter(1, FilterParameters::Parameter(0));
+					tool_compressSample(&_par);
 				}
+				break;
 			}
 		}
-		else
-		{
-			sStart = 0;
-			sEnd = sample->samplen;
+
+		for (int i = 0; i < sample->samplen; i++) setFloatSampleInWaveform(i, getFloatSampleFromWaveform(i) * 0.66); // lower volume
+
+		if (reverb) {
+			float wet = (rand() % 2) == 0 ? 0.5 : 1.0;
+			int size = (rand() % 2) == 0 ? 70 : 30;
+			FilterParameters _par(2);
+			_par.setParameter(0, FilterParameters::Parameter(size));
+			_par.setParameter(1, FilterParameters::Parameter(wet));
+			tool_reverberateSample(&_par);
+			if (wet == 1.0) {
+				setSelectionStart(sample->samplen / 10);
+				cropSample();
+			}
+			if( wet == 1.0 && (rand() % 2) == 0 ){
+				setSelectionStart(0);
+				setSelectionEnd(sample->samplen / 2);
+				cropSample();
+				seamless = true;
+			}
 		}
-	}
-	sLength = sEnd - sStart;
-	stringstream input;
-	list<SoundGenerator *> list_generator;
-	string synthdef = string(par->getParameter(0).stringPart);
-	if( synthdef == string("random") ) synthdef = SoundGenerator::randomNote();
-	input << synthdef;
-	
-	::srand(1); // seed rand to 1 so random() calls are reproducable by milkymacro's
-	SoundGenerator *g = SoundGenerator::factory(input);
-	if (g) {
-		list_generator.push_front(g);
+		// limit
+		FilterParameters _par(2);
+		_par.setParameter(0, FilterParameters::Parameter(0));
+		_par.setParameter(1, FilterParameters::Parameter(1));
+		tool_compressSample(&_par);
+		tool_compressSample(&_par);
+		if (seamless) {
+			FilterParameters _par(2);
+			_par.setParameter(0, FilterParameters::Parameter(50));
+			_par.setParameter(1, FilterParameters::Parameter(50));
+			tool_seamlessLoopSample(&_par);
+		}
+	}else { // run predefined synth
+		g.init( string(par->getParameter(0).stringPart) );
+		int ok = g.generate(&buf[0], sLength);
 		for (int i = 0; i < sLength; i++) {
-			float left = 0.0;
-			float right = 0.0;
-			for (auto generator : list_generator) generator->next(left, right);
-			this->setFloatSampleInWaveform(i, left *1.2);
+			setFloatSampleInWaveform(sStart + i, buf[i]);
 		}
 	}
+	free(buf);
 
+	setSelectionStart(0);
+	setSelectionEnd(sample->samplen);
+	loopRange();
+	setLoopType(seamless ? 1 : 2);
+	lastOperation = OperationNew; // force updating the sampleview
+
+	// push undo/redo here (otherwise 'redo filter' can't reload the script since its buried by all the earlier actions pushed to the undotrack)
+	preFilter(&SampleEditor::tool_synth, par);
+	prepareUndo();
 	finishUndo();
-
 	postFilter();
+
 }
 
 

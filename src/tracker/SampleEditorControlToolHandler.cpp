@@ -158,11 +158,11 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Filter Modulate" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Intensity [0..1]");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0.0, 1.0, 1);
-			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.mFilterRange != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.mFilterRange : 0.2);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.mFilterRange != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.mFilterRange : 0.7);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeModulateEnvelope:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Filter Modulate" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Envelope Modulate" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Release [0..9]");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 9, 0);
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.mFilterSweeps != SampleEditorControlLastValues::invalidIntValue() ? lastValues.mFilterSweeps : 3);

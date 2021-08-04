@@ -173,8 +173,14 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				refresh();
 				break;
 
+			
+			case BUTTON_SAMPLE_RANDOM:
 			case BUTTON_SAMPLE_PLAY_WAVE:
 			{
+				if (reinterpret_cast<PPControl*>(sender)->getID() == BUTTON_SAMPLE_RANDOM) {
+					sampleEditor->tool_synthRandomNote(NULL);
+					sampleEditorControl->rangeAll(true);
+				}
 				SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
 				samplePlayer.playCurrentSample(currentSamplePlayNote);
 				break;
@@ -536,7 +542,11 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_SAMPLE_PLAY_WAVE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2), PPSize(size3, bHeightm));
 	button->setText("Wav");
 	container->addControl(button);
-	
+
+	button = new PPButton(BUTTON_SAMPLE_RANDOM, screen, this, PPPoint(x2 + size2, y2 + 2 ), PPSize(size, bHeightm) );
+	button->setText("Syn");
+	container->addControl(button);
+
 	button = new PPButton(BUTTON_SAMPLE_PLAY_RANGE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight), PPSize(size3, bHeightm));
 	button->setText("Rng");
 	container->addControl(button);
