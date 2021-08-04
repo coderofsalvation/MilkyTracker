@@ -105,8 +105,7 @@ add_executable(tracker
     Undo.cpp
     VRand.cpp
     Zapper.cpp
-	MilkyMacro.cpp
-
+	
     # Headers
     ${PROJECT_BINARY_DIR}/src/tracker/version.h
     AnimatedFXControl.h
