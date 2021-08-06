@@ -23,11 +23,13 @@
 #include <fstream>
 #include <streambuf>
 #include <map>
-#include <unistd.h>
 #include "FilterParameters.h"
 #include "ControlIDs.h"
 #include "ModuleEditor.h"
 #include "Tracker.h"
+#if defined("DRIVER_UNIX")
+#include <unistd.h>
+#endif
       
 #define BUFSIZE 255
 
@@ -112,9 +114,13 @@ class Script{
        * LINUX:   pops up X11 terminal or launches script as non-interactive
        * AMIGA:   *TODO* launch 'auto con' console window https://wiki.amigaos.net/wiki/Executing_External_Programs
        */
+      #ifdef defined(DRIVER_UNIX)
       if( access("/usr/bin/x-terminal-emulator" , F_OK ) == 0 ) {
         snprintf(launcher,BUFSIZ,"/usr/bin/x-terminal-emulator %s",s+2);
       }else snprintf(launcher,BUFSIZ,"%s",s+2);
+      #else
+      snprintf(launcher,BUFSIZ,"%s",s+2);
+      #endif
 
       /////////////////////////////////////////////////////////////////////////////////// MILKY MACRO
       if (strstr(launcher, "milkymacro v") != NULL) {
