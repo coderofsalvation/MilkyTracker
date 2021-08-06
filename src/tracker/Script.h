@@ -114,7 +114,7 @@ class Script{
        * LINUX:   pops up X11 terminal or launches script as non-interactive
        * AMIGA:   *TODO* launch 'auto con' console window https://wiki.amigaos.net/wiki/Executing_External_Programs
        */
-      #ifdef defined(DRIVER_UNIX)
+      #ifndef defined(WINDOWS) || defined(WIN32)
       if( access("/usr/bin/x-terminal-emulator" , F_OK ) == 0 ) {
         snprintf(launcher,BUFSIZ,"/usr/bin/x-terminal-emulator %s",s+2);
       }else snprintf(launcher,BUFSIZ,"%s",s+2);
