@@ -23,11 +23,12 @@
 #include <fstream>
 #include <streambuf>
 #include <map>
+#include <unistd.h>
 #include "FilterParameters.h"
 #include "ControlIDs.h"
 #include "ModuleEditor.h"
 #include "Tracker.h"
-
+      
 #define BUFSIZE 255
 
 using namespace std;
@@ -81,63 +82,72 @@ class Script{
 	bool outputFile;
 	string err;
 	
-    int exec( PPString file, PPString fin, PPString fout ){
-	  outputFile = false;
-	  err = "";
-      char s[BUFSIZ]={ 0 };
-      int l=0;
-      f=fopen(file.getStrBuffer(),"r");
-      if (f==0) {
-        tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, "could not open script", Tracker::MessageBox_OK);
-        return 0; // because 0 will 
-      }
-      fgets(s,BUFSIZ,f);
-      while ( l < BUFSIZ ) {
-        if (s[l]=='\r'||s[l]=='\n'||s[l]==EOF) {
-          s[l]='\0';
-          break;
-        }
-        l++;
-      }
-      fclose(f);
-
-      char launcher[BUFSIZ]={ 0 };
-      char cmd[BUFSIZ]={ 0 };
-	  int ok = 0;
-      if(s[0]=='#' && s[1]=='!') {
-        snprintf(launcher,BUFSIZ,"%s",s+2);
-		// MILKY MACRO
-		if (strstr(launcher, "milkymacro v") != NULL) {
-			outputFile = false;
-			ok = macro.run(file) ? 0 : 1;
-			if (macro.err.length() > 0) err = macro.err; 
-		}else {
-			// FORMATSTRING SHEBANG
-			if (strstr(launcher, "%s") != NULL) {
-				snprintf(cmd, BUFSIZ, launcher, fin.getStrBuffer(), fout.getStrBuffer());
-			}
-			// TRADITIONAL SHEBANG
-			else {
-				snprintf(cmd, BUFSIZ, "%s \"%s\" \"%s\" \"%s\"", launcher, file.getStrBuffer(), fin.getStrBuffer(), fout.getStrBuffer());
-			}
-			// remove last produced out.wav file since certain utilities don't like leftovers
-			remove(fout.getStrBuffer());
-			ok = system(cmd);	
-			outputFile = ok == 0;
-		}
-		// notify errors
-		if (ok != 0 || err.length() > 0) {
-			char num[50];
-			sprintf(num, "%i", ok);
-			err = err.length() > 0 ? err : string("exitcode: ") + string(num);
-			tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, err.c_str(), Tracker::MessageBox_OK);
-		}
-		return ok;
-      } else {
-		tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, "script is missing shebang", Tracker::MessageBox_OK);
-        return 1;
-      }
+  int exec( PPString file, PPString fin, PPString fout ){
+    outputFile = false;
+    err = "";
+    char s[BUFSIZ]={ 0 };
+    int l=0;
+    f=fopen(file.getStrBuffer(),"r");
+    if (f==0) {
+      tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, "could not open script", Tracker::MessageBox_OK);
+      return 0; // because 0 will 
     }
+    fgets(s,BUFSIZ,f);
+    while ( l < BUFSIZ ) {
+      if (s[l]=='\r'||s[l]=='\n'||s[l]==EOF) {
+        s[l]='\0';
+        break;
+      }
+      l++;
+    }
+    fclose(f);
+
+    char launcher[BUFSIZ]={ 0 };
+    char cmd[BUFSIZ]={ 0 };
+    int ok = 0;
+    if(s[0]=='#' && s[1]=='!') {
+
+      /* 
+       * WINDOWS: automatically pops up terminal for interactive scripts
+       * LINUX:   pops up X11 terminal or launches script as non-interactive
+       * AMIGA:   *TODO* launch 'auto con' console window https://wiki.amigaos.net/wiki/Executing_External_Programs
+       */
+      if( access("/usr/bin/x-terminal-emulator" , F_OK ) == 0 ) {
+        snprintf(launcher,BUFSIZ,"/usr/bin/x-terminal-emulator %s",s+2);
+      }else snprintf(launcher,BUFSIZ,"%s",s+2);
+
+      /////////////////////////////////////////////////////////////////////////////////// MILKY MACRO
+      if (strstr(launcher, "milkymacro v") != NULL) {
+        outputFile = false;
+        ok = macro.run(file) ? 0 : 1;
+        if (macro.err.length() > 0) err = macro.err; 
+      }else {
+        ///////////////////////////////////////////////////////////////////////////////// FORMATSTRING SHEBANG
+        if (strstr(launcher, "%s") != NULL) {
+          snprintf(cmd, BUFSIZ, launcher, fin.getStrBuffer(), fout.getStrBuffer());
+        }
+        // TRADITIONAL SHEBANG
+        else {
+          snprintf(cmd, BUFSIZ, "%s \"%s\" \"%s\" \"%s\"", launcher, file.getStrBuffer(), fin.getStrBuffer(), fout.getStrBuffer());
+        }
+      }
+      // RUN! +remove last produced out.wav file since certain utilities don't like leftovers
+      remove(fout.getStrBuffer());
+      ok = system(cmd);	
+      outputFile = ok == 0;
+      // notify errors
+      if (ok != 0 || err.length() > 0) {
+        char num[50];
+        sprintf(num, "%i", ok);
+        err = err.length() > 0 ? err : string("exitcode: ") + string(num);
+        tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, err.c_str(), Tracker::MessageBox_OK);
+      }
+      return ok;
+    } else {
+      tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, "script is missing shebang", Tracker::MessageBox_OK);
+      return 1;
+    }
+  }
 
 	int init(PPString fin, PPString fout) {
 		// create new in.wav
