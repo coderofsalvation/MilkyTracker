@@ -27,7 +27,7 @@
 #include "ControlIDs.h"
 #include "ModuleEditor.h"
 #include "Tracker.h"
-#if defined("DRIVER_UNIX")
+#if defined(DRIVER_UNIX)
 #include <unistd.h>
 #endif
       
