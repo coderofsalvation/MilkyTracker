@@ -35,7 +35,7 @@ struct synth_state {
 class SoundGenerator {
 
 public:
-	struct synth_state s = { 40.,80.,40.,1.,0.0001,0,0,0,0,100.0}; // default
+	struct synth_state s = { 40.0f, 80.0f, 40.0f, 1.0f, 0.0001f, 0, 0, 0, 0, 100.0f}; // default
 
 	void init(string cfg){
 		//   params: <freq_osc1> <freq_osc2> <freq_osc3> <amp>  <decay> <osc1_type> <osc2_type> <osc3_type> <third_mod>  <mod_depth>
