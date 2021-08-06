@@ -117,7 +117,7 @@ class Script{
        */
       #ifndef defined(WINDOWS) || defined(WIN32)
       if( access("/usr/bin/x-terminal-emulator" , F_OK ) == 0 ) {
-        snprintf(launcher,BUFSIZ,"/usr/bin/x-terminal-emulator %s",s+2);
+        snprintf(launcher,BUFSIZ,"/usr/bin/x-terminal-emulator -e %s",s+2);
       }else snprintf(launcher,BUFSIZ,"%s",s+2);
       #else
       snprintf(launcher,BUFSIZ,"%s",s+2);
