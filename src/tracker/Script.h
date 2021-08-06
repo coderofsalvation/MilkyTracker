@@ -28,10 +28,6 @@
 #include "ModuleEditor.h"
 #include "Tracker.h"
 
-#ifndef defined(WINDOWS) || defined(WIN32)
-#include <unistd.h>
-#endif
-      
 #define BUFSIZE 255
 
 using namespace std;
@@ -111,17 +107,11 @@ class Script{
     if(s[0]=='#' && s[1]=='!') {
 
       /* 
-       * WINDOWS: automatically pops up terminal for interactive scripts
-       * LINUX:   pops up X11 terminal or launches script as non-interactive
+       * WINDOWS: automatically pops up terminal for interactive (blocking) scripts (debian's x-terminal-emulator is unusable here)
+       * LINUX:   make sure to launch milkytracker from the console (in case of interactive scripts wanting input) or use xdialog etc
        * AMIGA:   *TODO* launch 'auto con' console window https://wiki.amigaos.net/wiki/Executing_External_Programs
        */
-      #ifndef defined(WINDOWS) || defined(WIN32)
-      if( access("/usr/bin/x-terminal-emulator" , F_OK ) == 0 ) {
-        snprintf(launcher,BUFSIZ,"/usr/bin/x-terminal-emulator -e %s",s+2);
-      }else snprintf(launcher,BUFSIZ,"%s",s+2);
-      #else
-      snprintf(launcher,BUFSIZ,"%s",s+2);
-      #endif
+      snprintf(launcher,BUFSIZ,"%s",s+2);                                           
 
       /////////////////////////////////////////////////////////////////////////////////// MILKY MACRO
       if (strstr(launcher, "milkymacro v") != NULL) {
