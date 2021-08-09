@@ -111,6 +111,28 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 				}
 			}
 		}
+    if (::getKeyModifier() == (KeyModifierCTRL |  KeyModifierALT))
+    {
+      switch (keyCode)
+      {
+
+        // plus key increases pattern step
+        case SC_TICK: {
+                        getPatternEditorControl()->increaseRowInsertAdd();
+                        updatePatternAddAndOctave();
+                        event->cancel();
+                        break;
+                      }
+
+                      // minus key increases pattern step
+        case SC_SS: {
+                      getPatternEditorControl()->decreaseRowInsertAdd();
+                      updatePatternAddAndOctave();
+                      event->cancel();
+                      break;
+                    }
+      }
+    }
 
 		switch (keyCode)
 		{
