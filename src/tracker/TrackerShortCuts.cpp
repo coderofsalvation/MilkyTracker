@@ -113,7 +113,7 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 		}
     if (::getKeyModifier() == (KeyModifierCTRL |  KeyModifierALT))
     {
-      switch (keyCode)
+      switch (scanCode)
       {
 
         // plus key increases pattern step
