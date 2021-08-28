@@ -130,6 +130,9 @@ class Script{
       }
       // RUN! +remove last produced out.wav file since certain utilities don't like leftovers
       remove(fout.getStrBuffer());
+	  #if defined(WINDOWS) || defined(WIN32)  
+	  for (int i = 0; cmd[i]; i++) if (cmd[i] == '/') cmd[i] = '\\';
+	  #endif
       ok = system(cmd);	
       outputFile = ok == 0;
       // notify errors
