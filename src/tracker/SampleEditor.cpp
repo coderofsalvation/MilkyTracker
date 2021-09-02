@@ -901,9 +901,24 @@ void SampleEditor::clearSample()
 	tool_clearSample(&par);
 }
 
+void SampleEditor::mixSpreadPasteSample()
+{
+	FilterParameters par(1);
+	par.setParameter(0, FilterParameters::Parameter(0) ); // spreads selection across sample (changes pitch)
+	tool_mixPasteSample(&par);
+}
+
 void SampleEditor::mixPasteSample()
 {
-	FilterParameters par(0);
+	FilterParameters par(1);
+	par.setParameter(0, FilterParameters::Parameter(1) ); // paste's selection on top new selection start (preserve pitch)
+	tool_mixPasteSample(&par);
+}
+
+void SampleEditor::mixOverflowPasteSample()
+{
+	FilterParameters par(1);
+	par.setParameter(0, FilterParameters::Parameter(2)); // paste's selection on top new selection start (preserves pitch + overflow) 
 	tool_mixPasteSample(&par);
 }
 
@@ -1435,6 +1450,10 @@ void SampleEditor::tool_convertSampleResolution(const FilterParameters* par)
 
 void SampleEditor::tool_mixPasteSample(const FilterParameters* par)
 {
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+
+	bool preservePitch  = par->getParameter(0).intPart > 0;
+	bool overflow       = par->getParameter(0).intPart > 1;
 	if (isEmptySample())
 		return;
 
@@ -1443,6 +1462,7 @@ void SampleEditor::tool_mixPasteSample(const FilterParameters* par)
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
+	
 	
 	if (hasValidSelection())
 	{
@@ -1456,23 +1476,22 @@ void SampleEditor::tool_mixPasteSample(const FilterParameters* par)
 	}
 	else
 	{
-		sStart = 0;
+		sStart = preservePitch ? sStart : 0;
 		sEnd = sample->samplen;
 	}
-	
+	if (preservePitch) sEnd = sStart + clipBoard->getWidth();
+
 	preFilter(NULL, NULL);
 	
 	prepareUndo();
 	
-	ClipBoard* clipBoard = ClipBoard::getInstance();
-	
-	float step = (float)clipBoard->getWidth() / (float)(sEnd-sStart);
+	// preserve pitch (otherwise stretch clipboard to selection)
+	float step = preservePitch ? 1 : (float)clipBoard->getWidth() / (float)(sEnd - sStart);
 	
 	float j = 0.0f;
 	for (pp_int32 i = sStart; i < sEnd; i++)
 	{
 		float frac = j - (float)floor(j);
-	
 		pp_int16 s = clipBoard->getSampleWord((pp_int32)j);
 		float f1 = s < 0 ? (s/32768.0f) : (s/32767.0f);
 		s = clipBoard->getSampleWord((pp_int32)j+1);
@@ -1480,8 +1499,9 @@ void SampleEditor::tool_mixPasteSample(const FilterParameters* par)
 
 		float f = (1.0f-frac)*f1 + frac*f2;
 		
-		setFloatSampleInWaveform(i, f + getFloatSampleFromWaveform(i));
+		setFloatSampleInWaveform(i % sample->samplen, f + getFloatSampleFromWaveform(i % sample->samplen));
 		j+=step;
+		if (!overflow && i == sample->samplen) break;
 	}
 				
 	finishUndo();	
@@ -2202,8 +2222,8 @@ void SampleEditor::tool_seamlessLoopSample(const FilterParameters* par)
 
 	float* samplebuf;
 	float y;
-	int fadein = 25;
-	int fadeout = 25;
+	int fadein = par->getParameter(0).intPart;
+	int fadeout = par->getParameter(1).intPart;
 	pp_int32 sLength = sample->samplen;
 	samplebuf = (float*)malloc(sLength * sizeof(float));
 	pp_int32 lenFadeIn = floor(((float)sample->samplen / 100.0f) * fadein);
@@ -2218,10 +2238,10 @@ void SampleEditor::tool_seamlessLoopSample(const FilterParameters* par)
 	sample->samplen = newSampleSize;
 	for (int i = 0; i < newSampleSize; i++) {
 
-		float amp_fadein = ((1.0f / lenFadeIn) * (float)i);
-		float amp_fadeout = ((1.0f / lenFadeOut) * (float)i);
+		float amp_fadein  = lenFadeIn  > 0 ? ((1.0f / lenFadeIn)  * (float)i) : 1.0f;
+		float amp_fadeout = lenFadeOut > 0 ? ((1.0f / lenFadeOut) * (float)i) : 0.0f;
 		y = 0.0f;
-		if (i < lenFadeIn)   y = samplebuf[i] * amp_fadein;
+		if (i <= lenFadeIn)   y = samplebuf[i] * amp_fadein;
 		else y = samplebuf[i];
 		if (i < lenFadeOut)  y += samplebuf[(sLength - lenFadeOut) + i] * (1.0f - amp_fadeout);
 		this->setFloatSampleInWaveform(i, y);
@@ -4019,13 +4039,14 @@ void SampleEditor::tool_runScript(const FilterParameters* par)
 	PPString fin = PPString(par->getParameter(1).stringPart);
 	PPString fout = PPString(par->getParameter(2).stringPart);
 	
+	// push undo/redo here (otherwise 'redo filter' can't reload the script since its buried by all the earlier actions pushed to the undotrack)
+	preFilter(&SampleEditor::tool_runScript, par);
+	prepareUndo();
+
 	int ok	= this->script.init(fin, fout);
 	ok = this->script.exec(file, fin, fout);								// MILKYMACRO-FILE OR EXTERNAL SCRIPTING LANGUAGE
 	if ( this->script.outputFile ) this->script.update(fin, fout);
 	
-	// push undo/redo here (otherwise 'redo filter' can't reload the script since its buried by all the earlier actions pushed to the undotrack)
-	preFilter(&SampleEditor::tool_runScript, par);
-	prepareUndo();
 	finishUndo();
 	postFilter();
 }

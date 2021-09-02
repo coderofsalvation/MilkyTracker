@@ -177,6 +177,8 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuXPaste->setSubMenu(true);
 	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
 #ifdef DEV
+	subMenuXPaste->addEntry("Mix (overflow)", MenuCommandIDMixOverflowPaste);
+	subMenuXPaste->addEntry("Mix (spread)", MenuCommandIDMixSpreadPaste);
 	subMenuXPaste->addEntry("Repeat", MenuCommandIDRepeat);
 	subMenuXPaste->addEntry("Substract", MenuCommandIDSubstract);
 #endif
@@ -1763,6 +1765,8 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuFX->setState(MenuCommandIDReverberate, isEmptySample);
 
 	subMenuXPaste->setState(MenuCommandIDMixPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDMixOverflowPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDMixSpreadPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDRepeat, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDSubstract, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDAMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
@@ -1811,7 +1815,17 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			sampleEditor->paste();
 			break;
 
-		// mix-paste
+		// mix-paste spread
+		case MenuCommandIDMixOverflowPaste:
+			sampleEditor->mixOverflowPasteSample();
+			break;
+
+		// mix-paste spread
+		case MenuCommandIDMixSpreadPaste:
+			sampleEditor->mixSpreadPasteSample();
+			break;
+
+		// mix-paste stencil-like (preserves pitch)
 		case MenuCommandIDMixPaste:
 			sampleEditor->mixPasteSample();
 			break;
