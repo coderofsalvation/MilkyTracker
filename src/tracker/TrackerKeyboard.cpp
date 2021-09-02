@@ -57,6 +57,7 @@
 #include "SectionQuickOptions.h"
 #include "SectionOptimize.h"
 #include "SectionAbout.h"
+#include "ChannelMixer.h"
 
 #include "ToolInvokeHelper.h"
 
@@ -1019,6 +1020,7 @@ void Tracker::eventKeyDownBinding_InvokePatternCapture()
 	sectionHDRecorder->insIndex = moduleEditor->currentInstrumentIndex;
 	sectionHDRecorder->fromOrder = getOrderListBoxIndex();
 	sectionHDRecorder->toOrder = getOrderListBoxIndex();
-  sectionHDRecorder->setSettingsAllowMuting(true);
+	sectionHDRecorder->setSettingsAllowMuting(true);
+	sectionHDRecorder->setSettingsResampler(settingsDatabase->restore("INTERPOLATION")->getIntValue());
 	sectionHDRecorder->exportWAVAsSample();
 }
