@@ -292,6 +292,7 @@ private:
 		MenuCommandIDMEnvelope,
 		MenuCommandIDNormalize,
 		MenuCommandIDCompress,
+		MenuCommandIDGate,
 		MenuCommandIDDecimate,
 		MenuCommandIDBitshift,
 		MenuCommandIDVolumeBoost,

@@ -124,6 +124,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFX->addEntry("Normalize", MenuCommandIDNormalize);
 #ifdef DEV
 	subMenuFX->addEntry("Compress", MenuCommandIDCompress);
+	subMenuFX->addEntry("Gate", MenuCommandIDGate);
 #endif
 
 #ifdef DEV
@@ -1751,6 +1752,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuFX->setState(MenuCommandIDVolumeBoost, isEmptySample);
 	subMenuFX->setState(MenuCommandIDNormalize, isEmptySample);
 	subMenuFX->setState(MenuCommandIDCompress, isEmptySample);
+	subMenuFX->setState(MenuCommandIDGate, isEmptySample);
 	subMenuFX->setState(MenuCommandIDEQ3Band, isEmptySample);
 	subMenuFX->setState(MenuCommandIDEQ10Band, isEmptySample);
 	subMenuFX->setState(MenuCommandIDResonantFilterLP, isEmptySample);
@@ -1935,6 +1937,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDCompress:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeCompress);
+			break;
+
+		case MenuCommandIDGate:
+			sampleEditor->tool_gateSample(NULL);
 			break;
 
 		case MenuCommandIDDecimate:

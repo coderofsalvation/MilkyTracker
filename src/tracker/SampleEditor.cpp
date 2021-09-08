@@ -3064,6 +3064,67 @@ void SampleEditor::tool_PTboostSample(const FilterParameters* par)
 	postFilter();
 }
 
+void SampleEditor::tool_gateSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	struct EnvelopeFollow e;
+	e.output = 0.0;
+	e.samplerate = 44100;
+	e.release = 0.2;
+	
+	preFilter(&SampleEditor::tool_gateSample, par);
+
+	prepareUndo();
+
+	pp_int32 i;
+	float maxLevel = ((par == NULL) ? 1.0f : par->getParameter(0).floatPart);
+	float peak = 0.0f;
+
+	// find peak value
+	for (i = sStart; i < sEnd; i++)
+	{
+		float f = getFloatSampleFromWaveform(i);
+		if (ppfabs(f) > peak) peak = ppfabs(f);
+	}
+
+	float scale = maxLevel / peak;
+
+	float x;
+	float delta = 1.05;
+	for (i = sStart; i < sEnd; i++)
+	{
+		x = getFloatSampleFromWaveform(i);
+		envelope_follow(x * scale, &e);
+		x = x * pow(e.output, delta); // gate
+		setFloatSampleInWaveform(i, x ); // compensate amp
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
 bool SampleEditor::isValidxFadeSelection()
 {
 	if (isEmptySample() || !hasValidSelection() || !(sample->type & 3))

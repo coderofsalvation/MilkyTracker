@@ -373,6 +373,7 @@ public:
 	void tool_eqSample(const FilterParameters* par,bool selective);
 	void tool_eqSample(const FilterParameters* par);
 	void tool_resonantFilterSample(const FilterParameters* par);
+	void tool_gateSample(const FilterParameters* par);
 
 	void tool_synth(const FilterParameters* par);
 	void tool_synthRandomNote(const FilterParameters* par);
