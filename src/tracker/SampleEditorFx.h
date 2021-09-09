@@ -27,6 +27,7 @@ struct Filter {
 	float notch;  // notch output
 	float cutoff; // hz
 	float q;      // 0-1
+	int samplerate; // 44100 e.g.
 };
 
 struct EnvelopeFollow {
@@ -42,7 +43,7 @@ extern void ifft(complex* v, int n, complex* tmp);
 extern int convolve(float* x, float* h, int lenX, int lenH, float** output);
 
 extern void filter(struct Filter* f, float input);
-extern void filter_init(struct Filter* f);
+extern void filter_init(struct Filter* f, int samplerate);
 //extern void xfade(float* in, float* out, pp_int32 len, int fadein /*percent*/, int fadeout /*percent*/);
 
 extern void envelope_follow(float input, struct EnvelopeFollow* e);

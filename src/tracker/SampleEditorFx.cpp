@@ -228,8 +228,9 @@ int convolve(float* x, float* h, int lenX, int lenH, float** output)
 }
 
 
-void filter(struct Filter* f, float input) {
-	float fs = 44100.0; // samplerate
+void filter(struct Filter* f, float input ) {
+	float fs = float(f->samplerate); // samplerate
+	if (f->cutoff > (f->samplerate / 4)) f->cutoff = f->samplerate / 4; // clamp max cutoff
 	float fCutoff = 2 * sin(PI * f->cutoff / fs);
 	f->lp = f->lp + fCutoff * f->bp;
 	f->hp = f->q * input - f->lp - f->q * f->bp;
@@ -237,11 +238,12 @@ void filter(struct Filter* f, float input) {
 	f->notch = f->hp + f->lp;
 }
 
-void filter_init(struct Filter* f) {
+void filter_init(struct Filter* f, int samplerate) {
 	f->lp = 0.0;
 	f->hp = 0.0;
 	f->bp = 0.0;
 	f->notch = 0.0;
+	f->samplerate = samplerate;
 }
 
 	static float output = 0.0;

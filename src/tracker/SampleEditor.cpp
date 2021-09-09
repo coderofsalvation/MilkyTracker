@@ -1717,7 +1717,7 @@ void SampleEditor::tool_modulateFilterSample(const FilterParameters* par)
 
 	struct EnvelopeFollow e;
 	e.output = 0.0;
-	e.samplerate = 44100;
+	e.samplerate = XModule::getc4spd(sample->relnote, sample->finetune);
 	e.release = 0.01;
 	float boost = 0.0;
 
@@ -1798,7 +1798,7 @@ void SampleEditor::tool_modulateEnvelopeSample(const FilterParameters* par)
 
 	struct EnvelopeFollow e;
 	e.output = 0.0;
-	e.samplerate = 44100;
+	e.samplerate = XModule::getc4spd(sample->relnote, sample->finetune);
 	e.release = 0.0001 + (0.1 / 9) * par->getParameter(0).intPart;
 	for (pp_int32 i = sStart; i < sEnd; i++)
 	{
@@ -2178,7 +2178,7 @@ void SampleEditor::tool_resonantFilterSample(const FilterParameters* par)
 	float pos;
 	float out;
 	float fQ = (float)par->getParameter(1).intPart / 10.0f;
-	filter_init(&f);
+	filter_init(&f, XModule::getc4spd(sample->relnote, sample->finetune) );
 	f.q = ((float)(1.0f - fQ));
 	f.cutoff = cutoff_a;
 	if (!sweeps) cutoff_b = cutoff_a;
@@ -2392,7 +2392,7 @@ void SampleEditor::tool_vocodeSample(const FilterParameters* par)
 	float f[bands][13]; //[0-8][0 1 2 | 0 1 2 3 | 0 1 2 3 | val rate]
                         //  #   reson | carrier |modulator| envelope
 	// init 
-	double tpofs = 6.2831853 / 44100; /* FIXME somehow guess samplerate */
+	double tpofs = 6.2831853 / XModule::getc4spd(sample->relnote, sample->finetune); /* FIXME somehow guess samplerate */
 	double rr, th; //, re;
 	float sh;
 
@@ -3090,8 +3090,8 @@ void SampleEditor::tool_gateSample(const FilterParameters* par)
 
 	struct EnvelopeFollow e;
 	e.output = 0.0;
-	e.samplerate = 44100;
-	e.release = 0.2;
+	e.samplerate = XModule::getc4spd(sample->relnote, sample->finetune);
+	e.release = 0.1;
 	
 	preFilter(&SampleEditor::tool_gateSample, par);
 
@@ -3111,12 +3111,12 @@ void SampleEditor::tool_gateSample(const FilterParameters* par)
 	float scale = maxLevel / peak;
 
 	float x;
-	float delta = 1.05;
+	float delta = 1.01;
 	for (i = sStart; i < sEnd; i++)
 	{
 		x = getFloatSampleFromWaveform(i);
 		envelope_follow(x * scale, &e);
-		x = x * pow(e.output, delta); // gate
+		x = x * e.output; // pow(e.output, delta); // gate
 		setFloatSampleInWaveform(i, x ); // compensate amp
 	}
 
