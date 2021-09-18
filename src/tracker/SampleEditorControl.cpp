@@ -158,8 +158,8 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 #ifdef DEV
 	subMenuAdvanced->addEntry("Decimate", MenuCommandIDDecimate);
-#endif
 	subMenuAdvanced->addEntry("Bitshift", MenuCommandIDBitshift);
+#endif
 	subMenuAdvanced->addEntry("Change sign", MenuCommandIDChangeSign);
 	subMenuAdvanced->addEntry("Swap byte order", MenuCommandIDSwapByteOrder);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);

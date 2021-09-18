@@ -201,6 +201,7 @@ Tracker::Tracker() :
 		muteChannels[i] = false;
 		
 	initKeyBindings();
+
 }
 
 Tracker::~Tracker()

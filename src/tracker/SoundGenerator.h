@@ -10,6 +10,7 @@
 #define squareFunc(pos, theta)  cos(pos * 2 * PI + theta) <= 0 ? -1 : 1;
 #define triangleFunc(pos, theta) 1 - fabs(fmod(pos + theta, 1.0) - 0.5) * 4;
 #define noise(pos,theta) (float)rand()/(float)RAND_MAX;
+#define randomInt() rand()
 
 //fmod equation
 //x(t)=A(t)*[cos(2pi*fc*t + I(t)cos(2pi*fm*t+osc2_t) + osc1_t]
@@ -56,24 +57,38 @@ public:
 	}
 
 	int generateRandom(float* buf, int n, bool seamless) {
-		int o1 = rand() % 4;
-		int o2 = rand() % 4;
-		int o3 = rand() % 4;
-		int r3 = seamless ? 2 : (rand() % 3);
-		s.osc1  = 80.0 * (float)(rand() % 4);
-		s.osc2  = ((rand() % 2) ? s.osc1 : 80.0) * (float)(rand() % 4);
-		s.osc3  = ((rand() % 2) ? s.osc2 : 80.0) * (float)(rand() % 4);
+		printf("%i\n", randomInt());
+		int o1 = 1 + (randomInt() % 4);
+		int o2 = 1 + (randomInt() % 4);
+		int o3 = 1 + (randomInt() % 4);
+		int r3 = seamless ? 0 : randomInt() % 3;
+		float basenote = 80.0;
+		s.osc1 = basenote *(float)(1+(randomInt() % 4));
+		s.osc2 = ((randomInt() % 2) ? s.osc1 : basenote) * (1+(float)(randomInt() % 4));
+		s.osc3 = ((randomInt() % 2) ? s.osc2 : basenote) * (1+(float)(randomInt() % 4));
 		switch (r3) {
 			case 0: s.decay = 0.0001; break;
 			case 1: s.decay = 0.00006; break;
-			case 2: s.decay = 0.0; break;
+			case 2: s.decay = 0.0001; break;
 		}
 		s.osc1_type = o1;
-		s.osc2_type = o2 != o1 ? o2 : rand() % 3;
-		s.osc3_type = o3 != o1 ? o3 : rand() % 3;
-		s.third_mod = rand() % 4;
-		s.depth = (1.0f / 5) * (float)(rand() % 5);
+		s.osc2_type = o2 != o1 ? o2 : (1+(randomInt() % 3));
+		s.osc3_type = o3 != o1 ? o3 : (1+(randomInt() % 3));
+		s.third_mod = randomInt() % 3;
+		s.depth = (1.0f / 5) * (float)(1+(randomInt() % 5));
 		if (s.osc1_type == 3 || s.osc2_type == 3 || s.osc3_type == 3) s.decay = 0.0001; // noise means short sounds
+		// now lets generate the synth sound
+		generate(buf, n);
+		// (sometimes) add extra layer
+		int layered = randomInt() % 3;
+		if (layered != 0) {
+			float* buf2;
+			buf2 = (float*)malloc(n * sizeof(float));
+			generateRandom(buf2, n, seamless);
+			for (int i = 0; i < n; i++) buf[i] = (buf[i] + buf2[i]) * 0.5;
+			free(buf2);
+		}
+		printf("syn %f %f %f 1.0 %f %i %i %i %i %f\n", s.osc1, s.osc2, s.osc3, s.decay, s.osc1_type, s.osc2_type, s.osc3_type, s.third_mod, s.depth);
 		return generate(buf, n);
 	}
 

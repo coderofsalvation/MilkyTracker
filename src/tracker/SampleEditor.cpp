@@ -4142,8 +4142,9 @@ void SampleEditor::tool_synth(const FilterParameters* par)
 		srand(time(NULL)); // randomize seed
 		int r1 = rand() % 5;
 		int r2 = rand() % 3;
-		bool reverb = (rand() % 3) == 0;
+		bool reverb = (rand() % 2) == 0;
 		bool flange = (rand() % 3) == 0;
+		bool filter = (rand() % 3) == 0;
 		seamless = (r2 == 0);
 		int ok = g.generateRandom( &buf[0], sLength, seamless );
 		for (int i = 0; i < sLength; i++) {
@@ -4167,6 +4168,18 @@ void SampleEditor::tool_synth(const FilterParameters* par)
 				}
 				break;
 			}
+		}
+
+		if (filter) {
+			FilterParameters _par(5);
+			int minhz = 200;
+			int maxhz = minhz * (2 + (rand() % 4));
+			_par.setParameter(0, FilterParameters::Parameter(minhz));
+			_par.setParameter(1, FilterParameters::Parameter(5));
+			_par.setParameter(2, FilterParameters::Parameter(rand() % 4));
+			_par.setParameter(3, FilterParameters::Parameter(maxhz));
+			_par.setParameter(4, FilterParameters::Parameter(rand() % 3));
+			tool_resonantFilterSample(&_par);
 		}
 
 		for (int i = 0; i < sample->samplen; i++) setFloatSampleInWaveform(i, getFloatSampleFromWaveform(i) * 0.66); // lower volume
@@ -4215,7 +4228,11 @@ void SampleEditor::tool_synth(const FilterParameters* par)
 	loopRange();
 	setLoopType(seamless ? 1 : 2);
 	lastOperation = OperationNew; // force updating the sampleview
+	// undo muffled summing
+	for (int i = 0; i < 2; i++) tool_PTboostSample(NULL);
 
+	tool_normalizeSample(NULL);
+	
 	// push undo/redo here (otherwise 'redo filter' can't reload the script since its buried by all the earlier actions pushed to the undotrack)
 	preFilter(&SampleEditor::tool_synth, par);
 	prepareUndo();

@@ -101,6 +101,15 @@ class Script{
     }
     fclose(f);
 
+
+	#if defined(WINDOWS) || defined(WIN32) 
+	AllocConsole();
+	freopen("conin$", "r", stdin);
+	freopen("conout$", "w", stdout);
+	freopen("conout$", "w", stderr);
+	printf("=> %s\n", file.getStrBuffer());
+	#endif
+
     char launcher[BUFSIZ]={ 0 };
     char cmd[BUFSIZ]={ 0 };
     int ok = 0;
