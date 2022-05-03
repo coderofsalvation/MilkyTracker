@@ -40,6 +40,7 @@
 
 #include "Mixable.h"
 
+
 class MasterMixer
 {
 public:
@@ -60,9 +61,9 @@ public:
 	};
 
 	MasterMixer(mp_uint32 sampleRate, 
-				mp_uint32 bufferSize = 0, 
-				mp_uint32 numDevices = 1,
-				class AudioDriverInterface* audioDriver = 0);
+  mp_uint32 bufferSize = 0, 
+  mp_uint32 numDevices = 1,
+	class AudioDriverInterface* audioDriver = 0);
 	
 	virtual ~MasterMixer();
 	
@@ -83,6 +84,9 @@ public:
 	
 	mp_sint32 setBufferSize(mp_uint32 bufferSize);
 	mp_uint32 getBufferSize() const { return bufferSize; }
+	
+  mp_sint32 setMasteringPreset(mp_uint32 masteringPreset);
+	mp_uint32 getMasteringPreset() const { return masteringPreset; }
 	
 	mp_sint32 setSampleRate(mp_uint32 sampleRate);
 	mp_uint32 getSampleRate() const { return sampleRate; }
@@ -107,7 +111,7 @@ public:
 	
 	void setFilterHook(Mixable* filterHook) { this->filterHook = filterHook; }
 	Mixable* getFilterHook(Mixable* filterHook) const { return filterHook; }
-	
+
 	// some legacy functions used by milkytracker
 	const class AudioDriverInterface* getAudioDriver() const { return audioDriver; }
 	
@@ -123,6 +127,7 @@ private:
 	MasterMixerNotificationListener* listener;
 	mp_uint32 sampleRate;
 	mp_uint32 bufferSize;
+	mp_uint32 masteringPreset;
 	mp_sint32* buffer;
 	mp_uint32 sampleShift;
 	bool disableMixing;

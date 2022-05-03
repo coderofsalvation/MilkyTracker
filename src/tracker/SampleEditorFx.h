@@ -3,7 +3,7 @@
 #ifndef SAMPLEDITORFX_H
 #define SAMPLEDITORFX_H
 
-#include "BasicTypes.h"
+//#include "BasicTypes.h"
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>

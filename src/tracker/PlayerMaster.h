@@ -56,6 +56,8 @@ struct TMixerSettings
     pp_uint32 numPlayerChannels;
 	// 0 means disable virtual channels, negative value means ignore
 	pp_int32 numVirtualChannels;
+	// 0 means disable virtual channels, negative value means ignore
+	pp_int32 masteringPreset;
 
 	TMixerSettings() :
 		mixFreq(-1),
@@ -67,7 +69,8 @@ struct TMixerSettings
 		ramping(-1),
 		audioDriverName(NULL),
         numPlayerChannels(TrackerConfig::numPlayerChannels),
-		numVirtualChannels(-1)
+		numVirtualChannels(-1),
+		masteringPreset(-1)
 	{
 	}
 

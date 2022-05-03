@@ -155,7 +155,8 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_RAMPING,
 	RADIOGROUP_SETTINGS_MIXFREQ,
 	BUTTON_SETTINGS_CHOOSEDRIVER,
-    RADIOGROUP_SETTINGS_XMCHANNELLIMIT,
+  RADIOGROUP_SETTINGS_XMCHANNELLIMIT,
+  RADIOGROUP_SETTINGS_MASTERING,
 
 	// PAGE I (2)
 	CHECKBOX_SETTINGS_VIRTUALCHANNELS,
@@ -252,7 +253,8 @@ enum ControlIDs
 	PAGE_IO_1,
 	PAGE_IO_2,
 	PAGE_IO_3,
-    PAGE_IO_4,
+  PAGE_IO_4,
+  PAGE_IO_5,
 
 	PAGE_LAYOUT_1,
 	PAGE_LAYOUT_2,
@@ -790,6 +792,44 @@ public:
                 break;
                 
         }
+    }
+    
+};
+
+class TabPageIO_5 : public TabPage
+{
+public:
+    TabPageIO_5(pp_uint32 id, SectionSettings& sectionSettings) :
+    TabPage(id, sectionSettings)
+    {
+    }
+    
+    virtual void init(PPScreen* screen)
+    {
+        pp_int32 x = 0;
+        pp_int32 y = 0;
+        
+        container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
+        
+        pp_int32 x2 = x;
+        pp_int32 y2 = y;
+        
+        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2 ), "Mastering preset", true, true));
+        PPRadioGroup* masteringGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_MASTERING, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 6*14));
+        masteringGroup->setColor(TrackerConfig::colorThemeMain);
+        masteringGroup->addItem("none");
+        masteringGroup->addItem("EDM");
+        masteringGroup->addItem("multimedia");
+        masteringGroup->addItem("amradio");
+        container->addControl(masteringGroup);
+
+    }
+    
+    virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+    {
+        // mastering preset 
+        pp_int32 v = settingsDatabase->restore("MASTERING")->getIntValue();
+        static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_MASTERING))->setChoice(v);
     }
     
 };
@@ -1960,8 +2000,10 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-
-				tracker.settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+        if( tracker.settingsDatabase->restore("MASTERING")->getIntValue() > 0 )
+          tracker.settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", (pp_int32)1 );
+        else
+          tracker.settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
 			}
@@ -2470,7 +2512,10 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			case SLIDER_SETTINGS_BUFFERSIZE:
 			{
 				pp_uint32 v = (reinterpret_cast<PPSlider*>(sender)->getCurrentValue()+1) << 5;
-				tracker.settingsDatabase->store("BUFFERSIZE", v);
+        if( tracker.settingsDatabase->restore("MASTERING")->getIntValue() > 0 && v < MASTERING_MIN_BUFSIZE )
+          tracker.settingsDatabase->store("BUFFERSIZE", MASTERING_MIN_BUFSIZE);
+        else
+          tracker.settingsDatabase->store("BUFFERSIZE", v);
 				update();
 				break;
 			}
@@ -2557,15 +2602,27 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
                 
-            case RADIOGROUP_SETTINGS_XMCHANNELLIMIT:
-            {
-                pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
-                
-                ASSERT(v >= 0 && v < 3);
-                tracker.settingsDatabase->store("XMCHANNELLIMIT", 1 << (v + 5));
-                update();
-                break;
-            }
+      case RADIOGROUP_SETTINGS_XMCHANNELLIMIT:
+      {
+          pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
+          
+          ASSERT(v >= 0 && v < 3);
+          tracker.settingsDatabase->store("XMCHANNELLIMIT", 1 << (v + 5));
+          update();
+          break;
+      }
+      
+      case RADIOGROUP_SETTINGS_MASTERING:
+      {
+          pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
+          tracker.settingsDatabase->store("MASTERING", v);
+          // enforce minimum compatible FFT window
+          if( tracker.settingsDatabase->restore("BUFFERSIZE")->getIntValue() < MASTERING_MIN_BUFSIZE  ) 
+            tracker.settingsDatabase->store("BUFFERSIZE", MASTERING_MIN_BUFSIZE ); 
+          tracker.settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", 1 );
+          update();
+          break;
+      }
 
 			case RADIOGROUP_SETTINGS_PATTERNFONT:
 			{
@@ -2776,6 +2833,7 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	tabPages.get(0)->add(new TabPageIO_3(PAGE_IO_3, *this));
 #ifndef __LOWRES__
     tabPages.get(0)->add(new TabPageIO_4(PAGE_IO_4, *this));
+    tabPages.get(0)->add(new TabPageIO_5(PAGE_IO_5, *this));
 #endif
 
 	tabPages.get(1)->add(new TabPageLayout_1(PAGE_LAYOUT_1, *this));

@@ -198,8 +198,10 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("SAMPLEEDITORLASTVALUES", "");
 	// no virtual channels for instrument playback
 	settingsDatabase->store("VIRTUALCHANNELS", 0);
-    // default number of XM channel limit
-    settingsDatabase->store("XMCHANNELLIMIT", 32);
+  // default number of XM channel limit
+  settingsDatabase->store("XMCHANNELLIMIT", 32);
+  // default number of XM mastering preset 
+  settingsDatabase->store("MASTERING", 0);
 	// enable multichn recording by default
 	settingsDatabase->store("MULTICHN_RECORD", 1);
 	// enable multichn keyjazzing by default
@@ -358,11 +360,16 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	{
 		settings.numVirtualChannels = v2;
 	}
-    // ---------------- XM channel limit -------------------
-    else if (theKey->getKey().compareTo("XMCHANNELLIMIT") == 0)
-    {
-        settings.numPlayerChannels = v2;
-    }
+  // ---------------- XM channel limit -------------------
+  else if (theKey->getKey().compareTo("XMCHANNELLIMIT") == 0)
+  {
+      settings.numPlayerChannels = v2;
+  }
+  // ---------------- Mastering preset-------------------
+  else if (theKey->getKey().compareTo("MASTERING") == 0)
+  {
+      settings.masteringPreset = v2;
+  }
 	else if (theKey->getKey().compareTo("FULLSCREEN") == 0)
 	{
 		bool fullScreen = (v2 != 0);
@@ -709,7 +716,7 @@ void Tracker::getMixerSettingsFromDatabase(TMixerSettings& mixerSettings,
 	mixerSettings.resampler = currentSettings.restore("INTERPOLATION")->getIntValue();
 	mixerSettings.ramping = currentSettings.restore("RAMPING")->getIntValue();
 	mixerSettings.setAudioDriverName(currentSettings.restore("AUDIODRIVER")->getStringValue());
-    mixerSettings.numPlayerChannels = currentSettings.restore("XMCHANNELLIMIT")->getIntValue();
+  mixerSettings.numPlayerChannels = currentSettings.restore("XMCHANNELLIMIT")->getIntValue();
 	mixerSettings.numVirtualChannels = currentSettings.restore("VIRTUALCHANNELS")->getIntValue();
 }
 

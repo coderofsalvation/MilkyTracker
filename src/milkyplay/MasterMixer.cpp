@@ -39,11 +39,57 @@
 #include "MilkyPlayCommon.h"
 #include "AudioDriverBase.h"
 #include "AudioDriverManager.h"
+#include "../tracker/SampleEditorFx.h"
 
 enum
 {
 	BlockTimeOut = 5000
 };
+
+struct MasteringFilter : public Mixable
+{
+	mp_uint32 masterVolume;
+	
+	MasteringFilter() : 
+		masterVolume(256)
+	{
+	}
+	
+	virtual void mix(mp_sint32* buffer, mp_uint32 bufferSize)
+	{
+    // coderofsalvation@2022: unfortunately, the channelmixer converts stuff to interleaved audio quite soon
+    // result: FFT on interleaved audio is not ideal 
+    // however, here is more convenient compared to hacking it into the the resampler-code 
+    printf("mixing %i\n",bufferSize);
+    const mp_uint32 FFT_WINDOW = 1024;
+    mp_uint32 sample = 0;
+    complex* compL = (complex *)calloc(FFT_WINDOW, sizeof(complex));
+    complex* compR = (complex *)calloc(FFT_WINDOW, sizeof(complex));
+    complex* tmp   = (complex *)calloc(FFT_WINDOW, sizeof(complex));
+    for( mp_uint32 i = 0; i < (bufferSize*MP_NUMCHANNELS)/FFT_WINDOW; i++ ){
+      const mp_uint32 offset = i*FFT_WINDOW;
+      for (mp_uint32 j = offset, sample = 0; j < offset+FFT_WINDOW; j+=2, sample++ ) {
+        compL[sample].Re = (float)buffer[ j   ]*(1.0f/32767.0f);
+        compR[sample].Re = (float)buffer[ j+1 ]*(1.0f/32767.0f);
+      }
+      fft(compL,FFT_WINDOW,tmp);
+      fft(compR,FFT_WINDOW,tmp);
+      for( mp_uint32 x = 0; x < FFT_WINDOW*2; x++ ){
+        //compL[x].Im = compL[x].Im;
+        //compR[x].Im = compR[x].Im;
+      }
+      ifft(compL,FFT_WINDOW,tmp);
+      ifft(compR,FFT_WINDOW,tmp);
+      for (mp_uint32 j = offset, sample = 0; j < offset+FFT_WINDOW; j+=2, sample++){
+        buffer[j]     = (mp_sint32)( compL[sample].Re * 64.0 ); // why 64?
+        buffer[j+1]   = (mp_sint32)( compR[sample].Re * 64.0 ); //
+      }
+    }
+    free(compL);
+    free(compR);
+    free(tmp);
+	}
+} mastering;
 
 MasterMixer::MasterMixer(mp_uint32 sampleRate, 
 						 mp_uint32 bufferSize/* = 0*/, 
@@ -192,6 +238,10 @@ mp_sint32 MasterMixer::resume()
 {
 	paused = false;
 	return audioDriver->resume();
+}
+
+mp_sint32 MasterMixer::setMasteringPreset(mp_uint32 preset){
+  if( this->masteringPreset >= 0 ) this->masteringPreset = preset;
 }
 
 mp_sint32 MasterMixer::setBufferSize(mp_uint32 bufferSize)
@@ -381,11 +431,12 @@ void MasterMixer::mixerHandler(mp_sword* buffer)
 {
 	if (!disableMixing)
 		prepareBuffer();
+
 	
 	const mp_sint32 numDevices = this->numDevices;
 	const mp_uint32 bufferSize = this->bufferSize;
 	mp_sint32* mixBuffer = this->buffer;
-	
+      
 	DeviceDescriptor* device = this->devices;	
 	for (mp_sint32 i = 0; i < numDevices; i++, device++)
 	{
@@ -404,6 +455,8 @@ void MasterMixer::mixerHandler(mp_sword* buffer)
 			device->mixable->mix(mixBuffer, bufferSize);
 		}
 	}
+  
+  if( this->masteringPreset > 0 ) mastering.mix( mixBuffer, bufferSize );
 	
 	if (!disableMixing)
 		swapOutBuffer(buffer);
@@ -437,9 +490,6 @@ inline void MasterMixer::prepareBuffer()
 
 inline void MasterMixer::swapOutBuffer(mp_sword* bufferOut)
 {
-	if (filterHook)
-		filterHook->mix(buffer, bufferSize);
-
 	mp_sint32* bufferIn = buffer;
 	const mp_sint32 sampleShift = this->sampleShift; 
 	const mp_sint32 lowerBound = -((128<<sampleShift)*256); 

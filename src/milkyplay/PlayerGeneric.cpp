@@ -949,9 +949,7 @@ mp_sint32 PlayerGeneric::exportToWAV(const SYSCHAR* fileName, XModule* module,
 	player = getPreferredPlayer(module);
 	
 	PeakAutoAdjustFilter filter;
-	if (autoAdjustPeak)
-		mixer.setFilterHook(&filter);
-		
+	if (autoAdjustPeak) mixer.setFilterHook(&filter);
 	if (player)
 	{
 		player->adjustFrequency(frequency);

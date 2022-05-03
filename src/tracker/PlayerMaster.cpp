@@ -58,6 +58,7 @@ void PlayerMaster::adjustSettings()
 {
 	pp_int32 bufferSize = mixer->getBufferSize();
 	pp_int32 sampleRate = mixer->getSampleRate();
+  mixer->setMasteringPreset( currentSettings.masteringPreset );
 
 	for (pp_int32 i = 0; i < playerControllers->size(); i++)
 	{		
@@ -81,6 +82,9 @@ void PlayerMaster::applySettingsToPlayerController(PlayerController& playerContr
 	{
 		player->setMasterVolume(settings.mixerVolume);
 	}
+    
+  if (currentSettings.masteringPreset >= 0)
+    mixer->setMasteringPreset( currentSettings.masteringPreset );
 	
 	mp_sint32 resamplerType = player->getResamplerType();			
 	mp_sint32 oldResamplerType = resamplerType;
@@ -317,6 +321,9 @@ bool PlayerMaster::applyNewMixerSettings(const TMixerSettings& settings, bool al
 
 	if (settings.resampler >= 0)
 		currentSettings.resampler = settings.resampler;
+
+  if( settings.masteringPreset >= 0)
+    currentSettings.masteringPreset = settings.masteringPreset;
 	
 	// take over settings like sample rate and buffer size 
 	// those are retrieved from the master mixer and set for all players
