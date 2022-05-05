@@ -85,8 +85,8 @@ public:
 	mp_sint32 setBufferSize(mp_uint32 bufferSize);
 	mp_uint32 getBufferSize() const { return bufferSize; }
 	
-  mp_sint32 setMasteringPreset(mp_uint32 masteringPreset);
-	mp_uint32 getMasteringPreset() const { return masteringPreset; }
+  mp_sint32 setCompandPreset(mp_uint32 compandAmount);
+	mp_uint32 getCompandPreset() const { return compandAmount; }
 	
 	mp_sint32 setSampleRate(mp_uint32 sampleRate);
 	mp_uint32 getSampleRate() const { return sampleRate; }
@@ -127,7 +127,7 @@ private:
 	MasterMixerNotificationListener* listener;
 	mp_uint32 sampleRate;
 	mp_uint32 bufferSize;
-	mp_uint32 masteringPreset;
+	mp_uint32 compandAmount;
 	mp_sint32* buffer;
 	mp_uint32 sampleShift;
 	bool disableMixing;

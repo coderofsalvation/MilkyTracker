@@ -46,48 +46,66 @@ enum
 	BlockTimeOut = 5000
 };
 
-struct MasteringFilter : public Mixable
+#define ZEROCROSSING(a,b) (a >= 0.0 && b <= 0.0 || a <= 0.0 && b >= 0.0 )
+
+struct CompandFilter : public Mixable
 {
-	mp_uint32 masterVolume;
+  float max;
+  mp_uint32 sampleRate;
+  // treble+bass boost
+  struct Filter bL;
+  struct Filter bR;
+  struct Filter tL;
+  struct Filter tR;
+  // companding
+  mp_uint32 drive;
 	
-	MasteringFilter() : 
-		masterVolume(256)
+	CompandFilter() : 
+    max(32678.0f)
 	{
+    bL.q = bR.q = tL.q = tR.q = 0.3;
+    bL.cutoff = bR.cutoff = 60;
+    tL.cutoff = tR.cutoff = 98000;
 	}
+
+  void init(){
+    filter_init(&bL, sampleRate );
+    filter_init(&bR, sampleRate );
+    filter_init(&tL, sampleRate );
+    filter_init(&tR, sampleRate );
+  }
 	
 	virtual void mix(mp_sint32* buffer, mp_uint32 bufferSize)
 	{
-    // coderofsalvation@2022: unfortunately, the channelmixer converts stuff to interleaved audio quite soon
-    // result: FFT on interleaved audio is not ideal 
-    // however, here is more convenient compared to hacking it into the the resampler-code 
-    printf("mixing %i\n",bufferSize);
-    const mp_uint32 FFT_WINDOW = 1024;
-    mp_uint32 sample = 0;
-    complex* compL = (complex *)calloc(FFT_WINDOW, sizeof(complex));
-    complex* compR = (complex *)calloc(FFT_WINDOW, sizeof(complex));
-    complex* tmp   = (complex *)calloc(FFT_WINDOW, sizeof(complex));
-    for( mp_uint32 i = 0; i < (bufferSize*MP_NUMCHANNELS)/FFT_WINDOW; i++ ){
-      const mp_uint32 offset = i*FFT_WINDOW;
-      for (mp_uint32 j = offset, sample = 0; j < offset+FFT_WINDOW; j+=2, sample++ ) {
-        compL[sample].Re = (float)buffer[ j   ]*(1.0f/32767.0f);
-        compR[sample].Re = (float)buffer[ j+1 ]*(1.0f/32767.0f);
+    if( drive < 1 ) return;
+    mp_uint32 i;
+    mp_uint32 j;
+    for( i = 0; i < bufferSize*MP_NUMCHANNELS; i+=2 ){
+      float srcL = (float)buffer[i  ]*(1.0/max);
+      float srcR = (float)buffer[i+1]*(1.0/max);
+      // compand using mulaw-ish curve
+      if( drive == 1 || drive == 2 ){
+        filter(&tL, tanh(srcL*8) ); // excite treble
+        filter(&tR, tanh(srcR*8) ); //
+        filter(&bL, tanh(srcL*8) ); // excite lows
+        filter(&bR, tanh(srcR*8) ); //
+        srcL -= tR.hp * 0.15; // mix in treble (stereowiden + compensate loss of high freqs due to summing low/mid freqs))
+        srcR -= tL.hp * 0.15; 
+        srcL -= bL.lp * 0.25; // mix in bass (compensate loss of low freqs due to companding)
+        srcR -= bR.lp * 0.25; 
+        for( j = 0; j < 2; j++ ){
+          srcL = asinh(srcL*(float)drive)/asinh((float)drive); // compand to compensate accumulated mid freqs 
+          srcR = asinh(srcR*(float)drive)/asinh((float)drive); // due to summing
+        }
       }
-      fft(compL,FFT_WINDOW,tmp);
-      fft(compR,FFT_WINDOW,tmp);
-      for( mp_uint32 x = 0; x < FFT_WINDOW*2; x++ ){
-        //compL[x].Im = compL[x].Im;
-        //compR[x].Im = compR[x].Im;
+      if( drive == 3 ){
+        srcL = (srcL+srcR)/2.0;
+        srcR = (srcL+srcR)/2.0;
       }
-      ifft(compL,FFT_WINDOW,tmp);
-      ifft(compR,FFT_WINDOW,tmp);
-      for (mp_uint32 j = offset, sample = 0; j < offset+FFT_WINDOW; j+=2, sample++){
-        buffer[j]     = (mp_sint32)( compL[sample].Re * 64.0 ); // why 64?
-        buffer[j+1]   = (mp_sint32)( compR[sample].Re * 64.0 ); //
-      }
+      buffer[i]   = (mp_sint32)( srcL  * max);
+      buffer[i+1] = (mp_sint32)( srcR  * max);
+
     }
-    free(compL);
-    free(compR);
-    free(tmp);
 	}
 } mastering;
 
@@ -240,8 +258,12 @@ mp_sint32 MasterMixer::resume()
 	return audioDriver->resume();
 }
 
-mp_sint32 MasterMixer::setMasteringPreset(mp_uint32 preset){
-  if( this->masteringPreset >= 0 ) this->masteringPreset = preset;
+mp_sint32 MasterMixer::setCompandPreset(mp_uint32 preset){
+  this->compandAmount = preset;
+  mastering.drive = 0;
+  mastering.sampleRate = sampleRate;
+  mastering.init();
+  if( this->compandAmount < 6 ) mastering.drive = compandAmount;
 }
 
 mp_sint32 MasterMixer::setBufferSize(mp_uint32 bufferSize)
@@ -455,11 +477,14 @@ void MasterMixer::mixerHandler(mp_sword* buffer)
 			device->mixable->mix(mixBuffer, bufferSize);
 		}
 	}
+
+  if( this->compandAmount > 0 && this->compandAmount < 5 ){ 
+    mastering.mix( mixBuffer, bufferSize );
+  }
   
-  if( this->masteringPreset > 0 ) mastering.mix( mixBuffer, bufferSize );
-	
-	if (!disableMixing)
+	if (!disableMixing){
 		swapOutBuffer(buffer);
+  }
 }
 
 void MasterMixer::notifyListener(MasterMixerNotifications notification)

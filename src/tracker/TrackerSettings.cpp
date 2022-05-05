@@ -200,8 +200,8 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("VIRTUALCHANNELS", 0);
   // default number of XM channel limit
   settingsDatabase->store("XMCHANNELLIMIT", 32);
-  // default number of XM mastering preset 
-  settingsDatabase->store("MASTERING", 0);
+  // default number of XM compand preset 
+  settingsDatabase->store("COMPAND", 0);
 	// enable multichn recording by default
 	settingsDatabase->store("MULTICHN_RECORD", 1);
 	// enable multichn keyjazzing by default
@@ -365,10 +365,10 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
   {
       settings.numPlayerChannels = v2;
   }
-  // ---------------- Mastering preset-------------------
-  else if (theKey->getKey().compareTo("MASTERING") == 0)
+  // ---------------- Compand preset-------------------
+  else if (theKey->getKey().compareTo("COMPAND") == 0)
   {
-      settings.masteringPreset = v2;
+      settings.compandPreset = v2;
   }
 	else if (theKey->getKey().compareTo("FULLSCREEN") == 0)
 	{

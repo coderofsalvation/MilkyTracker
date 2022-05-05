@@ -42,8 +42,6 @@
 #define NUMSETTINGSPAGES	5
 #endif
 
-#define MASTERING_MIN_BUFSIZE 1024
-
 class PPControl;
 class PPContainer;
 class PPListBox;

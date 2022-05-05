@@ -156,7 +156,7 @@ enum ControlIDs
 	RADIOGROUP_SETTINGS_MIXFREQ,
 	BUTTON_SETTINGS_CHOOSEDRIVER,
   RADIOGROUP_SETTINGS_XMCHANNELLIMIT,
-  RADIOGROUP_SETTINGS_MASTERING,
+  RADIOGROUP_SETTINGS_COMPAND,
 
 	// PAGE I (2)
 	CHECKBOX_SETTINGS_VIRTUALCHANNELS,
@@ -814,22 +814,22 @@ public:
         pp_int32 x2 = x;
         pp_int32 y2 = y;
         
-        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2 ), "Mastering preset", true, true));
-        PPRadioGroup* masteringGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_MASTERING, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 6*14));
-        masteringGroup->setColor(TrackerConfig::colorThemeMain);
-        masteringGroup->addItem("none");
-        masteringGroup->addItem("EDM");
-        masteringGroup->addItem("multimedia");
-        masteringGroup->addItem("amradio");
-        container->addControl(masteringGroup);
+        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2 ), "Master mix", true, true));
+        PPRadioGroup* compandGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_COMPAND, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 6*14));
+        compandGroup->setColor(TrackerConfig::colorThemeMain);
+        compandGroup->addItem("none");
+        compandGroup->addItem("compand 1x");
+        compandGroup->addItem("compand 2x");
+        compandGroup->addItem("mono");
+        container->addControl(compandGroup);
 
     }
     
     virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
     {
-        // mastering preset 
-        pp_int32 v = settingsDatabase->restore("MASTERING")->getIntValue();
-        static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_MASTERING))->setChoice(v);
+        // compand preset 
+        pp_int32 v = settingsDatabase->restore("COMPAND")->getIntValue();
+        static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_COMPAND))->setChoice(v);
     }
     
 };
@@ -2000,7 +2000,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-        if( tracker.settingsDatabase->restore("MASTERING")->getIntValue() > 0 )
+        if( tracker.settingsDatabase->restore("COMPAND")->getIntValue() > 0 )
           tracker.settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", (pp_int32)1 );
         else
           tracker.settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
@@ -2512,11 +2512,8 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			case SLIDER_SETTINGS_BUFFERSIZE:
 			{
 				pp_uint32 v = (reinterpret_cast<PPSlider*>(sender)->getCurrentValue()+1) << 5;
-        if( tracker.settingsDatabase->restore("MASTERING")->getIntValue() > 0 && v < MASTERING_MIN_BUFSIZE )
-          tracker.settingsDatabase->store("BUFFERSIZE", MASTERING_MIN_BUFSIZE);
-        else
-          tracker.settingsDatabase->store("BUFFERSIZE", v);
-				update();
+        tracker.settingsDatabase->store("BUFFERSIZE", v);
+        update();
 				break;
 			}
 			case SLIDER_SETTINGS_MIXERVOL:
@@ -2612,14 +2609,10 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
           break;
       }
       
-      case RADIOGROUP_SETTINGS_MASTERING:
+      case RADIOGROUP_SETTINGS_COMPAND:
       {
           pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
-          tracker.settingsDatabase->store("MASTERING", v);
-          // enforce minimum compatible FFT window
-          if( tracker.settingsDatabase->restore("BUFFERSIZE")->getIntValue() < MASTERING_MIN_BUFSIZE  ) 
-            tracker.settingsDatabase->store("BUFFERSIZE", MASTERING_MIN_BUFSIZE ); 
-          tracker.settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", 1 );
+          tracker.settingsDatabase->store("COMPAND", v);
           update();
           break;
       }
