@@ -136,7 +136,11 @@ pp_int32 ModuleServices::exportToWAV(const PPSystemString& fileName, WAVWriterPa
 										  parameters.fromOrder, parameters.toOrder, 
 										  muting, 
 										  module.header.channum, 
-										  parameters.panning);
+										  parameters.panning,
+										  NULL,NULL,
+										  parameters.masteringPreset,
+										  parameters.masteringPunchInstrument
+										  );
 			}
 		}
 		
@@ -148,7 +152,11 @@ pp_int32 ModuleServices::exportToWAV(const PPSystemString& fileName, WAVWriterPa
 								  parameters.fromOrder, parameters.toOrder, 
 								  parameters.muting, 
 								  module.header.channum, 
-								  parameters.panning);
+								  parameters.panning,
+								  NULL,NULL,
+								  parameters.masteringPreset,
+								  parameters.masteringPunchInstrument
+		);
 	}
 		
 	delete player;	

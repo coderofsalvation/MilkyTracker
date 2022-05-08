@@ -85,9 +85,6 @@ public:
 	mp_sint32 setBufferSize(mp_uint32 bufferSize);
 	mp_uint32 getBufferSize() const { return bufferSize; }
 	
-  mp_sint32 setCompandPreset(mp_uint32 compandAmount);
-	mp_uint32 getCompandPreset() const { return compandAmount; }
-	
 	mp_sint32 setSampleRate(mp_uint32 sampleRate);
 	mp_uint32 getSampleRate() const { return sampleRate; }
 	
@@ -122,17 +119,18 @@ public:
 	
 	mp_sint32 getCurrentSample(mp_sint32 position, mp_sint32 channel);
 	mp_sint32 getCurrentSamplePeak(mp_sint32 position, mp_sint32 channel);	
+	void setMasteringPreset( mp_uint32 p ){ this->masteringPreset = p; }	
 			
 private:
 	MasterMixerNotificationListener* listener;
 	mp_uint32 sampleRate;
 	mp_uint32 bufferSize;
-	mp_uint32 compandAmount;
 	mp_sint32* buffer;
 	mp_uint32 sampleShift;
 	bool disableMixing;
 	mp_uint32 numDevices;
 	Mixable* filterHook;
+	mp_uint32 masteringPreset;
 
 	struct DeviceDescriptor
 	{
@@ -162,7 +160,6 @@ private:
 	void notifyListener(MasterMixerNotifications notification);
 	
 	void cleanup();
-	
 	inline void prepareBuffer();
 	inline void swapOutBuffer(mp_sword* bufferOut);
 };

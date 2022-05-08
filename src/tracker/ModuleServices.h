@@ -64,6 +64,9 @@ public:
 		pp_uint32 toOrder;
 		const pp_uint8* muting;
 		const pp_uint8* panning;
+
+		pp_uint32 masteringPreset;
+		pp_uint32 masteringPunchInstrument;
 		
 		bool multiTrack;
 		

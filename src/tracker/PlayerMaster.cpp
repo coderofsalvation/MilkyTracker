@@ -58,7 +58,6 @@ void PlayerMaster::adjustSettings()
 {
 	pp_int32 bufferSize = mixer->getBufferSize();
 	pp_int32 sampleRate = mixer->getSampleRate();
-  mixer->setCompandPreset( currentSettings.compandPreset );
 
 	for (pp_int32 i = 0; i < playerControllers->size(); i++)
 	{		
@@ -69,7 +68,16 @@ void PlayerMaster::adjustSettings()
 
 		if (!player->isPlaying())
 			player->resumePlaying(false);
+
+		if (currentSettings.masteringPreset >= 0){
+			mixer->setMasteringPreset( currentSettings.masteringPreset );
+			player->setMastering( 
+				currentSettings.masteringPreset, 
+				currentSettings.masteringPreset == 4 || currentSettings.masteringPreset == 5 ? currentSettings.masteringPunch : 255
+			);
+		}
 	}
+    
 }
 
 void PlayerMaster::applySettingsToPlayerController(PlayerController& playerController, const TMixerSettings& settings)
@@ -82,9 +90,6 @@ void PlayerMaster::applySettingsToPlayerController(PlayerController& playerContr
 	{
 		player->setMasterVolume(settings.mixerVolume);
 	}
-    
-  if (currentSettings.compandPreset >= 0)
-    mixer->setCompandPreset( currentSettings.compandPreset );
 	
 	mp_sint32 resamplerType = player->getResamplerType();			
 	mp_sint32 oldResamplerType = resamplerType;
@@ -322,8 +327,12 @@ bool PlayerMaster::applyNewMixerSettings(const TMixerSettings& settings, bool al
 	if (settings.resampler >= 0)
 		currentSettings.resampler = settings.resampler;
 
-  if( settings.compandPreset >= 0)
-    currentSettings.compandPreset = settings.compandPreset;
+	if( settings.masteringPreset >= 0){
+		currentSettings.masteringPreset = settings.masteringPreset;
+	}
+	
+	if( settings.masteringPunch >= 0)
+		currentSettings.masteringPunch = settings.masteringPunch;
 	
 	// take over settings like sample rate and buffer size 
 	// those are retrieved from the master mixer and set for all players

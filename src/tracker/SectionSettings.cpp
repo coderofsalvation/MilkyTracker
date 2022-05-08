@@ -156,7 +156,10 @@ enum ControlIDs
 	RADIOGROUP_SETTINGS_MIXFREQ,
 	BUTTON_SETTINGS_CHOOSEDRIVER,
   RADIOGROUP_SETTINGS_XMCHANNELLIMIT,
-  RADIOGROUP_SETTINGS_COMPAND,
+  RADIOGROUP_SETTINGS_MASTERING,
+	STATICTEXT_SETTINGS_MASTERING_PUNCH,
+	BUTTON_MASTERING_PUNCH_PLUS,
+	BUTTON_MASTERING_PUNCH_MINUS,
 
 	// PAGE I (2)
 	CHECKBOX_SETTINGS_VIRTUALCHANNELS,
@@ -493,6 +496,7 @@ public:
 		PPStaticText* text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_BUFFERSIZE));
 		PPSlider* slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_SETTINGS_BUFFERSIZE));
 
+
 		char buffer[100];
 		char buffer2[100];
 
@@ -570,6 +574,7 @@ public:
 		// checkboxes
 		v = settingsDatabase->restore("RAMPING")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_RAMPING))->checkIt(v!=0);
+
 	}
 
 };
@@ -815,21 +820,44 @@ public:
         pp_int32 y2 = y;
         
         container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2 ), "Master mix", true, true));
-        PPRadioGroup* compandGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_COMPAND, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 6*14));
-        compandGroup->setColor(TrackerConfig::colorThemeMain);
-        compandGroup->addItem("none");
-        compandGroup->addItem("compand 1x");
-        compandGroup->addItem("compand 2x");
-        compandGroup->addItem("mono");
-        container->addControl(compandGroup);
+        PPRadioGroup* masteringGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_MASTERING, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 6*14));
+        masteringGroup->setColor(TrackerConfig::colorThemeMain);
+        masteringGroup->addItem("normal");
+        masteringGroup->addItem("mono test");
+        masteringGroup->addItem("compand satur8 1x");
+        masteringGroup->addItem("compand satur8 2x");
+        masteringGroup->addItem("punch limit 1x");
+        masteringGroup->addItem("punch limit 2x");
+        container->addControl(masteringGroup);
+
+        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 2 + 11*9), "Punch instr:", true));
+        container->addControl(new PPStaticText(STATICTEXT_SETTINGS_MASTERING_PUNCH, NULL, NULL, PPPoint(x + 6 + 104, y2 + 2 + 11*9), "no", false));
+
+
+        PPButton* button = new PPButton(BUTTON_MASTERING_PUNCH_PLUS, screen, this, PPPoint(x + 2 + 16*8, y2 + 2 + 11*9), PPSize(12, 9));
+        button->setText(TrackerConfig::stringButtonPlus);
+        container->addControl(button);
+        button = new PPButton(BUTTON_MASTERING_PUNCH_MINUS, screen, this, PPPoint(x + 2 + 16*8 + 13, y2 + 2 + 11*9), PPSize(13, 9));
+        button->setText(TrackerConfig::stringButtonMinus);
+        container->addControl(button);
 
     }
     
     virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
     {
-        // compand preset 
-        pp_int32 v = settingsDatabase->restore("COMPAND")->getIntValue();
-        static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_COMPAND))->setChoice(v);
+        // mastering preset 
+        pp_int32 v = settingsDatabase->restore("MASTERING")->getIntValue();
+        static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_MASTERING))->setChoice(v);
+
+        // mastering punch
+        char buffer[100];
+        PPStaticText *text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_MASTERING_PUNCH));
+        v = settingsDatabase->restore("MASTERING_PUNCH")->getIntValue();
+		if( v == 0 ) text->setText("no");
+		else{
+			sprintf(buffer,"%x", v); 
+			text->setText(buffer);
+		}
     }
     
 };
@@ -2000,10 +2028,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-        if( tracker.settingsDatabase->restore("COMPAND")->getIntValue() > 0 )
-          tracker.settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", (pp_int32)1 );
-        else
-          tracker.settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				tracker.settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
 			}
@@ -2503,6 +2528,26 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case BUTTON_MASTERING_PUNCH_PLUS:
+			{
+				pp_int32 v = tracker.settingsDatabase->restore("MASTERING_PUNCH")->getIntValue() + 1;
+				if (v > 255)
+					v = 255;
+				tracker.settingsDatabase->store("MASTERING_PUNCH", v);
+				update();
+				break;
+			}
+
+			case BUTTON_MASTERING_PUNCH_MINUS:
+			{
+				pp_int32 v = tracker.settingsDatabase->restore("MASTERING_PUNCH")->getIntValue() - 1;
+				if (v < 0)
+					v = 0;
+				tracker.settingsDatabase->store("MASTERING_PUNCH", v);
+				update();
+				break;
+			}
+
 		}
 	}
 	else if (event->getID() == eValueChanged)
@@ -2609,21 +2654,21 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
           break;
       }
       
-      case RADIOGROUP_SETTINGS_COMPAND:
+      case RADIOGROUP_SETTINGS_MASTERING:
       {
           pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
-          tracker.settingsDatabase->store("COMPAND", v);
+          tracker.settingsDatabase->store("MASTERING", v);
           update();
           break;
       }
 
-			case RADIOGROUP_SETTINGS_PATTERNFONT:
-			{
-				pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
-				tracker.settingsDatabase->store("PATTERNFONT", v);
-				update();
-				break;
-			}
+	  case RADIOGROUP_SETTINGS_PATTERNFONT:
+	  {
+	  	pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
+	  	tracker.settingsDatabase->store("PATTERNFONT", v);
+	  	update();
+	  	break;
+	  }
 
 			case RADIOGROUP_SETTINGS_EDITMODE:
 			{

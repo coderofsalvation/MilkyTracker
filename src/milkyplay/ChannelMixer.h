@@ -453,6 +453,8 @@ protected:
 
 	mp_int64		sampleCounter;			// number of samples played (per song)
 
+	mp_uint32       masteringPreset;
+
 	void			startMixer() 
 	{
 		lastBeatRemainder = 0;

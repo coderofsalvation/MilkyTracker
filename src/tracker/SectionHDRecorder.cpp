@@ -53,6 +53,7 @@
 #include "PPSavePanel.h"
 
 #include "ControlIDs.h"
+#include "TrackerSettingsDatabase.h"
 
 enum ControlIDs
 {
@@ -779,6 +780,8 @@ void SectionHDRecorder::exportWAVAsFileName(const PPSystemString& fileName)
 	parameters.panning = tracker.playerController->getPanningTable();
 	parameters.fromOrder = fromOrder;
 	parameters.toOrder = toOrder;
+	parameters.masteringPreset = tracker.settingsDatabase->restore("MASTERING")->getIntValue();
+	parameters.masteringPunchInstrument = tracker.settingsDatabase->restore("MASTERING_PUNCH")->getIntValue();
 
 	tracker.signalWaitState(true);
 

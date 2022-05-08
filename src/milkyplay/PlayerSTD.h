@@ -278,7 +278,7 @@ private:
 	// keep track of what positions we already visited (bitmap)
 	mp_ubyte		rowHits[256*256/8];
 	bool			isLooping;
-	
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	//					    this information is updated while the song plays
 	///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -350,7 +350,9 @@ private:
 	{
 		mp_sint32 vol = (nv*getenvval(c,&chninfo[c].venv,256))>>7;
 		vol = (vol*chninfo[c].fadevolstart)>>16;
-		vol = (vol*chninfo[c].masterVol)>>8;
+		if( (masteringPreset == 3 || masteringPreset == 4) && chninfo[c].ins == masteringPunchInstrument ){
+			vol = (vol*(2 * chninfo[c].masterVol) )>>8; // double volume to punch into mastering-effect
+		} else vol = (vol*chninfo[c].masterVol)>>8;
 		vol = (vol*mainVolume)>>8;
 		return vol;
 	}

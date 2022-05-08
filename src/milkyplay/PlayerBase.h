@@ -189,6 +189,9 @@ protected:
 
 	virtual void clearEffectMemory() { }	
 
+  	mp_uint32 masteringPunchInstrument;
+  	mp_uint32 masteringPreset;
+
 public:
 	PlayerBase(mp_uint32 frequency);
 
@@ -346,6 +349,11 @@ public:
 									 mp_sint32 note, mp_sint32 ins, mp_sint32 vol = -1) {}
 	
 	virtual void			setPanning(mp_ubyte chn, mp_ubyte pan) {}
+
+  void  setMastering(mp_uint32 preset, mp_uint32 punchInstrument){ 
+	  this->masteringPunchInstrument = punchInstrument; 
+	  this->masteringPreset          = preset; 
+  }
 };
 
 #endif

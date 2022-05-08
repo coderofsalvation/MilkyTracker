@@ -609,7 +609,6 @@ void PlayerSTD::playInstrument(mp_sint32 chn, TModuleChannel* chnInf, bool bNoRe
 		if (module->instr[chnInf->ins-1].samp && chnInf->smp != -1)
 		{
 			chnInf->flags &= ~CHANNEL_FLAGS_UPDATE_IGNORE;
-			
 			mp_sint32 i = chnInf->smp;
 			
 			// start out with the flags for 16bit sample
@@ -2151,7 +2150,6 @@ void PlayerSTD::doTickeffects()
 		for (mp_sint32 effcnt=0;effcnt<numEffects;effcnt++) {
 			doTickEffect(chn, chnInf, effcnt);
 		}
-
 	}
 
 }

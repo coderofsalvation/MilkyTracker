@@ -39,75 +39,12 @@
 #include "MilkyPlayCommon.h"
 #include "AudioDriverBase.h"
 #include "AudioDriverManager.h"
-#include "../tracker/SampleEditorFx.h"
+#include "Mastering.h"
 
 enum
 {
 	BlockTimeOut = 5000
 };
-
-#define ZEROCROSSING(a,b) (a >= 0.0 && b <= 0.0 || a <= 0.0 && b >= 0.0 )
-
-struct CompandFilter : public Mixable
-{
-  float max;
-  mp_uint32 sampleRate;
-  // treble+bass boost
-  struct Filter bL;
-  struct Filter bR;
-  struct Filter tL;
-  struct Filter tR;
-  // companding
-  mp_uint32 drive;
-	
-	CompandFilter() : 
-    max(32678.0f)
-	{
-    bL.q = bR.q = tL.q = tR.q = 0.3;
-    bL.cutoff = bR.cutoff = 60;
-    tL.cutoff = tR.cutoff = 98000;
-	}
-
-  void init(){
-    filter_init(&bL, sampleRate );
-    filter_init(&bR, sampleRate );
-    filter_init(&tL, sampleRate );
-    filter_init(&tR, sampleRate );
-  }
-	
-	virtual void mix(mp_sint32* buffer, mp_uint32 bufferSize)
-	{
-    if( drive < 1 ) return;
-    mp_uint32 i;
-    mp_uint32 j;
-    for( i = 0; i < bufferSize*MP_NUMCHANNELS; i+=2 ){
-      float srcL = (float)buffer[i  ]*(1.0/max);
-      float srcR = (float)buffer[i+1]*(1.0/max);
-      // compand using mulaw-ish curve
-      if( drive == 1 || drive == 2 ){
-        filter(&tL, tanh(srcL*8) ); // excite treble
-        filter(&tR, tanh(srcR*8) ); //
-        filter(&bL, tanh(srcL*8) ); // excite lows
-        filter(&bR, tanh(srcR*8) ); //
-        srcL -= tR.hp * 0.15; // mix in treble (stereowiden + compensate loss of high freqs due to summing low/mid freqs))
-        srcR -= tL.hp * 0.15; 
-        srcL -= bL.lp * 0.25; // mix in bass (compensate loss of low freqs due to companding)
-        srcR -= bR.lp * 0.25; 
-        for( j = 0; j < 2; j++ ){
-          srcL = asinh(srcL*(float)drive)/asinh((float)drive); // compand to compensate accumulated mid freqs 
-          srcR = asinh(srcR*(float)drive)/asinh((float)drive); // due to summing
-        }
-      }
-      if( drive == 3 ){
-        srcL = (srcL+srcR)/2.0;
-        srcR = (srcL+srcR)/2.0;
-      }
-      buffer[i]   = (mp_sint32)( srcL  * max);
-      buffer[i+1] = (mp_sint32)( srcR  * max);
-
-    }
-	}
-} mastering;
 
 MasterMixer::MasterMixer(mp_uint32 sampleRate, 
 						 mp_uint32 bufferSize/* = 0*/, 
@@ -258,14 +195,6 @@ mp_sint32 MasterMixer::resume()
 	return audioDriver->resume();
 }
 
-mp_sint32 MasterMixer::setCompandPreset(mp_uint32 preset){
-  this->compandAmount = preset;
-  mastering.drive = 0;
-  mastering.sampleRate = sampleRate;
-  mastering.init();
-  if( this->compandAmount < 6 ) mastering.drive = compandAmount;
-}
-
 mp_sint32 MasterMixer::setBufferSize(mp_uint32 bufferSize)
 {
 	if (bufferSize != this->bufferSize)
@@ -295,6 +224,8 @@ mp_sint32 MasterMixer::setSampleRate(mp_uint32 sampleRate)
 
 		notifyListener(MasterMixerNotificationSampleRateChanged);
 	}
+	masteringCompand.init(sampleRate);
+	masteringLimiter.init(sampleRate);
 	return 0;
 }
 
@@ -454,11 +385,10 @@ void MasterMixer::mixerHandler(mp_sword* buffer)
 	if (!disableMixing)
 		prepareBuffer();
 
-	
 	const mp_sint32 numDevices = this->numDevices;
 	const mp_uint32 bufferSize = this->bufferSize;
 	mp_sint32* mixBuffer = this->buffer;
-      
+
 	DeviceDescriptor* device = this->devices;	
 	for (mp_sint32 i = 0; i < numDevices; i++, device++)
 	{
@@ -478,10 +408,15 @@ void MasterMixer::mixerHandler(mp_sword* buffer)
 		}
 	}
 
-  if( this->compandAmount > 0 && this->compandAmount < 5 ){ 
-    mastering.mix( mixBuffer, bufferSize );
-  }
-  
+	if( masteringPreset > 0 && masteringPreset < 4 ){
+		masteringCompand.preset = masteringPreset;
+		masteringCompand.mix(this->buffer,bufferSize);
+	}
+	if( masteringPreset == 4 || masteringPreset == 5){
+		masteringLimiter.preset = masteringPreset-4;
+		masteringLimiter.mix(this->buffer,bufferSize);
+	}
+
 	if (!disableMixing){
 		swapOutBuffer(buffer);
   }
@@ -515,6 +450,8 @@ inline void MasterMixer::prepareBuffer()
 
 inline void MasterMixer::swapOutBuffer(mp_sword* bufferOut)
 {
+	if (filterHook) filterHook->mix(buffer, bufferSize);
+
 	mp_sint32* bufferIn = buffer;
 	const mp_sint32 sampleShift = this->sampleShift; 
 	const mp_sint32 lowerBound = -((128<<sampleShift)*256); 

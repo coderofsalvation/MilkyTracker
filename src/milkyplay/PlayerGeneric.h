@@ -637,6 +637,8 @@ public:
 	 * @param  timingLUT			optional: specify a pointer to a buffer which will hold the 
 	 *										  number of samples played up to this position in the orderlist
 	 *										  the buffer needs at least module->header.ordnum entries
+	 * @param  masteringPreset		        optional
+	 * @param  masteringPunchInstrument		optional
 	 */	
 	mp_sint32			exportToWAV(const SYSCHAR* fileName, 
 									XModule* module, 
@@ -644,7 +646,10 @@ public:
 									const mp_ubyte* mutingArray = NULL, mp_uint32 mutingNumChannels = 0,
 									const mp_ubyte* customPanningTable = NULL,
 									AudioDriverBase* preferredDriver = NULL,
-									mp_sint32* timingLUT = NULL);
+									mp_sint32* timingLUT = NULL,
+									mp_uint32 masteringPreset = 0,
+									mp_uint32 masteringPunchInstrument = 0
+									);
 	
 	/**
 	 * Grab current channel data from a module channel
