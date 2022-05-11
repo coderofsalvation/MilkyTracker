@@ -124,14 +124,14 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 				}
 			}
 			// this key is already pressed, we won't play that note again
-			if (isPressed)
-			{
-				// If we're live recording, this event should not be routed anywhere else
-				// it terminates HERE! (event shall not be routed to the pattern editor)
-				if (isLiveRecording && event)
-					event->cancel();
-				return;
-			}
+	//		if (isPressed)
+	//		{
+	//			// If we're live recording, this event should not be routed anywhere else
+	//			// it terminates HERE! (event shall not be routed to the pattern editor)
+	//			if (isLiveRecording && event)
+	//				event->cancel();
+	//			return;
+	//		}
 			
 			// if we're not recording, cycle through the channels
 			// use jam-channels for playing if requested
@@ -191,13 +191,12 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 					keys[i].row = row;
 					keys[i].playerController = playerController;
 					break;
+        }else if (keys[i].channel == chn)
+				{
+          // if there is already a note playing on this channel
+          // we "cut" the note
+					keys[i].note = keys[i].channel = 0;
 				}
-				// if there is already a note playing on this channel
-				// we "cut" the note
-				//else if (keys[i].channel == chn)
-				//{
-				//	keys[i].note = keys[i].channel = 0;
-				//}
 			}
 			
 			// play it
