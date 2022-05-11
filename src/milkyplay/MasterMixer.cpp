@@ -63,8 +63,12 @@ MasterMixer::MasterMixer(mp_uint32 sampleRate,
 	audioDriver(audioDriver),
 	initialized(false),
 	started(false),
-	paused(false)
+	paused(false),
+	fft_spectrum(NULL),
+	fft_spectrum_tmp(NULL)
 {
+	fft_spectrum = (complex *)calloc(FFT_SPECTRUM_WINDOW, sizeof(complex));
+	fft_spectrum_tmp = (complex *)calloc(FFT_SPECTRUM_WINDOW, sizeof(complex));
 }
 
 MasterMixer::~MasterMixer()
@@ -73,6 +77,9 @@ MasterMixer::~MasterMixer()
 
 	delete audioDriverManager;
 	delete[] devices;
+
+	free(fft_spectrum);
+	free(fft_spectrum_tmp);
 }
 
 void MasterMixer::setMasterMixerNotificationListener(MasterMixerNotificationListener* listener) 
@@ -591,6 +598,22 @@ mp_sint32 MasterMixer::getCurrentSample(mp_sint32 position, mp_sint32 channel)
 		val = 32767;
 
 	return val;
+}
+
+void * MasterMixer::getFFT(){
+	const mp_uint32 mixBufferSize = bufferSize;
+	const mp_sint32* mixbuff32 = this->buffer;
+	if( mixBufferSize > FFT_SPECTRUM_WINDOW ){
+		for( mp_uint32 i = 0; i < FFT_SPECTRUM_WINDOW; i++){
+			fft_spectrum[i].Im  = 0.0; //reset
+			fft_spectrum[i].Re  = (
+				((float)mixbuff32[i*MP_NUMCHANNELS]   ) +
+				((float)mixbuff32[i*MP_NUMCHANNELS+1] ) 
+			) * 0.5f * (1.0f/32768.0f) ; // mono average
+		}
+		fft(fft_spectrum, FFT_SPECTRUM_WINDOW, fft_spectrum_tmp);
+	}
+	return (void *)fft_spectrum;
 }
 
 mp_sint32 MasterMixer::getCurrentSamplePeak(mp_sint32 position, mp_sint32 channel)

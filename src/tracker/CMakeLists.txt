@@ -57,6 +57,7 @@ add_executable(tracker
     PatternEditorTools.cpp
     PatternTools.cpp
     PeakLevelControl.cpp
+    SpectrumAnalyserControl.cpp
     Piano.cpp
     PianoControl.cpp
     PlayerController.cpp

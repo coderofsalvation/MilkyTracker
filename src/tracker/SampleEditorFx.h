@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+#define FFT_SPECTRUM_WINDOW 64
 typedef float real;
 typedef struct { real Re; real Im; } complex;
 

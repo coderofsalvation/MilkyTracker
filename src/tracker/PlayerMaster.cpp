@@ -36,6 +36,8 @@
 #include "AudioDriverManager.h"
 #include "PlayerSTD.h"
 #include "ResamplerHelper.h"
+#include "TrackerConfig.h"
+#include "SampleEditorFx.h"
 
 class MasterMixerNotificationListener : public MasterMixer::MasterMixerNotificationListener
 {
@@ -169,7 +171,7 @@ PlayerMaster::PlayerMaster(pp_uint32 numDevices/* = DefaultMaxDevices*/) :
 	oldBufferSize(getPreferredBufferSize()),
 	forcePowerOfTwoBufferSize(false),
 	multiChannelKeyJazz(true),
-	multiChannelRecord(true)	
+	multiChannelRecord(true)
 {
 	listener = new MasterMixerNotificationListener(*this);
 
@@ -447,6 +449,10 @@ bool PlayerMaster::stop(bool detachPlayers)
 	}
 
 	return mixer->stop() == 0;
+}
+
+void * PlayerMaster::getFFT(){
+	return mixer->getFFT();
 }
 	
 void PlayerMaster::getCurrentSamplePeak(pp_int32& left, pp_int32& right)

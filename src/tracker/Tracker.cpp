@@ -373,6 +373,7 @@ void Tracker::showSongSettings(bool show)
 void Tracker::showMainOptions(bool show)
 {
 	screen->getControlByID(CONTAINER_MENU)->show(show);	
+	screen->getControlByID(SPECTRUMANALYSER_CONTROL)->show(show);	
 }
 
 void Tracker::showMainMenu(bool show, bool showInstrumentSelector)

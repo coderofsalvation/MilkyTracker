@@ -199,6 +199,7 @@ public:
 	bool stop(bool detachPlayers);
 	
 	void getCurrentSamplePeak(pp_int32& left, pp_int32& right);
+	void * getFFT();
 	
 	void resetQueuedPositions();
 	

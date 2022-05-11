@@ -40,6 +40,7 @@
 #include "ScopesControl.h"
 #include "TabHeaderControl.h"
 #include "TitlePageManager.h"
+#include "SpectrumAnalyserControl.h"
 
 // Sections
 #include "SectionSwitcher.h"
@@ -350,9 +351,9 @@ void Tracker::initUI()
 	// Main options
 	initSectionMainOptions(0, 64);
 
-	// ---------- Instrument & Sample listboxes ---------- 
+	// ---------- Instrument & Sample listboxes + spectrum analyser---------- 
 	initListboxesSection(320, 0);
-	
+
 #ifndef __LOWRES__
 	scopesControl = new ScopesControl(SCOPES_CONTROL, screen, this, 
 									  PPPoint(0, UPPERSECTIONDEFAULTHEIGHTWOINS()), 
@@ -1149,6 +1150,13 @@ void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 #endif
 
 	screen->addControl(container);
+
+	x = (x+2 + (size*2)+4+4);
+	spectrumAnalyserControl = new SpectrumAnalyserControl(SPECTRUMANALYSER_CONTROL, screen, this, PPPoint(x, 2+13), PPSize(screen->getWidth()-x-6,height-(10+2*dy)));
+	spectrumAnalyserControl->setBorderColor(TrackerConfig::colorThemeMain);
+	screen->addControl(spectrumAnalyserControl);
+	PPStaticText* spectrumlabel = new PPStaticText(STATICTEXT_SPECTRUMANALYSER, NULL, NULL, PPPoint(x, 4), "Spectrum analyzer", true);
+	screen->addControl(spectrumlabel);
 }
 
 void Tracker::showMessageBox(pp_int32 id, const PPString& caption, MessageBoxTypes type, bool update/* = true*/)

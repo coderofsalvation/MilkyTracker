@@ -184,6 +184,31 @@ bool Tracker::updatePeakLevelControl()
 	return false;
 }
 
+bool Tracker::updateSpectrumAnalyserControl()
+{
+	const pp_int32 maxPeakThreshold = 32700*2;
+
+	bool bUpdateEntire = false;
+
+	complex *fft = (complex *)playerMaster->getFFT();
+	//complex fft[FFT_SPECTRUM_WINDOW];
+	//fft[i] = _fft[i];
+
+	//spectrumAnalyserControl->setPeak(1,1);
+	float mag;
+	float phase;
+	pp_int32 i = 10;
+	//for( pp_int32 i = 0; i < FFT_SPECTRUM_WINDOW; i++){
+	
+		mag   = sqrt( fft[i].Re * fft[i].Re + fft[i].Im * fft[i].Im );
+		phase = atan2(fft[i].Im,fft[i].Re);
+	//}
+	if( mag > 0.0 ) printf("%f \n",mag);
+
+	screen->paintControl( (PPControl*)spectrumAnalyserControl, false);
+	return true;
+}
+
 bool Tracker::updatePlayTime()
 {
 	if (!playTimeText)
@@ -936,11 +961,13 @@ void Tracker::doFollowSong()
 	
 	bool updatePeak = updatePeakLevelControl();
 	
+	bool updateSpectrumAnalyser = updateSpectrumAnalyserControl();
+	
 	bool updateScopes = false;
 	if (scopesControl && scopesControl->isVisible())
 	{
 		updateScopes = scopesControl->needsUpdate();
-		if (updateScopes && !updatePiano && !importantRefresh && !updatePlayTime && !updatePeak)
+		if (updateScopes && !updatePiano && !importantRefresh && !updatePlayTime && !updatePeak && !updateSpectrumAnalyser)
 		{
 			screen->paintControl(scopesControl);
 			return;
@@ -953,9 +980,10 @@ void Tracker::doFollowSong()
 	
 	if (!importantRefresh)
 	{
-		if (updatePeak || updatePlayTime)
+		if (updatePeak || updateSpectrumAnalyser || updatePlayTime)
 		{
 			screen->updateControl(screen->getControlByID(CONTAINER_ABOUT));
+			screen->updateControl(screen->getControlByID(SPECTRUMANALYSER_CONTROL));
 		}
 		
 		if (updateScopes)

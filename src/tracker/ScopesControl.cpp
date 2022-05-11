@@ -170,10 +170,8 @@ public:
 	virtual void fetchSampleData(mp_sint32 sample)
 	{
 		const pp_int32 y = (((-sample >> 10)*(signed)channelHeight)>>6) + locy;
-		if( abs(sample) > max ){
-			max = abs(sample);
-			peak = (float)max;
-		}
+		max = abs(sample);
+		if( max > peak ) peak = (float)max;
 
 		g->setSafeColor(sr>>16, sg>>16, sb>>16);
 		sr+=addr; sg+=addg; sb+=addb;
@@ -235,8 +233,7 @@ public:
 
 		}
 		locx++;
-		if( max > 0 ) max--;
-		if( peak > max ) peak -= 0.0001;
+		if( peak > 0 ) peak -= 0.00000001;
 	}
 
 	pp_int32 getLocx() const { return locx; }

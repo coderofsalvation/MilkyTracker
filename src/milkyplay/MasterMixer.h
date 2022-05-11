@@ -39,7 +39,7 @@
 #define __MASTERMIXER_H__
 
 #include "Mixable.h"
-
+#include "../tracker/SampleEditorFx.h"
 
 class MasterMixer
 {
@@ -119,6 +119,7 @@ public:
 	
 	mp_sint32 getCurrentSample(mp_sint32 position, mp_sint32 channel);
 	mp_sint32 getCurrentSamplePeak(mp_sint32 position, mp_sint32 channel);	
+	void * getFFT();
 	void setMasteringPreset( mp_uint32 p ){ this->masteringPreset = p; }	
 			
 private:
@@ -131,6 +132,9 @@ private:
 	mp_uint32 numDevices;
 	Mixable* filterHook;
 	mp_uint32 masteringPreset;
+
+	complex *fft_spectrum;
+	complex *fft_spectrum_tmp;
 
 	struct DeviceDescriptor
 	{

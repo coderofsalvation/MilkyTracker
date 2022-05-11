@@ -51,6 +51,7 @@ class PPStaticText;
 class EnvelopeEditorControl;
 class PianoControl;
 class PeakLevelControl;
+class SpectrumAnalyserControl;
 class ScopesControl;
 class SampleEditorControl;
 class PPContainer;
@@ -127,6 +128,7 @@ private:
 	
 	PatternEditorControl* patternEditorControl;
 	PeakLevelControl* peakLevelControl;
+	SpectrumAnalyserControl* spectrumAnalyserControl;
 	ScopesControl* scopesControl;
 	PPStaticText* playTimeText;
 	
@@ -257,6 +259,7 @@ private:
 
 	bool updatePianoControl(PianoControl* pianoControl);
 	bool updatePeakLevelControl();
+	bool updateSpectrumAnalyserControl();
 	bool updatePlayTime();
 
 	void updateSampleEditor(bool repaint = true, bool force = false);
