@@ -59,6 +59,8 @@
 #include "SectionAbout.h"
 #include "ChannelMixer.h"
 
+#include "DialogHelp.h"
+
 #include "ToolInvokeHelper.h"
 
 // OS Interface
@@ -134,11 +136,15 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('R', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeSectionHDRecorder);	
 	eventKeyDownBindingsMilkyTracker->addBinding('O', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeSectionQuickOptions);	
 	eventKeyDownBindingsMilkyTracker->addBinding('Z', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_ToggleScopes);	
+  eventKeyDownBindingsMilkyTracker->addBinding('H', KeyModifierCTRL, &Tracker::eventKeyDownBinding_InvokeHelp);
+
 	// handy toggle shortcuts
 	eventKeyDownBindingsMilkyTracker->addBinding('F', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleFollowSong);	
 	eventKeyDownBindingsMilkyTracker->addBinding('P', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleProspectiveMode);	
 	eventKeyDownBindingsMilkyTracker->addBinding('W', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleCursorWrapAround);	
 	eventKeyDownBindingsMilkyTracker->addBinding('L', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleLiveSwitch);	
+
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_F1, 0, &Tracker::eventKeyDownBinding_InvokeHelp);
 
 	// Transpose stuff like FT2
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_F1, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_TransposeAllInsTrackDown);
@@ -201,7 +207,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsFastTracker->addBinding(VK_RCONTROL, 0xFFFF, &Tracker::eventKeyDownBinding_PlaySong);
 	eventKeyDownBindingsFastTracker->addBinding(VK_RMENU, 0xFFFF, &Tracker::eventKeyDownBinding_PlayPattern);
 	eventKeyDownBindingsFastTracker->addBinding('U', KeyModifierSHIFT, &Tracker::eventKeyDownBinding_UnmuteAll);
-
+	
 	// Transpose all instruments
 	eventKeyDownBindingsFastTracker->addBinding(VK_F1, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_TransposeAllInsTrackDown);
 	eventKeyDownBindingsFastTracker->addBinding(VK_F2, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_TransposeAllInsTrackUp);
@@ -229,6 +235,8 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsFastTracker->addBinding('O', KeyModifierCTRL, &Tracker::eventKeyDownBinding_InvokeSectionQuickOptions);	
 	//eventKeyDownBindingsFastTracker->addBinding('Z', KeyModifierCTRL, &Tracker::eventKeyDownBinding_InvokeSectionOptimize);	
 	eventKeyDownBindingsFastTracker->addBinding('Z', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleScopes);	
+  eventKeyDownBindingsFastTracker->addBinding('H', KeyModifierCTRL, &Tracker::eventKeyDownBinding_InvokeHelp);
+
 
 	// Handy toggle functions
 	eventKeyDownBindingsFastTracker->addBinding('F', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleFollowSong);	
@@ -1023,4 +1031,10 @@ void Tracker::eventKeyDownBinding_InvokePatternCapture()
 	sectionHDRecorder->setSettingsAllowMuting(true);
 	sectionHDRecorder->setSettingsResampler(settingsDatabase->restore("INTERPOLATION")->getIntValue());
 	sectionHDRecorder->exportWAVAsSample();
+}
+
+void Tracker::eventKeyDownBinding_InvokeHelp()
+{
+  dialog = new DialogHelp(screen, responder,PP_DEFAULT_ID,"Help",true);	
+  dialog->show();
 }

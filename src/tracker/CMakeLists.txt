@@ -24,7 +24,8 @@ add_executable(tracker
     AnimatedFXControl.cpp
     ColorExportImport.cpp
     ColorPaletteContainer.cpp
-	DialogChannelSelector.cpp
+    DialogHelp.cpp
+    DialogChannelSelector.cpp
     DialogEQ.cpp
     DialogGroupSelection.cpp
     DialogHandlers.cpp
