@@ -1460,9 +1460,10 @@ public:
 
 		radioGroup->addItem("MilkyTracker");
 		radioGroup->addItem("Fasttracker II");
+		radioGroup->addItem("StepSequencer");
 		container->addControl(radioGroup);
 
-		y2+=3*12+8;
+		y2+=4*12+8;
 
 		container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 156, TrackerConfig::colorThemeMain, true));
 

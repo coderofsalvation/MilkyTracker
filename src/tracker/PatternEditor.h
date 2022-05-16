@@ -33,7 +33,10 @@
 
 #include "EditorBase.h"
 #include "PatternEditorTools.h"
+#include "PatternStepSequencer.h"
 #include "Undo.h"
+
+#define MODE_TOGGLE 10001
 
 struct TXMPattern;
 class XModule;
@@ -221,9 +224,9 @@ private:
 
 	TCommand effectMacros[20];
 
-	void prepareUndo();
-	bool finishUndo(LastChanges lastChange, bool nonRepeat = false);
-	
+  void prepareUndo();
+  bool finishUndo(LastChanges lastChange, bool nonRepeat = false);
+
 	bool revoke(const PatternUndoStackEntry* stackEntry);
 
 	void cut(ClipBoard& clipBoard);
@@ -231,11 +234,14 @@ private:
 	void paste(ClipBoard& clipBoard, bool transparent = false, pp_int32 fromChannel = -1);
 
 	void clearRange(const PatternEditorTools::Position& rangeStart, const PatternEditorTools::Position& rangeEnd);
+
+  friend class PatternStepSequencer;
 	
 public:
 	PatternEditor();
 	virtual ~PatternEditor();
 
+  PatternStepSequencer *stepSequencer;
 	// query status
 	bool getLastOperationDidChangeRows() const { return lastOperationDidChangeRows; }
 	bool getLastOperationDidChangeCursor() const { return lastOperationDidChangeCursor; }

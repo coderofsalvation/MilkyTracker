@@ -1,5 +1,5 @@
 /*
- *  tracker/EditModes.h
+ *  tracker/PatternStepSequencer.h
  *
  *  Copyright 2009 Peter Barth
  *
@@ -21,28 +21,35 @@
  */
 
 /*
- *  EditModes.h
+ *  PatternEditor.h
  *  MilkyTracker
  *
- *  Created by Peter Barth on Thu May 19 2005.
+ *  Created by Peter Barth on 16.11.07.
  *
  */
 
-#ifndef __EDITMODES_H__
-#define __EDITMODES_H__
+#ifndef __PATTERNSTEP_SEQUENCER_H__
+#define __PATTERNSTEP_SEQUENCER_H__
 
-enum EditModes
-{
-	EditModeMilkyTracker,
-	EditModeFastTracker,
-  EditModeStepSequencer
-};
+#include "BasicTypes.h"
 
-enum ScrollModes
-{
-	ScrollModeToEnd,
-	ScrollModeToCenter,
-	ScrollModeStayInCenter
+class PatternEditor;
+class PatternEditorControl;
+class PPGraphicsAbstract;
+
+class PatternStepSequencer {
+
+  private:
+    PatternEditor *patternEditor;
+
+  public:
+    PatternStepSequencer( PatternEditor *editor );
+    ~PatternStepSequencer();
+    pp_int32 noteToStep(pp_int32 note);
+    void writeStep(pp_int32 note, 
+							  bool withUndo/* = false*/);
+    void setStep(pp_uint32 step, pp_uint32 channel );
+
 };
 
 #endif

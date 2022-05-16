@@ -705,7 +705,6 @@ markOrMoveSelection:
 						}
 					}
 				}
-				
 				patternEditor->getSelection().end.row = cursorPositionRow;
 				patternEditor->getSelection().end.channel = cursorPositionChannel;
 				patternEditor->getSelection().end.inner = cursorPositionInner;
@@ -831,7 +830,7 @@ markOrMoveSelection:
 			assureUpdate = false;
 
 			pp_uint8 character = *((pp_uint8*)event->getDataPtr());
-
+printf("%c\n",character);
 			handleKeyChar(character);
 
 			if (assureUpdate)

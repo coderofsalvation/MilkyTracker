@@ -50,6 +50,7 @@ add_executable(tracker
     ModuleEditor.cpp
     ModuleServices.cpp
     PatternEditor.cpp
+    PatternStepSequencer.cpp
     PatternEditorClipBoard.cpp
     PatternEditorControl.cpp
     PatternEditorControlEventListener.cpp

@@ -87,6 +87,7 @@ void Tracker::initKeyBindings()
 {
 	eventKeyDownBindingsMilkyTracker = new PPKeyBindings<TTrackerKeyBindingHandler>;
 	eventKeyDownBindingsFastTracker = new PPKeyBindings<TTrackerKeyBindingHandler>;
+	eventKeyDownBindingsStepSequencer = new PPKeyBindings<TTrackerKeyBindingHandler>;
 
 	// Key-down bindings for MilkyTracker
 	// tabbing stuff
@@ -274,6 +275,99 @@ void Tracker::initKeyBindings()
     eventKeyDownBindingsFastTracker->addBinding(VK_F12, KeyModifierCTRL, &Tracker::eventKeyDownBinding_IncCurOrderPattern);
 
 	eventKeyDownBindingsFastTracker->addBinding('V', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_InvokePatternCapture);
+	
+  
+  // Key-down bindings for StepSequencer
+	// tabbing stuff
+	eventKeyDownBindingsStepSequencer->addBinding('T', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_OpenTab);
+	eventKeyDownBindingsStepSequencer->addBinding('W', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_CloseTab);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_LEFT, KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SwitchToPreviousTab);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_RIGHT, KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SwitchToNextTab);	
+
+	eventKeyDownBindingsStepSequencer->addBinding('1', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SelectOctave1);
+	eventKeyDownBindingsStepSequencer->addBinding('2', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SelectOctave2);
+	eventKeyDownBindingsStepSequencer->addBinding('3', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SelectOctave3);
+	eventKeyDownBindingsStepSequencer->addBinding('4', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SelectOctave4);
+	eventKeyDownBindingsStepSequencer->addBinding('5', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SelectOctave5);
+	eventKeyDownBindingsStepSequencer->addBinding('6', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SelectOctave6);
+	eventKeyDownBindingsStepSequencer->addBinding('7', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SelectOctave7);
+	eventKeyDownBindingsStepSequencer->addBinding('8', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SelectOctave8);
+
+	eventKeyDownBindingsStepSequencer->addBinding(VK_RETURN, 0, &Tracker::eventKeyDownBinding_PlaySong);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_RETURN, KeyModifierCTRL, &Tracker::eventKeyDownBinding_PlayPattern);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_RETURN, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayPosition);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F9, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayPattern);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F10, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayPatternFromFIRSTQUARTER);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F11, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayPatternFromSECONDQUARTER);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F12, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayPatternFromTHIRDQUARTER);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_SPACE, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayRow);
+	// !! trace uses a hardcoded key-up event processing, check if you ever decide to change this shortcut
+	eventKeyDownBindingsStepSequencer->addBinding(VK_SPACE, KeyModifierALT, &Tracker::eventKeyDownBinding_PlayTrace);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_ESCAPE, 0, &Tracker::eventKeyDownBinding_Stop);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_SPACE, 0, &Tracker::eventKeyDownBinding_Edit);
+	eventKeyDownBindingsStepSequencer->addBinding('U', KeyModifierSHIFT, &Tracker::eventKeyDownBinding_UnmuteAll);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F4, KeyModifierALT, &Tracker::eventKeyDownBinding_ExitApplication);
+	
+	eventKeyDownBindingsStepSequencer->addBinding('Q', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ExitApplication);
+
+	eventKeyDownBindingsStepSequencer->addBinding('O', KeyModifierCTRL, &Tracker::eventKeyDownBinding_Open);
+	eventKeyDownBindingsStepSequencer->addBinding('S', KeyModifierCTRL, &Tracker::eventKeyDownBinding_Save);
+	eventKeyDownBindingsStepSequencer->addBinding('S', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SaveAs);
+	
+	// Sections always with CTRL+ALT
+	eventKeyDownBindingsStepSequencer->addBinding('X', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeMainScreen);	
+	eventKeyDownBindingsStepSequencer->addBinding('I', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeSectionInstruments);	
+	eventKeyDownBindingsStepSequencer->addBinding('S', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeSectionSamples);	
+	eventKeyDownBindingsStepSequencer->addBinding('C', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeSectionSettings);	
+	eventKeyDownBindingsStepSequencer->addBinding('A', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeSectionAdvancedEdit);	
+	eventKeyDownBindingsStepSequencer->addBinding('D', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeSectionDiskMenu);	
+	eventKeyDownBindingsStepSequencer->addBinding('T', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeSectionTranspose);	
+	eventKeyDownBindingsStepSequencer->addBinding('R', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeSectionHDRecorder);	
+	eventKeyDownBindingsStepSequencer->addBinding('O', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeSectionQuickOptions);	
+	eventKeyDownBindingsStepSequencer->addBinding('Z', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_ToggleScopes);	
+  eventKeyDownBindingsStepSequencer->addBinding('H', KeyModifierCTRL, &Tracker::eventKeyDownBinding_InvokeHelp);
+
+	// handy toggle shortcuts
+	eventKeyDownBindingsStepSequencer->addBinding('F', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleFollowSong);	
+	eventKeyDownBindingsStepSequencer->addBinding('P', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleProspectiveMode);	
+	eventKeyDownBindingsStepSequencer->addBinding('W', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleCursorWrapAround);	
+	eventKeyDownBindingsStepSequencer->addBinding('L', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleLiveSwitch);	
+
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F1, 0, &Tracker::eventKeyDownBinding_InvokeHelp);
+
+	// Transpose stuff like FT2
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F1, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_TransposeAllInsTrackDown);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F2, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_TransposeAllInsTrackUp);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F1, KeyModifierCTRL, &Tracker::eventKeyDownBinding_TransposeAllInsPatternDown);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F2, KeyModifierCTRL, &Tracker::eventKeyDownBinding_TransposeAllInsPatternUp);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F1, KeyModifierALT, &Tracker::eventKeyDownBinding_TransposeAllInsBlockDown);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F2, KeyModifierALT, &Tracker::eventKeyDownBinding_TransposeAllInsBlockUp);
+
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F7, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_TransposeCurInsTrackDown);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F8, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_TransposeCurInsTrackUp);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F7, KeyModifierCTRL, &Tracker::eventKeyDownBinding_TransposeCurInsPatternDown);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F8, KeyModifierCTRL, &Tracker::eventKeyDownBinding_TransposeCurInsPatternUp);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F7, KeyModifierALT, &Tracker::eventKeyDownBinding_TransposeCurInsBlockDown);
+	eventKeyDownBindingsStepSequencer->addBinding(VK_F8, KeyModifierALT, &Tracker::eventKeyDownBinding_TransposeCurInsBlockUp);
+
+	eventKeyDownBindingsStepSequencer->addBinding(VK_NUMPAD0, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_NUMPAD1, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_NUMPAD2, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_NUMPAD3, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_NUMPAD4, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_NUMPAD5, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_NUMPAD6, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_NUMPAD7, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_NUMPAD8, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_NUMPAD9, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_MULTIPLY, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_ADD, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_SEPARATOR, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_SUBTRACT, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_DECIMAL, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	eventKeyDownBindingsStepSequencer->addBinding(VK_DIVIDE, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+
+	eventKeyDownBindingsStepSequencer->addBinding('V', KeyModifierCTRL | KeyModifierSHIFT, &Tracker::eventKeyDownBinding_InvokePatternCapture);
 
 	eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
 }

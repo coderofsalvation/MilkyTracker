@@ -172,6 +172,7 @@ private:
 	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindings;
 	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindingsMilkyTracker;
 	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindingsFastTracker;
+	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindingsStepSequencer;
 
 	// - settings --------------------------------------------------------------
 	void buildDefaultSettings();
@@ -480,8 +481,6 @@ private:
 	// Process messagebox shortcuts (RETURN & ESC)
 	bool processMessageBoxShortcuts(PPEvent* event);
 
-	void processShortcutsMilkyTracker(PPEvent* event);
-	
 	void selectNextOrder(bool wrap = false);
 	void selectPreviousOrder(bool wrap = false);
 
@@ -489,6 +488,10 @@ private:
 	void selectPreviousInstrument();
 	
 	void processShortcutsFastTracker(PPEvent* event);
+	void processShortcutsMilkyTracker(PPEvent* event);
+	void processShortcutsStepSequencer(PPEvent* event);
+	
+	
 
 	// - Keyboard bindings -----------------------------------------------------
 	pp_int16 currentKeyCode;

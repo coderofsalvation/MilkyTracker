@@ -78,9 +78,54 @@ void Tracker::processShortcuts(PPEvent* event)
 		case EditModeFastTracker:
 			processShortcutsFastTracker(event);
 			break;
+
+		case EditModeStepSequencer:
+			processShortcutsStepSequencer(event);
+			break;
 			
 		default:
 			ASSERT(false);
+	}
+}
+
+void Tracker::processShortcutsStepSequencer(PPEvent* event)
+{
+	if (event->getID() == eKeyDown)
+	{
+		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
+		pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr()) + 1);
+
+		if (::getKeyModifier() == (KeyModifierSHIFT)) {
+
+			switch (scanCode)
+			{
+        default: processShortcutsMilkyTracker(event); break;
+			}
+		}
+    if (::getKeyModifier() == (KeyModifierCTRL |  KeyModifierALT))
+    {
+      switch (scanCode)
+      {
+        default: processShortcutsMilkyTracker(event); break;
+      }
+    }
+
+		switch (keyCode)
+		{
+        default: processShortcutsMilkyTracker(event); break;
+		}
+
+		if (event->getID() == eKeyUp)
+		{
+			pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
+			pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr()) + 1);
+
+			switch (keyCode)
+			{
+        default: processShortcutsMilkyTracker(event); break;
+			}
+
+		}
 	}
 }
 
@@ -215,6 +260,15 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 						case VK_NEXT:
 						case VK_PRIOR:
 							listBoxInstruments->dispatchEvent(event);
+              if( patternEditorControl->getEditMode() == EditModeStepSequencer ){
+                pp_int32 instrument;
+                pp_int32 sample;
+                getSelectedInstrument(&instrument,&sample);
+                patternEditorControl->setChannel(instrument,0);
+                //getPatternEditorControl()->setChannel(0,0);
+                getPatternEditorControl()->setCurrentInstrument(instrument);
+                screen->paintControl(patternEditorControl);
+              }
 							event->cancel();
 							break;
 
@@ -281,7 +335,6 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 				default:
 				{
 					PatternEditorControl* patternEditorControl = getPatternEditorControl();
-
 					pp_int32 note = patternEditorControl->ScanCodeToNote(scanCode);
 
 					recorderLogic->sendNoteUpToPatternEditor(event, note, patternEditorControl);
@@ -693,11 +746,11 @@ processOthers:
 
 void Tracker::switchEditMode(EditModes mode)
 {
-	bool b = (mode == EditModeMilkyTracker);
 
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_MENU));
 	ASSERT(container);
-	
+
+  bool b = mode == EditModeMilkyTracker || mode == EditModeStepSequencer;  
 	// Assign keyboard bindings
 	getPatternEditorControl()->setShowFocus(b);
 	listBoxInstruments->setShowFocus(b);
@@ -709,20 +762,28 @@ void Tracker::switchEditMode(EditModes mode)
 	ASSERT(container);
 	static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->setShowFocus(b);
 	
-	if (b)
+	if( mode == EditModeMilkyTracker)
 	{
 		eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;	
 		screen->setFocus(listBoxInstruments, false);
 	}
-	else
+	if( mode == EditModeFastTracker)
 	{
 		eventKeyDownBindings = eventKeyDownBindingsFastTracker;	
 		recorderLogic->setRecordMode(true);
 		eventKeyDownBinding_ToggleFT2Edit();
 	}
+	if( mode == EditModeStepSequencer)
+	{
+		eventKeyDownBindings = eventKeyDownBindingsStepSequencer;	
+		screen->setFocus(listBoxInstruments, false);
+    if( moduleEditor->getNumChannels() < 20 )
+      setModuleNumChannels(20);
+    getPatternEditorControl()->setNumVisibleChannels(20);
+    screen->paintControl(patternEditorControl);
+	}
 	
 	getPatternEditorControl()->switchEditMode(mode);
-
 	editMode = mode;
 }
 

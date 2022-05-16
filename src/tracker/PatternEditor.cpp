@@ -123,8 +123,10 @@ PatternEditor::PatternEditor() :
 	currentOctave(5),
 	before(NULL),
 	undoStack(NULL),
-	lastChange(LastChangeNone)	
+	lastChange(LastChangeNone),	
+  stepSequencer(NULL)
 {
+  stepSequencer = new PatternStepSequencer( this );
 	// Undo history
 	undoHistory = new UndoHistory<TXMPattern, PatternUndoStackEntry>(UNDOHISTORYSIZE_PATTERNEDITOR);
 	
@@ -139,6 +141,7 @@ PatternEditor::~PatternEditor()
 	delete undoHistory;
 	delete undoStack;
 	delete before;
+  delete stepSequencer;
 }
 
 void PatternEditor::attachPattern(TXMPattern* pattern, XModule* module) 

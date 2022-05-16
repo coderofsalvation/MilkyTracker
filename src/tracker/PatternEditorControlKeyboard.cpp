@@ -124,7 +124,7 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsFastTracker->addBinding(VK_F6, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_TransparentPastePattern);
 
 	eventKeyDownBindingsFastTracker->addBinding(VK_F3, KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Cut);
-	eventKeyDownBindingsFastTracker->addBinding(VK_F4, KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Copy);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F3, KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Copy);
 	eventKeyDownBindingsFastTracker->addBinding(VK_F5, KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Paste);
 	eventKeyDownBindingsFastTracker->addBinding(VK_F6, KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_TransparentPaste);
 
@@ -197,6 +197,10 @@ void PatternEditorControl::initKeyBindings()
 	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncSelection);
 	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecTrack);
 	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncTrack);
+
+  // stepSequencer piggybacks milkytracker mappings (because it'smost laptopfriendly)
+	scanCodeBindingsStepSequencer = scanCodeBindingsMilkyTracker;
+	eventKeyDownBindingsStepSequencer = eventKeyDownBindingsMilkyTracker;
 
 	eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
 }
@@ -536,14 +540,15 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 
 		// ^: Key off
 		case SC_WTF:
-			if (editMode != EditModeMilkyTracker)
+			if (editMode == EditModeFastTracker)
 				break;
 			return PatternTools::getNoteOffNote();
 
 		// CAPS-lock
 		case SC_CAPSLOCK:
-		case SC_1:
-			return PatternTools::getNoteOffNote();
+		case SC_1: {
+      return MODE_TOGGLE;
+    }
 
 		case SC_SMALLERGREATER:
 			return PatternTools::getNoteOffNote();
@@ -660,17 +665,25 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 	// remember to reset this when leaving this function
 	patternEditor->setLazyUpdateNotifications(true);
 
-	if (cursor.inner == 0)
-	{
-		handleDeleteKey(keyCode, number);
+  pp_uint32 note = ScanCodeToNote(scanCode);
+  if( note == MODE_TOGGLE ){
+    bool stepMode = editMode == EditModeStepSequencer;
+    if( stepMode && editModeLast == EditModeStepSequencer )
+      editModeLast = EditModeMilkyTracker;
+    switchEditMode( editMode == EditModeStepSequencer ? editModeLast : EditModeStepSequencer);
+  }else{
+    if (cursor.inner == 0)
+    {
+      handleDeleteKey(keyCode, number);
 
-		if (number == -1 && ::getKeyModifier() == 0)
-			number = ScanCodeToNote(scanCode);
+      if (number == -1 && ::getKeyModifier() == 0)
+        number = note;
 
-		patternEditor->writeNote(number, true, this);
-	}
-	else
-		handleDeleteKey(keyCode, number);
+      patternEditor->writeNote(number, true, this);
+    }
+    else
+      handleDeleteKey(keyCode, number);
+  }
 
 	patternEditor->setLazyUpdateNotifications(false);
 }
@@ -830,8 +843,9 @@ void PatternEditorControl::eventKeyDownBinding_LEFT()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
+  bool stepMode = editMode == EditModeStepSequencer;
 	cursor.inner--;
-	if (cursor.inner < 0)
+	if (stepMode || cursor.inner < 0)
 	{
 		if (cursor.channel > 0)
 		{
@@ -858,8 +872,9 @@ void PatternEditorControl::eventKeyDownBinding_RIGHT()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
+  bool stepMode = editMode == EditModeStepSequencer;
 	cursor.inner++;
-	if (cursor.inner == 8)
+	if (stepMode || cursor.inner == 8)
 	{
 		if (cursor.channel < patternEditor->getNumChannels() - 1)
 		{

@@ -36,6 +36,7 @@
 #include "PatternTools.h"
 #include "EditModes.h"
 #include "TrackerConfig.h"
+#include "PatternStepSequencer.h"
 
 // Forwards ------------------------------------------------------
 class PPScrollbar;
@@ -192,10 +193,16 @@ private:
 	PPKeyBindings<TPatternEditorKeyBindingHandler>* scanCodeBindingsMilkyTracker;
 	PPKeyBindings<TPatternEditorKeyBindingHandler>* eventKeyDownBindingsFastTracker;
 	PPKeyBindings<TPatternEditorKeyBindingHandler>* scanCodeBindingsFastTracker;
+	PPKeyBindings<TPatternEditorKeyBindingHandler>* eventKeyDownBindingsStepSequencer;
+	PPKeyBindings<TPatternEditorKeyBindingHandler>* scanCodeBindingsStepSequencer;
 
 	// Edit mode
 	EditModes editMode;
+	EditModes editModeLast;
 	pp_int32 selectionKeyModifier;
+  pp_int32 rowHeight;
+
+	friend class PatterStepSequencer;
 	
 public:
 	PatternEditorControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
@@ -313,6 +320,8 @@ public:
 	pp_int32 noteTransposeTrack(const PatternEditorTools::TransposeParameters& transposeParameters);
 	pp_int32 noteTransposePattern(const PatternEditorTools::TransposeParameters& transposeParameters);
 	pp_int32 noteTransposeSelection(const PatternEditorTools::TransposeParameters& transposeParameters);	
+
+  EditModes getEditMode(){ return editMode; }
 	
 private:
 	// --- Transpose handler

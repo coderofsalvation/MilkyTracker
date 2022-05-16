@@ -137,6 +137,7 @@ Tracker::Tracker() :
 	eventKeyDownBindings(NULL),
 	eventKeyDownBindingsMilkyTracker(NULL),
 	eventKeyDownBindingsFastTracker(NULL),
+	eventKeyDownBindingsStepSequencer(NULL),
 	currentFileName(TrackerConfig::untitledSong),
 	lastState(false),
 	editMode(EditModeFastTracker),
@@ -208,6 +209,7 @@ Tracker::~Tracker()
 {
 	delete eventKeyDownBindingsMilkyTracker;
 	delete eventKeyDownBindingsFastTracker;
+	delete eventKeyDownBindingsStepSequencer;
 	
 	delete toolInvokeHelper;
 	delete responder;
