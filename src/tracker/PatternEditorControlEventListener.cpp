@@ -255,6 +255,11 @@ pp_int32 PatternEditorControl::dispatchEvent(PPEvent* event)
 			// Clicked in client area
 			else
 			{
+
+        if( getEditMode() == EditModeStepSequencer ){
+          printf("todo: implement selections in stepsequencer mode\n");
+          break;
+        }
 				PPPoint cp = *p;
 				
 				cp.x-=location.x + SCROLLBARWIDTH + getRowCountWidth() + 4;
@@ -830,7 +835,6 @@ markOrMoveSelection:
 			assureUpdate = false;
 
 			pp_uint8 character = *((pp_uint8*)event->getDataPtr());
-printf("%c\n",character);
 			handleKeyChar(character);
 
 			if (assureUpdate)

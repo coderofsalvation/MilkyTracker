@@ -545,8 +545,7 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 			return PatternTools::getNoteOffNote();
 
 		// CAPS-lock
-		case SC_CAPSLOCK:
-		case SC_1: {
+		case SC_CAPSLOCK:{
       return MODE_TOGGLE;
     }
 
@@ -865,6 +864,7 @@ void PatternEditorControl::eventKeyDownBinding_LEFT()
 				cursor.channel = patternEditor->getNumChannels()-1;
 			}
 		}
+    if( stepMode ) cursor.inner = 0;
 	}
 }
 
@@ -894,6 +894,7 @@ void PatternEditorControl::eventKeyDownBinding_RIGHT()
 				cursor.channel = 0;
 			}
 		}
+    if( stepMode ) cursor.inner = 0;
 	}
 }
 

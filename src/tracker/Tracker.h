@@ -472,6 +472,8 @@ public:
 
 	bool runMacro(MilkyMacro *m, PPString line);
 
+  void toggleChannelMute( pp_int32 channel);
+
 private:
 	void switchEditMode(EditModes mode);
 

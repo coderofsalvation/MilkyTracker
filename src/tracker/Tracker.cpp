@@ -1191,7 +1191,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 					getPatternEditorControl()->setCurrentInstrument(listBoxInstruments->getSelectedIndex() + 1);
 					updateSampleEditorAndInstrumentSection(false);
 				}
-				
+			
 				screen->update();
 				break;
 			}
@@ -2139,6 +2139,9 @@ void Tracker::selectInstrument(pp_int32 instrument)
 	getPatternEditorControl()->setCurrentInstrument(instrument);
 	
 	sectionTranspose->setCurrentInstrument(instrument, false);
+        
+  listBoxInstruments->setSelectedIndex(instrument-1);
+  updateInstrumentsListBox(false);
 
 	updateSamplesListBox(false);
 
@@ -3267,6 +3270,14 @@ void Tracker::signalWaitState(bool b)
 void Tracker::getSelectedInstrument( int *instrument, int *sample ) {
 	*instrument = listBoxInstruments->getSelectedIndex();
 	*sample = listBoxSamples->getSelectedIndex();
+}
+
+void Tracker::toggleChannelMute( pp_int32 channel ){
+  muteChannels[channel] = !muteChannels[channel];
+  bool mute = muteChannels[channel];
+  playerController->muteChannel(channel,mute);
+  scopesControl->muteChannel(channel,mute);
+  getPatternEditorControl()->muteChannel(channel,mute);
 }
 
 #include "MilkyMacro.cpp" 

@@ -35,6 +35,7 @@
 #include "PlayerController.h"
 #include "PlayerLogic.h"
 #include "RecorderLogic.h"
+#include "ScopesControl.h"
 
 #include "Container.h"
 #include "ListBox.h"
@@ -90,6 +91,7 @@ void Tracker::processShortcuts(PPEvent* event)
 
 void Tracker::processShortcutsStepSequencer(PPEvent* event)
 {
+  // this piggybacks the milkytracker mapping apart from some exceptions
 	if (event->getID() == eKeyDown)
 	{
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
@@ -112,6 +114,18 @@ void Tracker::processShortcutsStepSequencer(PPEvent* event)
 
 		switch (keyCode)
 		{
+        case '1':  { toggleChannelMute(0); break; }
+        case '2':  { toggleChannelMute(1); break; }
+        case '3':  { toggleChannelMute(2); break; }
+        case '4':  { toggleChannelMute(3); break; }
+        case '5':  { toggleChannelMute(4); break; }
+        case '6':  { toggleChannelMute(5); break; }
+        case '7':  { toggleChannelMute(6); break; }
+        case '8':  { toggleChannelMute(7); break; }
+        case '9':  { toggleChannelMute(8); break; }
+        case '0':  { toggleChannelMute(9); break; }
+        case '-':  { toggleChannelMute(10); break; }
+        case '=':  { toggleChannelMute(11); break; }
         default: processShortcutsMilkyTracker(event); break;
 		}
 
@@ -204,6 +218,12 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 				break;
 			}
 
+      case VK_TAB: { // switch instrument accordingly
+        if( getPatternEditorControl()->getEditMode() == EditModeStepSequencer )
+          selectInstrument( getPatternEditorControl()->getCurrentChannel()+1 );
+        break;
+      }
+
 			default:
 			{
 			processBindings:
@@ -248,6 +268,8 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 					::getKeyModifier() == (KeyModifierSHIFT | KeyModifierALT))
 				{
 					getPatternEditorControl()->dispatchEvent(event);
+          if( getPatternEditorControl()->getEditMode() == EditModeStepSequencer )
+            selectInstrument( getPatternEditorControl()->getCurrentChannel()+1 );
 					event->cancel();
 				}
 				else if (::getKeyModifier() == KeyModifierCTRL)
@@ -331,7 +353,6 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 					playerLogic->finishTraceAndRowPlay();
 					break;
 				}
-
 				default:
 				{
 					PatternEditorControl* patternEditorControl = getPatternEditorControl();
@@ -661,8 +682,8 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 			case VK_TAB:
 				if (screen->getModalControl())
 					break;
-
 				getPatternEditorControl()->dispatchEvent(event);
+
 				event->cancel();
 				break;
 

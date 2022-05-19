@@ -291,7 +291,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 	}
 
 	// ;----------------- start painting rows
-	pp_int32 startx = location.x + (stepMode ? 2*-SCROLLBARWIDTH : SCROLLBARWIDTH )+ getRowCountWidth() + 4;
+	pp_int32 startx = location.x + (stepMode ? 0 : SCROLLBARWIDTH + getRowCountWidth()) + 4;
 	
 	pp_int32 previousPatternIndex = currentOrderlistIndex;
 	pp_int32 previousRowIndex = 0;
@@ -323,7 +323,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 		i = i2 < 0 ? startIndex - i2 - 1: i2;
 
 		pp_int32 px = location.x + SCROLLBARWIDTH;
-		pp_int32 py = location.y + (i-startIndex) * rowHeight + SCROLLBARWIDTH + (rowHeight + 4);
+		pp_int32 py = location.y + (i-startIndex) * rowHeight + (stepMode ? 0 : SCROLLBARWIDTH + (rowHeight + 4));
 
 		// rows are already in invisible area => abort
 		if (py >= location.y + size.height)
@@ -331,7 +331,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			
 		pp_int32 row = i;
 
-		if (properties.prospective && properties.scrollMode == ScrollModeStayInCenter && currentOrderlistIndex != -1)
+		if (!stepMode && properties.prospective && properties.scrollMode == ScrollModeStayInCenter && currentOrderlistIndex != -1)
 		{
 			if (i < 0)
 			{
@@ -641,14 +641,14 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
         bool enabled = patternTools->getNote() != 0;
         if( currentLine )
           g->setColor( TrackerConfig::colorPatternEditorSelection ); 
-        else g->setColor( enabled ? noteColor : TrackerConfig::colorRowHighLight_1 );
+        else g->setColor( enabled && !muteChannels[j] ? noteColor : TrackerConfig::colorRowHighLight_1 );
 
-        g->fill(PPRect(px+6, py +6, px + slotSize -6, py + rowHeight -6 ));
-        g->drawHLine(px+7, px + slotSize - 7,py+rowHeight-6);
+        if( !muteChannels[j] || enabled ) g->fill(PPRect(px+6, py +6, px + slotSize -6, py + rowHeight -5 ));
+        else g->drawHLine(px+7, px + slotSize - 7,py+rowHeight-6);
         g->drawVLine(py+7, py+rowHeight-7, px+5);
         g->drawVLine(py+7, py+rowHeight-7, px+slotSize-6);
         if (!(i % properties.highlightSpacingPrimary) && properties.highLightRowPrimary)
-          g->setColor(noteColor);
+          g->setColor( noteColor);
         if (!(i % properties.highlightSpacingSecondary) && properties.highLightRowSecondary)
           g->setColor(effColor);
         g->drawHLine(px+7, px + slotSize - 7,py+5);
