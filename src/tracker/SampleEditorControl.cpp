@@ -25,6 +25,7 @@
 #include "GraphicsAbstract.h"
 #include "PPUIConfig.h"
 #include "ScrollBar.h"
+#include "PPOpenPanel.h"
 #include "ContextMenu.h"
 #include "Piano.h"
 #include "Tools.h"
@@ -33,6 +34,12 @@
 #include "TrackerConfig.h"
 #include "PlayerController.h"
 #include "DialogBase.h"
+#include "FilterParameters.h"
+#include "ModuleEditor.h"
+#include "Scripting.h"
+#include "PPSystem.h"
+#include "ControlIDs.h"
+#include "SectionSamples.h"
 
 #include <algorithm>
 #include <math.h>
@@ -163,7 +170,13 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuGenerators->addEntry("Half Sine" PPSTR_PERIODS, MenuCommandIDGenerateHalfSine);
 	subMenuGenerators->addEntry("Absolute Sine" PPSTR_PERIODS, MenuCommandIDGenerateAbsoluteSine);
 	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
-	
+
+	// scripting menu
+	subMenuScripting = new PPContextMenu(8, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
+	Scripting::loadScriptsToMenu(System::getConfigFileName(), subMenuScripting);
+	subMenuScripting->addEntry(seperatorStringMed, -1);
+	subMenuScripting->addEntry("Scripts location" PPSTR_PERIODS, Scripting::MenuIDHelp);
+
 	// build context menu
 	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain, true);
 	editMenuControl->addEntry("New" PPSTR_PERIODS, MenuCommandIDNew);
@@ -178,10 +191,12 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
 	editMenuControl->addEntry("Loop range", MenuCommandIDLoopRange);
 	editMenuControl->addEntry(seperatorStringMed, -1);
-	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced);
-	editMenuControl->addEntry("Ext. Paste \x10", 0xFFFF, subMenuXPaste);
-	editMenuControl->addEntry("Protracker \x10", 0xFFFF, subMenuPT);
-	editMenuControl->addEntry("Generators \x10", 0xFFFF, subMenuGenerators);
+	editMenuControl->addEntry("Scripts      \x10", 0xFFFF, subMenuScripting );
+	editMenuControl->addEntry(seperatorStringMed, -1);
+	editMenuControl->addEntry("Advanced     \x10", 0xFFFF, subMenuAdvanced);
+	editMenuControl->addEntry("Ext. Paste   \x10", 0xFFFF, subMenuXPaste);
+	editMenuControl->addEntry("Protracker   \x10", 0xFFFF, subMenuPT);
+	editMenuControl->addEntry("Generators   \x10", 0xFFFF, subMenuGenerators);
 
 	// Create tool handler responder
 	toolHandlerResponder = new ToolHandlerResponder(*this);
@@ -209,6 +224,7 @@ SampleEditorControl::~SampleEditorControl()
 	delete subMenuXPaste;
 	delete subMenuPT;
 	delete subMenuGenerators;
+	delete subMenuScripting;
 }
 
 void SampleEditorControl::drawLoopMarker(PPGraphicsAbstract* g, pp_int32 x, pp_int32 y, bool down, const pp_int32 size)
@@ -1209,6 +1225,7 @@ pp_int32 SampleEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 			 sender == reinterpret_cast<PPObject*>(subMenuAdvanced) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuXPaste) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuPT) ||
+			 sender == reinterpret_cast<PPObject*>(subMenuScripting) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuGenerators)) &&
 			 event->getID() == eCommand)
 	{
@@ -1907,6 +1924,58 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeGenerateAbsoluteSine);
 			break;
 
+	}
+	if (commandId >= Scripting::MenuID)
+	{
+		if (commandId == Scripting::MenuIDHelp)
+		{
+			char msg[255];
+			char configfile[255];
+			sprintf(msg, "%s.scripts.txt", System::getConfigFileName());
+			return tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, msg, Tracker::MessageBox_OK);
+		}
+		char cmd[255];
+		int selected_instrument;
+		int selected_sample;
+		PPString selected;
+		tracker->getSelectedInstrument(&selected_instrument, &selected_sample);
+#if defined(WINDOWS) || defined(WIN32) // C++ >= v17
+		AllocConsole();				   // popup console for errors
+		freopen("conin$", "r", stdin);
+		freopen("conout$", "w", stdout);
+		freopen("conout$", "w", stderr);
+		PPString fin = "c:\\Temp\\in.wav";	 // ideally std::filesystem::temp_directory_path()) + string("\\in.wav") ?
+		PPString fout = "c:\\Temp\\out.wav"; // TODO: write clipboard.wav
+#else
+		PPString fin = "/tmp/in.wav";	// assume *nix environment
+		PPString fout = "/tmp/out.wav"; // TODO: write clipboard.wav
+#endif
+		// save samples to local disk
+		tracker->getModuleEditor()->saveSample(
+			fin,
+			selected_instrument,
+			selected_sample,
+			ModuleEditor::SampleFormatTypeWAV);
+		tracker->getModuleEditor()->saveSample(
+			fout,
+			selected_instrument,
+			selected_sample,
+			ModuleEditor::SampleFormatTypeWAV);
+		sampleEditor->prepareUndo();
+		int ret = Scripting::runScript(System::getConfigFileName(), commandId, cmd, tracker->screen, fin, fout, &selected);
+		if (ret != 0 && ret != -1)
+			return tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, "script error :/", Tracker::MessageBox_OK);
+		tracker->getModuleEditor()->loadSample(
+			fout,
+			selected_instrument,
+			selected_sample,
+			ModuleEditor::SampleFormatTypeWAV);
+		tracker->getModuleEditor()->setSampleName(selected_instrument, selected_sample, selected.getStrBuffer(), selected.length() );
+		tracker->sectionSamples->updateAfterLoad();
+		rangeAll(true);
+		showAll();
+		sampleEditor->finishUndo();
+		sampleEditor->postFilter();
 	}
 }
 
