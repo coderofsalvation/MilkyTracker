@@ -47,6 +47,8 @@
 #include "SectionInstruments.h"
 #include "SectionTranspose.h"
 #include "SectionDiskMenu.h"
+#include "ScopesControl.h"
+#include "TrackerSettingsDatabase.h"
 
 void Tracker::sendNoteDown(mp_sint32 note, pp_int32 volume/* = -1*/)
 {
@@ -144,6 +146,7 @@ processBindings:
 			}
 
 		}
+		if (::getKeyModifier() == (KeyModifierSHIFT) ) doASCIISTEP16(keyCode);
 	}
 	else if (event->getID() == eKeyUp)
 	{
@@ -677,4 +680,76 @@ bool Tracker::processMessageBoxShortcuts(PPEvent* event)
 	}
 
 	return false;
+}
+
+static pp_int32 ASCIISTEP16(pp_uint8 ascii,pp_uint16 bar)
+{
+	pp_int32 number = -1;
+	switch (ascii)
+	{
+		// ASCIISTEP16 standard (https://gist.github.com/coderofsalvation/8d760b191f4bb5465c8772d5618e5c4b)
+		case 'Q': number = 0; break;
+		case 'W': number = 1; break;
+		case 'E': number = 2; break;
+		case 'R': number = 3; break;
+		case 'T': number = 4; break;
+		case 'Y': number = 5; break;
+		case 'U': number = 6; break;
+		case 'I': number = 7; break;
+		case 'O': number = 8; break;
+		case 'S': number = 9; break;
+		case 'D': number = 10; break;
+		case 'F': number = 11; break;
+		case 'G': number = 12; break;
+		case 'H': number = 13; break;
+		case 'J': number = 14; break;
+		case 'K': number = 15; break;
+	}
+	return number == -1 ? -1 : number + (bar*16);
+}
+
+static pp_int32 ASCIISTEP16_mute(pp_uint8 ascii)
+{
+	pp_int32 number = -1;
+	switch (ascii)
+	{
+		// ASCIISTEP16 standard (https://gist.github.com/coderofsalvation/8d760b191f4bb5465c8772d5618e5c4b)
+		case '1': number = 0; break;
+		case '2': number = 1; break;
+		case '3': number = 2; break;
+		case '4': number = 3; break;
+		case '5': number = 4; break;
+		case '6': number = 5; break;
+		case '7': number = 6; break;
+		case '8': number = 7; break;
+		case '9': number = 8; break;
+		case '0': number = 9; break;
+		case '-': number = 10; break;
+		case '=': number = 11; break;
+	}
+	return number;
+}
+
+void Tracker::doASCIISTEP16( pp_uint8 character ){
+	// check for ASCIISTEP16 events
+	PatternEditorTools::Position& cursor = getPatternEditor()->getCursor();
+	pp_int32 stepsize = settingsDatabase->restore("HIGHLIGHTMODULO2")->getIntValue();
+	pp_int32 bar      = cursor.row / (16*stepsize);
+	pp_int32 step     = ASCIISTEP16(character,bar) * stepsize;
+	pp_int32 chmute   = ASCIISTEP16_mute(character);
+	if ( chmute > -1 ){
+		muteChannels[chmute] = !muteChannels[chmute];
+		bool mute = muteChannels[chmute];
+		playerController->muteChannel(chmute,mute);
+		scopesControl->muteChannel(chmute,mute);
+		getPatternEditorControl()->muteChannel(chmute,mute);
+		patternEditorControl->muteChannel( chmute, mute ); // ASCIISTEP16 mute toggle
+	}
+	if ( step > -1 ){
+		PatternEditorTools::Position cursor;
+		// write ASCIISTEP16 step
+		pp_uint32 note = TONOTE(getPatternEditor()->getCurrentOctave(),0);
+		getPatternEditor()->writeStep( patternEditorControl->getCurrentChannel(), step, note, bar * (16*stepsize),true);
+		updatePatternEditorControl(false);
+	}
 }
