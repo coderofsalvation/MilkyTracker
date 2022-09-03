@@ -71,6 +71,7 @@ private:
 	PPContextMenu* subMenuXPaste;
 	PPContextMenu* subMenuGenerators;
 	PPContextMenu* subMenuPT;
+	PPContextMenu* subMenuScripting;
 
 	// extent
 	pp_int32 selectionStartNew, selectionEndNew;
