@@ -749,7 +749,6 @@ void Tracker::doASCIISTEP16( pp_uint8 character ){
 		PatternEditorTools::Position cursor;
 		// write ASCIISTEP16 step
 		pp_uint32 note = TONOTE(getPatternEditor()->getCurrentOctave(),0);
-		printf("step=%i\n",step);
 		getPatternEditor()->writeStep( patternEditorControl->getCurrentChannel(), step, note, bar * (16*stepsize),true);
 		updatePatternEditorControl(true);
 	}
