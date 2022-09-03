@@ -146,8 +146,10 @@ enum ControlIDs
 	RADIOGROUP_SETTINGS_FREQTAB,
 	STATICTEXT_SETTINGS_BUFFERSIZE,
 	STATICTEXT_SETTINGS_MIXERVOL,
+	STATICTEXT_SETTINGS_LIMITDRIVE,
 	SLIDER_SETTINGS_BUFFERSIZE,
 	SLIDER_SETTINGS_MIXERVOL,
+	SLIDER_SETTINGS_LIMITDRIVE,
 	STATICTEXT_SETTINGS_FORCEPOWER2BUFF,
 	CHECKBOX_SETTINGS_FORCEPOWER2BUFF,
 	RADIOGROUP_SETTINGS_AMPLIFY,
@@ -771,6 +773,15 @@ public:
         radioGroup->addItem("128");
         
         container->addControl(radioGroup);
+
+        y2 += 60;
+        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Mastering limiter", true, true));
+        container->addControl(new PPStaticText(STATICTEXT_SETTINGS_LIMITDRIVE, NULL, NULL, PPPoint(x2 + 4, y2 + 8 + 11*2), "", false));
+        
+        PPSlider *slider = new PPSlider(SLIDER_SETTINGS_LIMITDRIVE, screen, this, PPPoint(x + 4, y2 + 4 + 11), 151, true);
+        slider->setMaxValue(10);
+        slider->setBarSize(8192);
+        container->addControl(slider);
     }
     
     virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
@@ -790,6 +801,17 @@ public:
                 break;
                 
         }
+
+		PPStaticText *text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_LIMITDRIVE));
+		PPSlider *slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_SETTINGS_LIMITDRIVE));
+		v = 0;
+		PPDictionaryKey *k = settingsDatabase->restore("LIMITDRIVE");
+		if( k != NULL ) v = k->getIntValue();
+		char buffer[10];
+		sprintf(buffer, "drive: %i", v);
+		text->setText(buffer);
+		slider->setCurrentValue(v);
+
     }
     
 };
@@ -2478,6 +2500,14 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				pp_uint32 v = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
 				tracker.settingsDatabase->store("MIXERVOLUME", v);
+				update();
+				break;
+			}
+
+			case SLIDER_SETTINGS_LIMITDRIVE:
+			{
+				pp_uint32 v = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
+				tracker.settingsDatabase->store("LIMITDRIVE", v);
 				update();
 				break;
 			}
