@@ -1,0 +1,3 @@
+[submodule "milkytracker"]
+	path = milkytracker
+	url = https://github.com/milkytracker/milkytracker
