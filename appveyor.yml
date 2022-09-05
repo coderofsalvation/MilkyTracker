@@ -54,19 +54,20 @@ for:
   - sh: echo create AppImage
   - sh: cp -r milkytracker-* Milkytracker-x86_64.AppDir
   - sh: cd Milkytracker-x86_64.AppDir 
-  - sh: ln -s bin/milkytracker AppRun
+  - sh: echo -e '#!/bin/sh\nHERE="$(dirname "$(readlink -f "${0}")")"\nLD_LIBRARY_PATH="$HERE/usr/lib":$LD_LIBRARY_PATH $HERE/bin/milkytracker' > AppRun && chmod +x AppRun
   - sh: mkdir -p usr/lib/x86_64-linux-gnu
   - sh: find /usr/lib |grep rtmidi
   - sh: cp /usr/lib/x86_64-linux-gnu/librtmidi.so.2v5 usr/lib/x86_64-linux-gnu/.
   - sh: cd usr/lib && ln -s x86_64-linux-gnu/librtmidi.so.2v5 && cd ../..
   - sh: cp ../resources/pictures/carton.png milkytracker.png
-  - sh: echo -e "[Desktop Entry]\nName=MilkyTracker\nExec=Apprun\nIcon=milkytracker\nType=Application\nCategories=Utility" > myapp.desktop
+  - sh: echo -e "[Desktop Entry]\nName=MilkyTracker\nExec=Apprun\nIcon=milkytracker\nType=Application\nCategories=Utility" > milkytracker.desktop
   - sh: find .
   - sh: echo CHECKING LIBS && find . -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
   - sh: cd .. 
   - sh: wget 'https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage';
   - sh: chmod +x appimagetool*.AppImage
   - sh: ./appimagetool-* Milkytracker-x86_64.AppDir 
+
 
 
 after_build:
