@@ -62,8 +62,8 @@ for:
   - sh: cp ../resources/pictures/carton.png milkytracker.png
   - sh: echo -e "[Desktop Entry]\nName=MilkyTracker\nExec=Apprun\nIcon=milkytracker\nType=Application\nCategories=Utility" > myapp.desktop
   - sh: find .
+  - sh: echo CHECKING LIBS && find . -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
   - sh: cd .. 
-  - sh: find Milkytracker-x86_64 -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
   - sh: wget 'https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage';
   - sh: chmod +x appimagetool*.AppImage
   - sh: ./appimagetool-* Milkytracker-x86_64.AppDir 
