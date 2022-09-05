@@ -482,6 +482,7 @@ private:
 
 	void selectNextInstrument();
 	void selectPreviousInstrument();
+	void backtraceInstrument(pp_uint8 channelIncrement);
 	
 	void processShortcutsFastTracker(PPEvent* event);
 
