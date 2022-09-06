@@ -257,8 +257,8 @@ processBindings:
 			}
 
 		}
-		if (::getKeyModifier() == (KeyModifierSHIFT) ) doASCIISTEP16(keyCode);
-		
+		if (::getKeyModifier() == (KeyModifierSHIFT) || ::getKeyModifier() == (KeyModifierCTRL) )
+			doASCIISTEP16(keyCode, ::getKeyModifier() == (KeyModifierCTRL) );
 	}
 	else if (event->getID() == eKeyUp)
 	{
@@ -819,7 +819,7 @@ static pp_int32 ASCIISTEP16(pp_uint8 ascii,pp_uint16 bar)
 	return number == -1 ? -1 : number + (bar*16);
 }
 
-static pp_int32 ASCIISTEP16_mute(pp_uint8 ascii)
+static pp_int32 ASCIISTEP16_channel(pp_uint8 ascii)
 {
 	pp_int32 number = -1;
 	switch (ascii)
@@ -841,20 +841,29 @@ static pp_int32 ASCIISTEP16_mute(pp_uint8 ascii)
 	return number;
 }
 
-void Tracker::doASCIISTEP16( pp_uint8 character ){
+void Tracker::doASCIISTEP16( pp_uint8 character, bool chselect ){
 	// check for ASCIISTEP16 events
 	PatternEditorTools::Position& cursor = getPatternEditor()->getCursor();
 	pp_int32 stepsize = settingsDatabase->restore("HIGHLIGHTMODULO2")->getIntValue();
 	pp_int32 bar      = cursor.row / (16*stepsize);
 	pp_int32 step     = ASCIISTEP16(character,bar) * stepsize;
-	pp_int32 chmute   = ASCIISTEP16_mute(character);
-	if ( chmute > -1 ){
-		muteChannels[chmute] = !muteChannels[chmute];
-		bool mute = muteChannels[chmute];
-		playerController->muteChannel(chmute,mute);
-		scopesControl->muteChannel(chmute,mute);
-		getPatternEditorControl()->muteChannel(chmute,mute);
-		patternEditorControl->muteChannel( chmute, mute ); // ASCIISTEP16 mute toggle
+	pp_int32 ch       = ASCIISTEP16_channel(character);
+	if ( ch > -1 ){
+		if( chselect ){
+			PatternEditor *p = getPatternEditor();
+			PatternEditorTools::Position& cursor = p->getCursor();
+			cursor.channel = ch < p->getNumChannels() ? ch : cursor.channel;
+			getPatternEditorControl()->setChannel( cursor.channel, 0 );
+			backtraceInstrument(0);
+		}else{
+			muteChannels[ch] = !muteChannels[ch];
+			bool mute = muteChannels[ch];
+			playerController->muteChannel(ch,mute);
+			scopesControl->muteChannel(ch,mute);
+			getPatternEditorControl()->muteChannel(ch,mute);
+			patternEditorControl->muteChannel( ch, mute ); // ASCIISTEP16 mute toggle
+		}
+		updatePatternEditorControl(true);
 	}
 	if ( step > -1 ){
 		PatternEditorTools::Position cursor;
