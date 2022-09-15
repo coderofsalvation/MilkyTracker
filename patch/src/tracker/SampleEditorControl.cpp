@@ -1989,8 +1989,8 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		tracker->getSelectedInstrument(&selected_instrument, &selected_sample);
 		#if defined(WINDOWS) || defined(WIN32) // C++ >= v17
-		PPString fin = "%TEMP%\\in.wav";   // ideally std::filesystem::temp_directory_path()) + string("\\in.wav") ?
-		PPString fout = "%TEMP%\\out.wav"; // TODO: write clipboard.wav
+		PPString fin = "in.wav";   // ideally std::filesystem::temp_directory_path()) + string("\\in.wav") ?
+		PPString fout = "out.wav"; // TODO: write clipboard.wav
 		#else
 		PPString fin = "/tmp/in.wav";	// assume *nix environment
 		PPString fout = "/tmp/out.wav"; // TODO: write clipboard.wav
