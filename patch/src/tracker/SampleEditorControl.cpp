@@ -1956,71 +1956,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 	}
 	if (commandId >= Scripting::MenuID)
 	{
-		char cmd[255];
-		int selected_instrument;
-		int selected_sample;
-		PPString selected;
-
-		if (commandId == Scripting::MenuIDScriptBrowse)
-		{
-			#if defined(WINDOWS) || defined(WIN32) // C++ >= v17
-			AllocConsole();				   // popup console for errors
-			freopen("conin$", "r", stdin);
-			freopen("conout$", "w", stdout);
-			freopen("conout$", "w", stderr);
-			#endif
-			if( scriptsFile.length() == 0 ){
-				printf("script: engine started\n");
-				printf("script: to download example scripts see: https://github.com/coderofsalvation/MilkyTrackerX\n");
-			}
-			Scripting::filepicker("Load script (or scripts.txt)",NULL,&scriptsFile, tracker->screen);
-			PPString fileshort = scriptsFile.stripPath();
-			if( fileshort.compareTo( "scripts.txt") == 0 ){
-				Scripting::loadScripts( scriptsFile.getStrBuffer(), &scriptsFolder );
-				loadScriptsContextMenu();
-				tracker->settingsDatabase->store("SCRIPTSFILE",scriptsFile);
-				return tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, "Scripts contextmenu was updated", Tracker::MessageBox_OK);
-			}else{
-				sprintf(cmd,"%s %%s %%s",scriptsFile.getStrBuffer());	
-				selected = scriptsFile.subString(0,24);
-				commandId = Scripting::MenuIDFile;
-			}
-		}
-
-		tracker->getSelectedInstrument(&selected_instrument, &selected_sample);
-		#if defined(WINDOWS) || defined(WIN32) // C++ >= v17
-		PPString fin = "in.wav";   // ideally std::filesystem::temp_directory_path()) + string("\\in.wav") ?
-		PPString fout = "out.wav"; // TODO: write clipboard.wav
-		#else
-		PPString fin = "/tmp/in.wav";	// assume *nix environment
-		PPString fout = "/tmp/out.wav"; // TODO: write clipboard.wav
-		#endif
-		// save samples to local disk
-		tracker->getModuleEditor()->saveSample(
-			fin,
-			selected_instrument,
-			selected_sample,
-			ModuleEditor::SampleFormatTypeWAV);
-		tracker->getModuleEditor()->saveSample(
-			fout,
-			selected_instrument,
-			selected_sample,
-			ModuleEditor::SampleFormatTypeWAV);
-		sampleEditor->prepareUndo();
-		int ret = Scripting::runScriptMenuItem(scriptsFolder, commandId, cmd, tracker->screen, fin, fout, &selected);
-		if (ret != 0 && ret != -1)
-			return tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, "script error :/", Tracker::MessageBox_OK);
-		tracker->getModuleEditor()->loadSample(
-			fout,
-			selected_instrument,
-			selected_sample,
-			ModuleEditor::SampleFormatTypeWAV);
-		tracker->getModuleEditor()->setSampleName(selected_instrument, selected_sample, selected.getStrBuffer(), selected.length() );
-		tracker->sectionSamples->updateAfterLoad();
-		rangeAll(true);
-		showAll();
-		sampleEditor->finishUndo();
-		sampleEditor->postFilter();
+		executeScriptContextMenu( commandId );
 	}
 }
 
@@ -2155,4 +2091,76 @@ void SampleEditorControl::loadScriptsContextMenu(){
 		subMenuScripting->addEntry(seperatorStringLarge, -1);
 		Scripting::loadScriptsToMenu(subMenuScripting);
 	}
+}
+
+void SampleEditorControl::executeScriptContextMenu(int commandId){
+	char cmd[255];
+	int selected_instrument;
+	int selected_sample;
+	PPString selected;
+
+	if (commandId == Scripting::MenuIDScriptBrowse)
+	{
+		#if defined(WINDOWS) || defined(WIN32) // C++ >= v17
+		AllocConsole();				   // popup console for errors
+		HWND hwnd = ::GetConsoleWindow();
+		if (hwnd != NULL){ // prevent user from closing console (thus milkytracker)
+			HMENU hMenu = ::GetSystemMenu(hwnd, FALSE);
+			if (hMenu != NULL) DeleteMenu(hMenu, SC_CLOSE, MF_BYCOMMAND);
+		}
+		freopen("conin$", "r", stdin);
+		freopen("conout$", "w", stdout);
+		freopen("conout$", "w", stderr);
+		#endif
+		if( scriptsFile.length() == 0 ){
+			printf("script: engine started\n");
+			printf("script: to download example scripts see: https://github.com/coderofsalvation/MilkyTrackerX\n");
+		}
+		Scripting::filepicker("Load script (or scripts.txt)",NULL,&scriptsFile, tracker->screen);
+		PPString fileshort = scriptsFile.stripPath();
+		if( fileshort.compareTo( "scripts.txt") == 0 ){
+			Scripting::loadScripts( scriptsFile.getStrBuffer(), &scriptsFolder );
+			loadScriptsContextMenu();
+			tracker->settingsDatabase->store("SCRIPTSFILE",scriptsFile);
+			return tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, "Scripts contextmenu was updated", Tracker::MessageBox_OK);
+		}else{
+			sprintf(cmd,"%s %%s %%s",scriptsFile.getStrBuffer());	
+			selected = scriptsFile.subString(0,24);
+			commandId = Scripting::MenuIDFile;
+		}
+	}
+
+	PPPath *currentPath = PPPathFactory::createPath();
+	PPString projectPath = currentPath->getCurrent();
+	if( scriptsFolder.length() != 0 ) currentPath->change(scriptsFolder);
+	tracker->getSelectedInstrument(&selected_instrument, &selected_sample);
+	PPString fin = "in.wav";   // ideally std::filesystem::temp_directory_path()) + string("\\in.wav") ?
+	PPString fout = "out.wav"; // TODO: write clipboard.wav
+	// save samples to local disk
+	tracker->getModuleEditor()->saveSample(
+		fin,
+		selected_instrument,
+		selected_sample,
+		ModuleEditor::SampleFormatTypeWAV);
+	tracker->getModuleEditor()->saveSample(
+		fout,
+		selected_instrument,
+		selected_sample,
+		ModuleEditor::SampleFormatTypeWAV);
+	sampleEditor->prepareUndo();
+	int ret = Scripting::runScriptMenuItem(scriptsFolder, commandId, cmd, tracker->screen, fin, fout, &selected);
+	if (ret != 0 && ret != -1)
+		return tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, "script error :/", Tracker::MessageBox_OK);
+	tracker->getModuleEditor()->loadSample(
+		fout,
+		selected_instrument,
+		selected_sample,
+		ModuleEditor::SampleFormatTypeWAV);
+	tracker->getModuleEditor()->setSampleName(selected_instrument, selected_sample, selected.getStrBuffer(), selected.length() );
+	tracker->sectionSamples->updateAfterLoad();
+	rangeAll(true);
+	showAll();
+	sampleEditor->finishUndo();
+	sampleEditor->postFilter();
+	currentPath->change(projectPath); // restore
 }

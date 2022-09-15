@@ -153,6 +153,7 @@ public:
 	virtual void setLocation(const PPPoint& location);
 
 	void loadScriptsContextMenu();
+	void executeScriptContextMenu(int commandId);
 
 public:
 	// controlling editor from outside
