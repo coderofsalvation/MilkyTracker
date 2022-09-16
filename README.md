@@ -1,4 +1,5 @@
-<img src="res/milkytrackerX.png" width="100%"/>
+<img src="res/milkytrackerX.png"/>
+<img src="res/milkytrackerX.gif" width="100%"/>
 
 > Q: What are the differences between MilkyTrackerX and MilkyTracker?
 
