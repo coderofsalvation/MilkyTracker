@@ -121,9 +121,6 @@ private:
 
 	bool drawing;
 	pp_int32 lastSamplePos;
-
-	void prepareUndo();
-	void finishUndo();
 	
 	bool revoke(const SampleUndoStackEntry* stackEntry);
 	
@@ -316,9 +313,11 @@ private:
 	TFilterFunc lastFilterFunc;
 		
 	void preFilter(TFilterFunc filterFuncPtr, const FilterParameters* par);
-	void postFilter();
 	
 public: 
+	void postFilter();
+	void prepareUndo();
+	void finishUndo();
 	void tool_newSample(const FilterParameters* par);
 	void tool_minimizeSample(const FilterParameters* par);
 	void tool_cropSample(const FilterParameters* par);
