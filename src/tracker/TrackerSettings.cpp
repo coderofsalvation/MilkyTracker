@@ -78,7 +78,7 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("LIMITDRIVE",0);
 	settingsDatabase->store("LIMITRESET",1);
 	settingsDatabase->store("RAMPING", 1);
-	settingsDatabase->store("INTERPOLATION", 1);
+	settingsDatabase->store("INTERPOLATION", 4);
 	settingsDatabase->store("MIXERFREQ", PlayerMaster::getPreferredSampleRate());
 #ifdef __FORCEPOWEROFTWOBUFFERSIZE__
 	settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", 1);
@@ -133,7 +133,7 @@ void Tracker::buildDefaultSettings()
 	// Pattern spacing
 	settingsDatabase->store("SPACING", 0);
 	// Trace instruments setting
-	settingsDatabase->store("INSTRUMENTBACKTRACE", 0);
+	settingsDatabase->store("INSTRUMENTBACKTRACE", 1);
 	// TAB to note?
 	settingsDatabase->store("TABTONOTE", 1);
 	// mouseclick to cursor?
@@ -156,7 +156,7 @@ void Tracker::buildDefaultSettings()
 #ifdef __LOWRES__
 	settingsDatabase->store("EDITMODE", EditModeMilkyTracker);
 #else
-	settingsDatabase->store("EDITMODE", EditModeFastTracker);
+	settingsDatabase->store("EDITMODE", EditModeMilkyTracker);
 #endif
 	// Our default scrolling mode
 	settingsDatabase->store("SCROLLMODE", ScrollModeStayInCenter);
@@ -167,7 +167,7 @@ void Tracker::buildDefaultSettings()
 	// Modulo for the first pattern highlight
 	settingsDatabase->store("HIGHLIGHTROW1", 0);
 	// Modulo for the second pattern highlight
-	settingsDatabase->store("HIGHLIGHTMODULO2", 8);
+	settingsDatabase->store("HIGHLIGHTMODULO2", 2);
 	// Modulo for the second pattern highlight
 	settingsDatabase->store("HIGHLIGHTROW2", 0);
 
@@ -244,7 +244,7 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("HDRECORDER_MIXERVOLUME", 256);
 	settingsDatabase->store("HDRECORDER_MIXERSHIFT", 1);
 	settingsDatabase->store("HDRECORDER_RAMPING", 1);
-	settingsDatabase->store("HDRECORDER_INTERPOLATION", 1);
+	settingsDatabase->store("HDRECORDER_INTERPOLATION", 4);
 	settingsDatabase->store("HDRECORDER_ALLOWMUTING", 0);
 
 	for (i = 0; i < NUMEFFECTMACROS; i++)

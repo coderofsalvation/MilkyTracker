@@ -70,7 +70,7 @@ private:
 	PPContextMenu* subMenuAdvanced;
 	PPContextMenu* subMenuXPaste;
 	PPContextMenu* subMenuGenerators;
-	PPContextMenu* subMenuPT;
+	PPContextMenu* subMenuFX;
 	PPContextMenu* subMenuScripting;
 
 	// extent

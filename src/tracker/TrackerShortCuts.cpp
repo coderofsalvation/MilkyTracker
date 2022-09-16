@@ -141,6 +141,10 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 				}
 				break;
 			}
+			case VK_TAB:{
+				backtraceInstrument( ::getKeyModifier() == (KeyModifierCTRL) ? -1 : +1);
+				break;
+			}
 
 			default:
 			{
@@ -278,7 +282,6 @@ processBindings:
 				recorderLogic->sendNoteUpToPatternEditor(event, note, patternEditorControl);	
 			}
 		}
-		
 	}
 }
 
@@ -851,6 +854,7 @@ void Tracker::doASCIISTEP16( pp_uint8 character, bool chselect ){
 			PatternEditorTools::Position& cursor = p->getCursor();
 			cursor.channel = ch < p->getNumChannels() ? ch : cursor.channel;
 			getPatternEditorControl()->setChannel( cursor.channel, 0 );
+			backtraceInstrument(0);
 		}else{
 			muteChannels[ch] = !muteChannels[ch];
 			bool mute = muteChannels[ch];

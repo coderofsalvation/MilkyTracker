@@ -420,7 +420,7 @@ void Tracker::initUI()
 #ifdef __LOWRES__
 	switchEditMode(EditModeMilkyTracker);
 #else
-	switchEditMode(EditModeFastTracker);
+	switchEditMode(EditModeMilkyTracker);
 #endif
 
 	screen->setFocus(patternEditorControl);
@@ -732,66 +732,82 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 		
 	}
 
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_SONG))->setText("Play Sng");	
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN))->setText("Play Pat");
+	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_SONG));
+	button->setText("\x10");	
+	button->setFlat(false);
+	button->setColor( TrackerConfig::colorHighLight_1);
+	button->setSize(PPSize( button->getSize().width, bHeight+3));
+
+	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN));
+	button->setText("\x1e");
+	button->setFlat(false);
+	button->setColor( TrackerConfig::colorHighLight_1);
+	button->setSize(PPSize( button->getSize().width, bHeight+8));
+
 	//static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP))->setText("Stop");
 	// Setup "Stop" PPButton
 	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP));
-	button->setText("Stop");
-	button->setSize(PPSize(77>>1, bHeight-1));
+	button->setText("\xa7");
+	button->setFlat(false);
+	button->setColor( TrackerConfig::colorHighLight_1);
+	button->setSize(PPSize(77>>1, bHeight+3));
 	// Add "Edit" button
 	button = new PPButton(MAINMENU_EDIT, screen, this, 
 						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y), 
 						PPSize(77>>1, bHeight-1), true, true, false);
 	
-	button->setText("Rec");
+	button->setText("rec");
 	
 	container->addControl(button);
 
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_ZAP))->setText("Zap");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_LOAD))->setText("Load");
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_ZAP))->setText("zap");
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_LOAD))->setText("load");
 	// Setup "Save" button
 	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_SAVE));
-	button->setText("Save");
+	button->setText("save");
 	button->setSize(PPSize(77>>1, bHeight-1));
 	// Add "Save As" button
 	button = new PPButton(MAINMENU_SAVEAS, screen, this, 
 						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y), 
 						PPSize(77>>1, bHeight-1));
 	
-	button->setText("As" PPSTR_PERIODS);
+	button->setText("as" PPSTR_PERIODS);
 	
 	container->addControl(button);
 	
 	//static_cast<PPButton*>(container->getControlByID(MAINMENU_SAVE));
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_DISKMENU))->setText("Disk Op.");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("Ins. Ed.");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setText("Smp. Ed.");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_ADVEDIT))->setText("Adv. Edit");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_TRANSPOSE))->setText("Transpose");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_CONFIG))->setText("Config");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_QUICKOPTIONS))->setText("Options");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_OPTIMIZE))->setText("Optimize");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_ABOUT))->setText("About");
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_DISKMENU))->setText("im/export");
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("instr");
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setText("samples");
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_ADVEDIT))->setText("poweredit");
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_TRANSPOSE))->setText("transpose");
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_CONFIG))->setText("config");
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_QUICKOPTIONS))->setText("playback");
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_OPTIMIZE))->setText("optimize");
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_ABOUT))->setText("about");
 
 	// add/subtract channels
 	button = new PPButton(BUTTON_MENU_ITEM_ADDCHANNELS, screen, this, PPPoint(x+4 + 3*78, y + 3 + 3*bHeight), PPSize((77>>1) - 1, bHeight-1));
-	button->setText("Add");
+	button->setText("+ch");
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_MENU_ITEM_SUBCHANNELS, screen, this, PPPoint(x+4 + 3*78 + (77>>1), y + 3 + 3*bHeight), PPSize((77>>1)+1, bHeight-1));
-	button->setText("Sub");
+	button->setText("-ch");
 	container->addControl(button);
 
 	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN));
-	button->setText("Pat");
-	button->setSize(PPSize((77>>1)-1, bHeight-1));
+	button->setText("\x10|");
+	button->setSize(PPSize((77>>1)-1, bHeight+3));
+	button->setColor( TrackerConfig::colorHighLight_1);
 
 	PPPoint p = button->getLocation();
 	p.x+=button->getSize().width+1;
 	
 	button = new PPButton(MAINMENU_PLAY_POSITION, screen, this, p, PPSize((77>>1)+1, bHeight-1));
-	button->setText("Pos");
+	button->setText("\x10-");
+	button->setFlat(false);
+	button->setSize(PPSize((77>>1)-1, bHeight+3));
+	button->setColor( TrackerConfig::colorHighLight_1);
 	container->addControl(button);
 
 	screen->addControl(container);	
@@ -1077,17 +1093,17 @@ void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 #ifndef __LOWRES__
 	button = new PPButton(BUTTON_INSTRUMENTEDITOR_CLEAR, screen, sectionInstruments, PPPoint(x+2 + size - 2 - 92, y+dy+tinyButtonOffset), PPSize(30, tinyButtonHeight));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("Zap");
+	button->setText("zap");
 	container->addControl(button);	
 
 	button = new PPButton(BUTTON_INSTRUMENTEDITOR_LOAD, screen, sectionInstruments, PPPoint(x+2 + size - 2 - 61, y+dy+tinyButtonOffset), PPSize(30, tinyButtonHeight));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("Load");
+	button->setText("load");
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_INSTRUMENTEDITOR_SAVE, screen, sectionInstruments, PPPoint(x+2 + size - 2 - 30, y+dy+tinyButtonOffset), PPSize(30, tinyButtonHeight));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("Save");
+	button->setText("save");
 	container->addControl(button);
 #else
 	button = new PPButton(BUTTON_INSTRUMENTS_FLIP, screen, this, PPPoint(container->getLocation().x + container->getSize().width - 27, y+dy+tinyButtonOffset - 1), PPSize(24, 11), false);
@@ -1149,6 +1165,27 @@ void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 #endif
 
 	screen->addControl(container);
+
+	PPString str = PPString("welcome2 MilkytrackerX");
+	getModuleEditor()->setInstrumentName(1,str.getStrBuffer(),str.length());
+	str.replace("CTRL+h     = help");
+	getModuleEditor()->setInstrumentName(3,str.getStrBuffer(),str.length());
+	str.replace("CTRL+space = uirotate");
+	getModuleEditor()->setInstrumentName(4,str.getStrBuffer(),str.length());
+	str.replace("CTRL+1-9   = chselect");
+	getModuleEditor()->setInstrumentName(5,str.getStrBuffer(),str.length());
+	str.replace("SHFT+1-9   = chmute");
+	getModuleEditor()->setInstrumentName(6,str.getStrBuffer(),str.length());
+	str.replace("CTRL\x18\x19     = instrsel");
+	getModuleEditor()->setInstrumentName(7,str.getStrBuffer(),str.length());
+	str.replace("CTRLSHIFT\x18\x19= smp");
+	getModuleEditor()->setInstrumentName(8,str.getStrBuffer(),str.length());
+	str.replace("SHIFT +/-  = add/del order");
+	getModuleEditor()->setInstrumentName(9,str.getStrBuffer(),str.length());
+	str.replace("ALT\x18\x19      = ordernav");
+	getModuleEditor()->setInstrumentName(10,str.getStrBuffer(),str.length());
+	str.replace("ALT\x1a\x1b      = setpatt.");
+	getModuleEditor()->setInstrumentName(11,str.getStrBuffer(),str.length());
 }
 
 void Tracker::showMessageBox(pp_int32 id, const PPString& caption, MessageBoxTypes type, bool update/* = true*/)

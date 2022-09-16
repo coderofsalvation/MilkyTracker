@@ -86,31 +86,31 @@ const PPString TrackerConfig::defaultPredefinedPanningEnvelope("0602030500000000
 const PPString TrackerConfig::defaultProTrackerPanning("0000002000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF00");
 
 const PPString TrackerConfig::defaultColorPalette("2B" // Numkeys 
-												  "FFFFFF" // ColorPatternNote
-												  "80E0FF" // ColorPatternInstrument
-												  "80FF80" // ColorPatternVolume
-												  "FF80E0" // ColorPatternEffect
-												  "FFE080" // ColorPatternOperand
-												  "8080FF" // ColorCursor
-												  "602040" // ColorCursorLine
-												  "A01830" // ColorCursorLineHighlighted
-												  "406080" // ColorTheme
-												  "FFFFFF" // ColorForegroundText
-												  "C0C0C0" // ColorButtons
-												  "000000" // ColorButtonText
-												  "8080FF" // ColorSelection
-												  "282849" // ColorListBoxBackground
-												  "103060" // ColorPatternSelection
-												  "FFFF00" // Hilighted text
-												  "FFFFFF" // Scopes
-												  "FFFF80" // Hilighted rows (secondary)
-												  "202020" // Row highlight background (primary)
-												  "101010" // Row highlight background (secondary)
-												  "203040" // ColorScrollBarBackground
-												  "FF0000" // ColorRecordModeButtonText
-												  "FF0000" // Scopes record indicator
-												  "FF0000" // Peak clip indicator
-												  "FFFF80" // Sample Editor Waveform
+												  "FFFFFF" // ColorPatternNote // ColorPatternNote
+												  "807F8C" // ColorPatternInstrument // ColorPatternInstrument
+												  "A7C9F1" // ColorPatternVolume // ColorPatternVolume
+												  "00A1FF" // ColorPatternEffect // ColorPatternEffect
+												  "7F7F80" // ColorPatternOperand // ColorPatternOperand
+												  "647278" // ColorCursor // ColorCursor
+												  "2E353C" // ColorCursorLine // ColorCursorLine
+												  "A01830" // ColorCursorLineHighlighted // ColorCursorLineHighlighted
+												  "1e2020" // ColorTheme // ColorTheme
+												  "AAAAAA" // ColorForegroundText // ColorForegroundText
+												  "282c2c" // ColorButtons // ColorButtons
+												  "CCCCCC" // ColorButtonText // ColorButtonText
+												  "49576B" // ColorSelection // ColorSelection
+												  "161B1D" // ColorListBoxBackground // ColorListBoxBackground
+												  "103060" // ColorPatternSelection // ColorPatternSelection
+												  "3c7283" // Hilighted text // Hilighted text
+												  "B5A7AE" // Scopes // Scopes
+												  "FFFFFF" // Hilighted rows (secondary) // Hilighted rows (secondary)
+												  "202120" // Row highlight background (primary) // Row highlight background (primary)
+												  "101000" // Row highlight background (secondary) // Row highlight background (secondary)
+												  "000000" // ColorScrollBarBackground // ColorScrollBarBackground
+												  "FF0000" // ColorRecordModeButtonText // ColorRecordModeButtonText
+												  "FF0000" // Scopes record indicator // Scopes record indicator
+												  "FF0000" // Peak clip indicator // Peak clip indicator
+												  "00A1FF" // Sample Editor Waveform
 												  "DB00A0"
 												  "DB00A0"
 												  "DB00A0"
@@ -134,7 +134,9 @@ const PPString TrackerConfig::defaultColorPalette("2B" // Numkeys
 const char* TrackerConfig::predefinedColorPalettes[TrackerConfig::numPredefinedColorPalettes] =                // Current last color start in the line of this comment marker
 {
 // default
-"2BFFFFFF80E0FF80FF80FF80E0FFE0808080FF602040A01830406080FFFFFFC0C0C00000008080FF282849103060FFFF00FFFFFFFFFF80202020101010203040FF0000FF0000FF0000FFFF803B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
+//"28FFFFFF807F8CA7C9F1FF57AE7F7F808C5DFF001A14A01830646B6BC2C2C2464949B5AEAE8C8CD0161B1D103060BBAEFFB5A7AEFFFFFF202120101000000000FF0000FF0000FF000000A1FF5B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040"
+//"2BFFFFFF80E0FF80FF80FF80E0FFE0808080FF602040A01830406080FFFFFFC0C0C00000008080FF282849103060FFFF00FFFFFFFFFF80202020101010203040FF0000FF0000FF0000FFFF803B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
+"28FFFFFF807F8CA7C9F100A1FF7F7F806472782E353CA018301e2020AAAAAA282c2cCCCCCC49576B161B1D1030603c7283B5A7AEFFFFFF202120101000000000FF0000FF0000FF000000A1FF3B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
 // bluish
 "2BFFFFFF7FB5FFA7DDFF00B5FF7FFFFF0000593F5A7F8618C9405DA7FFFFFFC0C0C000000080B5FF18183A103060FFFF00FFFFFFFFFF8020202010101018183AFF0000FF0000FF0000FFFF805B00205B00205B00205B00205B00205B00205B00205B00205B00205B00205B00205B00205B00205B00205B00205B00205B00205B0020",
 // nice one
@@ -151,4 +153,4 @@ const char* TrackerConfig::predefinedColorPalettes[TrackerConfig::numPredefinedC
 const PPSystemString TrackerConfig::untitledSong("Untitled");
 
 const pp_int32 TrackerConfig::numMixFrequencies = 4;
-const pp_int32 TrackerConfig::mixFrequencies[] = {11025, 22050, 44100, 48000};
+const pp_int32 TrackerConfig::mixFrequencies[] = {22050, 32000, 44100, 48000};

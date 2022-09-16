@@ -468,6 +468,24 @@ void PPScreen::paintSplash(const pp_uint8* rawData, pp_uint32 width, pp_uint32 h
 	s.width = width; s.height = height;
 	g->blit(rawData, p, s, pitch, bpp, intensity);
 
+	g->setColor(254,254,254);
+	g->setFont(PPFont::getFont(PPFont::FONT_SYSTEM));
+	g->drawString("MILKYTRACKER X EDITION", 11, 11, true );
+
+	pp_int32 ty = 30;
+	pp_int32 tx = 11;
+	pp_int32 line = 13;
+	g->drawString("special thanks to:", tx, ty+=11 );
+
+	tx += line;
+	ty += line;
+	g->setColor(80,80,80);
+	g->drawString("peter 'pailes' Barth", tx, ty+=line );
+	g->drawString("milkytracker devs", tx, ty+=line );
+	g->drawString("pefu", tx, ty+=line );
+	g->drawString("theorize", tx, ty+=line );
+	g->drawString("nicopomidj", tx, ty+=line );
+
 	displayDevice->close();
 	
 	displayDevice->update();	

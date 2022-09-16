@@ -22,9 +22,9 @@
 file(GLOB SONGS "*.xm")
 
 if(APPLE OR WIN32)
-    set(INSTALL_DEST "Example Songs")
+    set(INSTALL_DEST "examples")
 else()
-    set(INSTALL_DEST ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME_LOWER}/songs)
+    set(INSTALL_DEST ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME_LOWER}/examples)
 endif()
 
 install(FILES ${SONGS} DESTINATION ${INSTALL_DEST})
