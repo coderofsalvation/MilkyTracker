@@ -3,7 +3,7 @@
 
 > Q: What are the differences between MilkyTrackerX and MilkyTracker?
 
-A: MilkyTrackerX is basically a build of mainline MilkyTracker, but with **new gridsequencer-like features & UX-changes, and different default settings**, allowing a enjoyable UX for certain people.
+A: MilkyTrackerX is basically a build of mainline MilkyTracker, but with **new gridsequencer-like features & UX-changes, new keyboard shortcuts, [sample-editor scripting](https://gitlab.com/coderofsalvation/milkytracker-scripts), and different default settings** on top of it. A 'better' (opiniated) milkytracker workflow.
 
 ### Download MilkyTrackerX:
 
