@@ -755,7 +755,7 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 	button = new PPButton(MAINMENU_EDIT, screen, this, 
 						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y), 
 						PPSize(77>>1, bHeight-1), true, true, false);
-	
+	button->setSize(PPSize( button->getSize().width, bHeight+3));
 	button->setText("rec");
 	
 	container->addControl(button);
@@ -789,10 +789,12 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 	// add/subtract channels
 	button = new PPButton(BUTTON_MENU_ITEM_ADDCHANNELS, screen, this, PPPoint(x+4 + 3*78, y + 3 + 3*bHeight), PPSize((77>>1) - 1, bHeight-1));
 	button->setText("+ch");
+	button->setSize(PPSize( button->getSize().width, bHeight+3));
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_MENU_ITEM_SUBCHANNELS, screen, this, PPPoint(x+4 + 3*78 + (77>>1), y + 3 + 3*bHeight), PPSize((77>>1)+1, bHeight-1));
 	button->setText("-ch");
+	button->setSize(PPSize( button->getSize().width, bHeight+3));
 	container->addControl(button);
 
 	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN));
@@ -806,7 +808,7 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 	button = new PPButton(MAINMENU_PLAY_POSITION, screen, this, p, PPSize((77>>1)+1, bHeight-1));
 	button->setText("\x10-");
 	button->setFlat(false);
-	button->setSize(PPSize((77>>1)-1, bHeight+3));
+	button->setSize(PPSize((77>>1)+1, bHeight+3));
 	button->setColor( TrackerConfig::colorHighLight_1);
 	container->addControl(button);
 
