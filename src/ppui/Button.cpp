@@ -39,10 +39,10 @@ PPButton::PPButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* 
 	clickable(clickable),
 	update(update),
 	verticalText(false),
-	flat(true),
+	flat(false),
 	autoSizeFont(true),
 	offset(0,0),
-	invertShading(true),
+	invertShading(false),
 	lMouseDown(false), rMouseDown(false)
 {
 	// default colors
@@ -107,7 +107,7 @@ void PPButton::paint(PPGraphicsAbstract* g)
 
 		// adjust dark color
 		bColor = *color;
-		//bColor.scaleFixed(20000);
+		bColor.scaleFixed(20000);
 
 		g->setColor(bColor);
 		
