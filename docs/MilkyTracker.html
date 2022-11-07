@@ -201,6 +201,8 @@
 			<li><a href="#MIDI">MIDI support</a></li>
 			<li><a href="#issues">Known issues and bug reports</a></li>
 			<li><a href="#credits">Credits</a></li>
+			<li><a href="#scripting">Scripting</a></li>
+			<li><a href="#ASCIISTEP16">ASCIISTEP16</a></li>
 			<li><a href="#contact">Contact</a></li>
 			<li><a href="#donations">Donations</a></li>
 		</ol>
@@ -254,7 +256,7 @@
 			<li>Over 30 imported module formats</li>
 			<li>Basic archive support for loading zipped, powerpacked and UMX modules directly</li>
 			<li>Rendering songs/patterns to disk (.WAV) or directly to sample</li>
-			<li>Powerful sample editor featuring waveform generators</li>
+			<li>Powerful scriptable sample editor featuring waveform generators</li>
 			<li>In-depth instrument editor featuring envelope zooming and scaling and support for copying and swapping instruments and samples across tabs</li>
 			<li>Copy/swap dialog for instrument management</li>
 			<li>Undo/redo in pattern/sample/instrument editor</li>
@@ -266,6 +268,8 @@
 			<li>Prospective pattern view option</li>
 			<li>Playing and editing simultaneously</li>
 			<li>Live mode for seamless pattern changes</li>
+			<li>mastering limiter</li>
+			<li>ASCIISTEP16 liveperformance shortcuts</li>			
 		</ul>
 		<h3><a id="resamplers">Resamplers</a></h3>
 		<p>
@@ -3164,8 +3168,46 @@
 		</p>
 
 
+		<h2 id="scripting">10. Scripting</h2>
+		<p>
+			samples ARE key-ingredients for sample-trackers.<br> 
+			Fortunately the sample editor supports scripting, using a very easy workflow:<br>
+			<ul>
+				<li>rightclick in the sample-editor</li>
+				<li>click Scripts > load..   (and open a scripts.txt file)</li>
+				<li>now the Scripts-context menu will be loaded with scripts</li>
+				<li>now you can execute scripts, integrate with other sample-software etc</li>
+			</ul>	
+			<br>
+            for a scripts-bundle see: https://gitlab.com/coderofsalvation/milkytracker-scripts<br>
+			<br>
+			example scripts.txt:<br>
+			<code>
+				waveeditor mhwaveedit;echo %s && mhwaveedit %s|exec
+				waveeditor wavosaur  ;echo %s && c:\\my\\dir\\wavosaur.exe %s|exec
+				sox reverb+;sox -D %s %s pad 0 1.5 reverb 50 50 100 0 50|exec
+			</code>
+			<br>
+		</p>
 
-		<h2 id="credits">9. Credits</h2>
+		<h2 id="ASCIISTEP16">11. ASCIISTEP16 stepsequencer</h2>
+		<p>
+			ASCIISTEP16 is a pckeyboard standard & translation of popular hardware 16-step drum/midisequencers (electribe MX, electribe SX, mc303, tr909,tr808, mc707, arturia beatstep). The goal of ASCIISTEP16 is to offer a pckeyboard mode (usually for tracker software) which:
+			<ul>
+
+			<li>can act as a substitute for a hardware stepsequencer (on a pckeyboard)</li>
+			<li>allows 'grid'-like liveperformance on pckeyboards</li>
+			<li>allows people coming from the hardware stepsequencer scene to easily use ASCIISTEP16 compatible music-software</li>
+			<li>allows any unix character-device, or implementation to send 16 stepsequencer-buttons over ascii</li>
+			</ul>
+
+			To toggle channels use shift+(number) and to toggle steps use shift+qweryuioasdfhjkl<br>
+			<br>
+			for more info see: https://tinyurl.com/asciistep16
+		</p>
+
+
+		<h2 id="credits">11. Credits</h2>
 		<h4>
 			The MilkyTracker experience is brought to you by the following people:
 		</h4>
@@ -3178,7 +3220,7 @@
 				<td><em>Deltafire</em></td><td>maintainer since v0.90.85</td>
 			</tr>
 			<tr>
-				<td><em>coderofsalvation</em></td><td>maintainer since v1.03.00</td>
+				<td><em>coderofsalvation</em></td><td>maintainer since v1.03.00 + MilkyTrackerX builds</td>
 			</tr>
 			<tr>
 				<td><em>kenet</em></td><td>graphics</td>
