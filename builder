@@ -40,6 +40,7 @@ merge(){
   runverbose git merge --no-edit coderofsalvation/feat/sampleditor-scripting
   runverbose git merge --no-edit coderofsalvation/feat/sampleeditor-improved-pasting
   runverbose git merge --no-edit coderofsalvation/feat/ASCIISTEP16-compatibility-stepsequencer-mode
+  runverbose git merge --no-edit coderofsalvation/feat/update-docs-with-asciistep16-and-scripting -> feat/update-docs-with-asciistep16-and-scripting 
   expecterror runverbose git merge --no-edit coderofsalvation/feat/show-note-backtrace-in-instrumentlistbox
   # solve conflict (accept both changes)
  # cp src/tracker/Tracker.cpp /tmp/. && awk '!/^(<<<<|====|>>>>)/ {print $0}' /tmp/Tracker.cpp > src/tracker/Tracker.cpp
