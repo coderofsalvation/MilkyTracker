@@ -81,7 +81,7 @@ patch(){
 
   apply(){
     set -x
-    test -f milkytracker/patch.all && rm milkytracker/patch.all # delete accidental commit 
+    touch milkytracker/patch.all # why is this needed
     $(which patch) -p0 < patch/all.patch
   }
 
