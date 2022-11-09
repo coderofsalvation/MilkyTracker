@@ -86,7 +86,7 @@ patch(){
   }
 
   test -z $1 && apply
-  test -z $1 || create 
+  test -z $1 || "$@"
 }
 
 release(){
