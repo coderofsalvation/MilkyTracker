@@ -72,6 +72,8 @@ for:
   - sh: wget 'https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage';
   - sh: chmod +x appimagetool*.AppImage
   - sh: ./appimagetool-* MilkyTrackerX-x86_64.AppDir 
+  - sh: pwd
+  - sh: if [ $APPVEYOR_REPO_BRANCH == "master" ]; then cd ..; fi
 
 
 
