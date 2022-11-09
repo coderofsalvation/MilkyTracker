@@ -33,10 +33,9 @@ before_build:
   - sh: cd build
   - ps: |
       if ($env:APPVEYOR_REPO_BRANCH -eq "master"){ cd milkytracker }
-  - cmd: echo %appveyor_repo_branch
   - cmd: pwd
-  - cmd: md c:\projects\milkytrackerx\build
-  - cmd: cd c:\projects\milkytrackerx\build
+  - cmd: md build
+  - cmd: cd build
   - cmd: if %platform% == Win32 cmake -G "Visual Studio 15 2017" -T v140_xp ..
   - cmd: if %platform% == x64 cmake -G "Visual Studio 15 2017 Win64" -T v140_xp ..
 
