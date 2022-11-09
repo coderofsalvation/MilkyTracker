@@ -74,12 +74,14 @@ patch(){
     # enable backtrace note by default
     sed -i 's|settingsDatabase->store("INSTRUMENTBACKTRACE", 0);|settingsDatabase->store("INSTRUMENTBACKTRACE", 1);|g' milkytracker/src/tracker/TrackerSettings.cpp
     # now create the diff file 
+    rm milkytracker/all.patch # leftover?
     $(which diff) -Naur milkytracker.mainline milkytracker/ > patch/all.patch
     #cat patch/all.patch |less
   }
 
   apply(){
     set -x
+    test -f milkytracker/patch.all && rm milkytracker/patch.all # delete accidental commit 
     $(which patch) -p0 < patch/all.patch
   }
 
