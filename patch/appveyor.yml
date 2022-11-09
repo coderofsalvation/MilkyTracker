@@ -73,7 +73,6 @@ for:
   - sh: chmod +x appimagetool*.AppImage
   - sh: ./appimagetool-* MilkyTrackerX-x86_64.AppDir 
   - sh: pwd
-  - sh: if [ $APPVEYOR_REPO_BRANCH == "master" ]; then cd ..; fi
 
 
 
@@ -85,6 +84,8 @@ after_build:
 artifacts:
   - path: Milky*.AppImage
   - path: build\milkytracker*.zip
+  - path: milkytracker/Milky*.AppImage
+  - path: milkytracker/build\milkytracker*.zip
 
 #deploy:
 #  description: Release $(appveyor_repo_tag_name)
