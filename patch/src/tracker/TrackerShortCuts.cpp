@@ -257,7 +257,7 @@ processBindings:
 			}
 
 		}
-		if (::getKeyModifier() == (KeyModifierSHIFT) || ::getKeyModifier() == (KeyModifierCTRL) )
+		if (::getKeyModifier() == (KeyModifierSHIFT) )
 			doASCIISTEP16(keyCode, ::getKeyModifier() == (KeyModifierCTRL) );
 	}
 	else if (event->getID() == eKeyUp)
