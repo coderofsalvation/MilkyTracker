@@ -113,6 +113,7 @@ private:
 
 	PPString scriptsFile;
 	PPString scriptsFolder;
+	pp_int32 lastScriptId;
 
 	mp_sint32 getVisibleLength();
 	

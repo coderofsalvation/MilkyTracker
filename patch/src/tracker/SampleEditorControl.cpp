@@ -94,6 +94,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	drawMode(false),
 	selectionTicker(-1),
 	relativeNote(0),
+	lastScriptId(-1),
 	offsetFormat(OffsetFormatHex)
 {
 	// default color
@@ -2085,6 +2086,7 @@ void SampleEditorControl::editorNotification(EditorBase* sender, EditorBase::Edi
 void SampleEditorControl::loadScriptsContextMenu(){
 	subMenuScripting->empty();
 	subMenuScripting->addEntry("Load" PPSTR_PERIODS, Scripting::MenuIDScriptBrowse);
+	subMenuScripting->addEntry("Repeat [ctrl+alt+r]" PPSTR_PERIODS, -1);
 	Scripting::loadScripts( scriptsFile.getStrBuffer(), &scriptsFolder );
 	if( Scripting::scripts != NULL ){
 		static const char* seperatorStringLarge = "\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4";
@@ -2098,6 +2100,10 @@ void SampleEditorControl::executeScriptContextMenu(int commandId){
 	int selected_instrument;
 	int selected_sample;
 	PPString selected;
+
+	// repeat last script? (== -1)
+	commandId = commandId == -1 ? lastScriptId : commandId;
+	if( commandId == -1 && lastScriptId == -1 ) return; // nothing to repeat
 
 	if (commandId == Scripting::MenuIDScriptBrowse)
 	{
@@ -2162,5 +2168,6 @@ void SampleEditorControl::executeScriptContextMenu(int commandId){
 	showAll();
 	sampleEditor->finishUndo();
 	sampleEditor->postFilter();
+	if( commandId > 0 ) lastScriptId = commandId; // remember (for repeated executions)
 	currentPath->change(projectPath); // restore
 }
