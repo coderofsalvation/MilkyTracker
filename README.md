@@ -12,6 +12,13 @@ A: MilkyTrackerX is basically a build of mainline MilkyTracker, but with **new g
 * Win32: [milkytracker-win32.zip (untested)](https://ci.appveyor.com/api/buildjobs/5od1e67fb3by6urx/artifacts/milkytracker%2Fbuild%2Fmilkytracker-1.03.00-win32.zip)
 * Raspberry PI: [todo]()
 
+### Video demos
+
+[![MilkyTrackerX soundgrain integration](https://img.youtube.com/vi/s49Vd9cyvw0/maxresdefault.jpg)](https://www.youtube.com/watch?v=s49Vd9cyvw0)
+[![MilkyTrackerX csound integration](https://img.youtube.com/vi/PjPLyvbEeLo/maxresdefault.jpg)](https://www.youtube.com/watch?v=PjPLyvbEeLo)
+[![MilkyTrackerX realtime / custom sampler howto](https://img.youtube.com/vi/9vMedCfQ58g/maxresdefault.jpg)](https://www.youtube.com/watch?v=9vMedCfQ58g)
+[![MilkyTrackerX dev brainstorm session](https://img.youtube.com/vi/as9Ii0pt8dE/maxresdefault.jpg)](https://www.youtube.com/watch?v=as9Ii0pt8dE)
+
 ### Download scripts
 
 <img src="https://user-content.gitlab-static.net/40da125e4044bbd68b90204ee2419c246377730a/68747470733a2f2f757365722d696d616765732e67697468756275736572636f6e74656e742e636f6d2f3138303036382f3138363935393730352d32366636393438622d616466392d343138622d383061612d3435643664343130643337652e706e67" width="100%"/>
