@@ -8,7 +8,7 @@ A: MilkyTrackerX is basically a build of mainline MilkyTracker, but with **new g
 ### Download MilkyTrackerX:
 
 * Linux: [MilkyTracker-x86_64.AppImage](https://ci.appveyor.com/api/projects/coderofsalvation/milkytrackerx/artifacts/milkytracker/MilkyTrackerX-x86_64.AppImage?branch=master&job=Image:%20Ubuntu1604;%20Platform:%20x64)
-* Win64: [milkytracker-win64.zip](https://ci.appveyor.com/api/projects/coderofsalvation/milkytrackerx/artifacts/milkytracker/build/milkytracker-1.03.00-win64.zip?branch=master&job=Image: Visual Studio 2017; Platform: x64)
+* Win64: [milkytracker-win64.zip](https://ci.appveyor.com/api/projects/coderofsalvation/milkytrackerx/artifacts/milkytracker/build/milkytracker-1.03.00-win64.zip?branch=master&job=Image:%20Visual%20Studio%202017;%20Platform:%20x64)
 * Win32: [milkytracker-win32.zip (untested)](https://ci.appveyor.com/api/buildjobs/5od1e67fb3by6urx/artifacts/milkytracker%2Fbuild%2Fmilkytracker-1.03.00-win32.zip)
 * Raspberry PI: [todo]()
 
