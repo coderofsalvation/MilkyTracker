@@ -34,6 +34,9 @@ before_build:
   - ps: |
       if ($env:APPVEYOR_REPO_BRANCH -eq "master"){ cd milkytracker }
   - cmd: pwd
+  - cmd: curl "https://gnuwin32.sourceforge.net/downlinks/patch-bin-zip.php" -o patch.zip 
+  - cmd: unzip patch.zip
+  - cmd: bin\patch.exe -p0 < patch/all.patch
   - cmd: md build
   - cmd: cd build
   - cmd: if %platform% == Win32 cmake -G "Visual Studio 15 2017" -T v140_xp ..
@@ -43,40 +46,40 @@ before_build:
 build:
     project: milkytracker\build\MilkyTracker.sln
 
-for:
--
-  matrix:
-    only:
-      - image: Ubuntu1604
-      #- image: Ubuntu
-      #- image: Ubuntu1804
-      #- image: Ubuntu2004
-
-  build_script:
-  - sh: cmake -DCMAKE_BUILD_TYPE=Debug ..
-  - sh: make
-  - sh: cpack -C %configuration% -D CPACK_GENERATOR="ZIP"
-  - sh: cd ..
-  - sh: unzip build/milkytracker*.zip 
-  - sh: echo create AppImage
-  - sh: cp -r milkytracker-* MilkyTrackerX-x86_64.AppDir
-  - sh: cd MilkyTrackerX-x86_64.AppDir 
-  - sh: echo -e '#!/bin/sh\nHERE="$(dirname "$(readlink -f "${0}")")"\nLD_LIBRARY_PATH="$HERE/usr/lib":$LD_LIBRARY_PATH $HERE/bin/milkytracker' > AppRun && chmod +x AppRun
-  - sh: mkdir -p usr/lib/x86_64-linux-gnu usr/share
-  - sh: find /usr/lib |grep rtmidi
-  - sh: cp /usr/lib/x86_64-linux-gnu/librtmidi.so.2v5 usr/lib/x86_64-linux-gnu/.
-  - sh: cd usr/lib && ln -s x86_64-linux-gnu/librtmidi.so.2v5 && cd ../..
-  - sh: cp ../resources/pictures/carton.png milkytracker.png
-  - sh: cp ../resources/milkytracker.desktop .
-  - sh: sed -i 's|MilkyTracker|MilkyTrackerX|g;s|Comment=.*|Comment=A Portable SampleTracker DAW|g' milkytracker.desktop
-  #- sh: cp ../resources/milkytracker.appdata /usr/share/metainfo
-  - sh: find .
-  - sh: echo CHECKING LIBS && find . -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
-  - sh: cd .. 
-  - sh: wget 'https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage';
-  - sh: chmod +x appimagetool*.AppImage
-  - sh: ./appimagetool-* MilkyTrackerX-x86_64.AppDir 
-  - sh: pwd
+#for:
+#-
+#  matrix:
+#    only:
+#      - image: Ubuntu1604
+#      #- image: Ubuntu
+#      #- image: Ubuntu1804
+#      #- image: Ubuntu2004
+#
+#  build_script:
+#  - sh: cmake -DCMAKE_BUILD_TYPE=Debug ..
+#  - sh: make
+#  - sh: cpack -C %configuration% -D CPACK_GENERATOR="ZIP"
+#  - sh: cd ..
+#  - sh: unzip build/milkytracker*.zip 
+#  - sh: echo create AppImage
+#  - sh: cp -r milkytracker-* MilkyTrackerX-x86_64.AppDir
+#  - sh: cd MilkyTrackerX-x86_64.AppDir 
+#  - sh: echo -e '#!/bin/sh\nHERE="$(dirname "$(readlink -f "${0}")")"\nLD_LIBRARY_PATH="$HERE/usr/lib":$LD_LIBRARY_PATH $HERE/bin/milkytracker' > AppRun && chmod +x AppRun
+#  - sh: mkdir -p usr/lib/x86_64-linux-gnu usr/share
+#  - sh: find /usr/lib |grep rtmidi
+#  - sh: cp /usr/lib/x86_64-linux-gnu/librtmidi.so.2v5 usr/lib/x86_64-linux-gnu/.
+#  - sh: cd usr/lib && ln -s x86_64-linux-gnu/librtmidi.so.2v5 && cd ../..
+#  - sh: cp ../resources/pictures/carton.png milkytracker.png
+#  - sh: cp ../resources/milkytracker.desktop .
+#  - sh: sed -i 's|MilkyTracker|MilkyTrackerX|g;s|Comment=.*|Comment=A Portable SampleTracker DAW|g' milkytracker.desktop
+#  #- sh: cp ../resources/milkytracker.appdata /usr/share/metainfo
+#  - sh: find .
+#  - sh: echo CHECKING LIBS && find . -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+#  - sh: cd .. 
+#  - sh: wget 'https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage';
+#  - sh: chmod +x appimagetool*.AppImage
+#  - sh: ./appimagetool-* MilkyTrackerX-x86_64.AppDir 
+#  - sh: pwd
 
 
 
