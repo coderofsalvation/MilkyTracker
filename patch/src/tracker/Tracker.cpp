@@ -753,8 +753,8 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				playerLogic->playPattern();
 				break;
 
-			case MAINMENU_PLAY_POSITION:
-				playerLogic->playPosition();
+			case MAINMENU_HELP:
+				eventKeyDownBinding_InvokeHelp();
 				break;
 
 			case MAINMENU_STOP:
@@ -2838,18 +2838,25 @@ bool Tracker::loadTypeWithDialog(FileTypes eLoadType, bool suspendPlayer/* = tru
 	
 	bool res = true;
 		
-	if (openPanel->runModal() == PPModalDialog::ReturnCodeOK)
-	{
-		PPSystemString file = openPanel->getFileName();
-	
-		if (file.length())
+	filepicker:
+		PPOpenPanel::ReturnCodes ret = openPanel->runModal();	
+		
+		if( ret == PPModalDialog::ReturnCodeCANCEL ) goto filepicker_done;
+		if (ret == PPModalDialog::ReturnCodeOK)
 		{
-			PPSystemString fileName = file;
-			res = loadTypeFromFile(eLoadType, fileName, suspendPlayer, repaint, false);
+			PPSystemString file = openPanel->getFileName();
+		
+			if (file.length())
+			{
+				PPSystemString fileName = file;
+				res = loadTypeFromFile(eLoadType, fileName, suspendPlayer, repaint, false);
+			}
+		
 		}
-	
+		goto filepicker;
+
+	filepicker_done:
 		delete openPanel;
-	}
 	
 	return res;
 }

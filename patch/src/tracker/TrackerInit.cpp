@@ -721,7 +721,7 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 	{
 		for (i = 0; i < 4; i++)
 		{
-			if (j * 4 + i < 15)
+			if (j * 4 + i < 14)
 			{
 				button = new PPButton(BUTTON_MENU_ITEM_0 + j*4+i, screen, this, PPPoint(x+4 + i*78, y + 3 + j*bHeight), PPSize(77, bHeight-1));
 				button->setText("Unused");
@@ -746,11 +746,15 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 
 	//static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP))->setText("Stop");
 	// Setup "Stop" PPButton
-	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP));
-	button->setText("\xa7");
+	//button = static_cast<PPButton*>(container->getControlByID(MAINMENU_HELP));
+	button = new PPButton(MAINMENU_HELP, screen, this, 
+						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y), 
+						PPSize(77>>1, bHeight-1), true, true, false);
+	button->setText("?");
 	button->setFlat(false);
-	button->setColor( TrackerConfig::colorHighLight_1);
 	button->setSize(PPSize(77>>1, bHeight+3));
+	container->addControl(button);
+	
 	// Add "Edit" button
 	button = new PPButton(MAINMENU_EDIT, screen, this, 
 						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y), 
@@ -805,8 +809,8 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 	PPPoint p = button->getLocation();
 	p.x+=button->getSize().width+1;
 	
-	button = new PPButton(MAINMENU_PLAY_POSITION, screen, this, p, PPSize((77>>1)+1, bHeight-1));
-	button->setText("\x10-");
+	button = new PPButton(MAINMENU_STOP, screen, this, p, PPSize((77>>1)+1, bHeight-1));
+	button->setText("\xa7");
 	button->setFlat(false);
 	button->setSize(PPSize((77>>1)+1, bHeight+3));
 	button->setColor( TrackerConfig::colorHighLight_1);
@@ -902,7 +906,7 @@ void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 		PPPoint p = button->getLocation();
 		p.x+=button->getSize().width+1;
 		
-		button = new PPButton(MAINMENU_PLAY_POSITION, screen, this, p, PPSize((73>>1)+1, bHeight-1));
+		button = new PPButton(MAINMENU_HELP, screen, this, p, PPSize((73>>1)+1, bHeight-1));
 		button->setText("Pos");
 		container->addControl(button);
 		
@@ -1024,7 +1028,7 @@ void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 		container->addControl(button);
 
 		x2+=button->getSize().width+1;
-		button = new PPButton(MAINMENU_PLAY_POSITION, screen, this, PPPoint(x2, y2), PPSize((77>>1)+1, bHeight-1));
+		button = new PPButton(MAINMENU_HELP, screen, this, PPPoint(x2, y2), PPSize((77>>1)+1, bHeight-1));
 		button->setText("Pos");
 		container->addControl(button);
 		

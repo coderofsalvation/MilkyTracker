@@ -26,8 +26,18 @@ pull(){
 }
 
 merge(){
+
+  accept_both_commits(){
+   for i in $*; do
+     cp $i /tmp/cur && awk '!/^(<<<<|====|>>>>)/ {print $0}' /tmp/cur > $i
+   done
+   git add $* && git commit -m "resolve conflict $* (accept both commits)"
+  }
+
   cd milkytracker
+  #runverbose git merge --no-edit coderofsalvation/feat/keep-open-filedialog
   runverbose git merge --no-edit coderofsalvation/bugfix/sustain-keyjazz-note-instead-of-retriggering
+  runverbose git merge --no-edit coderofsalvation/feat/sample-editor-scaling-compress
   runverbose git merge --no-edit coderofsalvation/chore/copy-paste-sample-respect-relative-notenumber
   runverbose git merge --no-edit coderofsalvation/chore/remove-hardcoded-envelope-color
   runverbose git merge --no-edit coderofsalvation/claytone/adding-shortcuts-and-highlight-scope
@@ -39,11 +49,11 @@ merge(){
   runverbose git merge --no-edit coderofsalvation/feat/responsive-filedialog
   runverbose git merge --no-edit coderofsalvation/feat/sampleditor-scripting
   runverbose git merge --no-edit coderofsalvation/feat/sampleeditor-improved-pasting
+  expecterror runverbose git merge --no-edit coderofsalvation/feat/sample-editor-easy-fade-fold 
+  accept_both_commits src/tracker/SampleEditorControl.cpp src/tracker/SampleEditor.cpp
   runverbose git merge --no-edit coderofsalvation/feat/ASCIISTEP16-compatibility-stepsequencer-mode
   runverbose git merge --no-edit coderofsalvation/feat/update-docs-with-asciistep16-and-scripting
   expecterror runverbose git merge --no-edit coderofsalvation/feat/show-note-backtrace-in-instrumentlistbox
-  # solve conflict (accept both changes)
- # cp src/tracker/Tracker.cpp /tmp/. && awk '!/^(<<<<|====|>>>>)/ {print $0}' /tmp/Tracker.cpp > src/tracker/Tracker.cpp
   cd ..
 }
 
