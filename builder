@@ -83,6 +83,12 @@ patch(){
     sed -i 's|settingsDatabase->store("HIGHLIGHTMODULO2", 8);|settingsDatabase->store("HIGHLIGHTMODULO2", 2);|g' milkytracker/src/tracker/TrackerSettings.cpp
     # enable backtrace note by default
     sed -i 's|settingsDatabase->store("INSTRUMENTBACKTRACE", 0);|settingsDatabase->store("INSTRUMENTBACKTRACE", 1);|g' milkytracker/src/tracker/TrackerSettings.cpp
+    # enable multichannel editing
+    sed -i 's|settingsDatabase->store("MULTICHN_EDIT", 0);|settingsDatabase->store("MULTICHN_EDIT", 1);|g' milkytracker/src/tracker/TrackerSettings.cpp
+    # enable virtual channels JAM
+    sed -i 's|settingsDatabase->store("VIRTUALCHANNELS", 0);|settingsDatabase->store("VIRTUALCHANNELS", 1);|g' milkytracker/src/tracker/TrackerSettings.cpp
+    # set default rowadd to 0 
+    sed -i 's|settingsDatabase->store("ROWINSERTADD", 1);|settingsDatabase->store("ROWINSERTADD", 0);|g' milkytracker/src/tracker/TrackerSettings.cpp
     # now create the diff file 
     rm milkytracker/all.patch # leftover?
     $(which diff) -Naur milkytracker.mainline milkytracker/ > patch/all.patch
