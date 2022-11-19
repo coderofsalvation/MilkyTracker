@@ -7,6 +7,11 @@ A: MilkyTrackerX is basically a build of mainline MilkyTracker, but with **new g
 
 > a 'better' (opiniated) milkytracker workflow.
 
+> Q: Why a tracker? We have DAW's which supports 1001 things'n'plugins these days.
+
+A: Well good luck with that: 1001 things'n'plugins easily become a burden for productivity. This is where sample-trackers shine since the late 80s. 
+Samples & all-in-one-screen-UX are first-class-citizens, which introduces the up/downside of stronger separation between sounddesign and composition.
+
 ### Download MilkyTrackerX:
 
 * Linux: [MilkyTracker-x86_64.AppImage](https://ci.appveyor.com/api/projects/coderofsalvation/milkytrackerx/artifacts/milkytracker/MilkyTrackerX-x86_64.AppImage?branch=master&job=Image:%20Ubuntu1604;%20Platform:%20x64)
