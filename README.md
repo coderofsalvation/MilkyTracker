@@ -7,11 +7,6 @@
 
 A: MilkyTrackerX is basically a build of mainline MilkyTracker, but with **new gridsequencer-like features & UX-changes, new keyboard shortcuts, [sample-editor scripting](https://gitlab.com/coderofsalvation/milkytracker-scripts), [ASCIISTEP16 liveperforming](https://tinyurl.com/asciistep16) and different default settings** on top of it (a 'better' (opiniated) milkytracker workflow).
 
-> Q: Why a tracker? We have DAW's which supports 1001 things'n'plugins these days.
-
-A: Well good luck with that: 1001 things'n'plugins easily become a burden for productivity. This is where sample-trackers shine since the late 80s. 
-Samples & all-in-one-screen-UX are first-class-citizens, which introduces the up/downside of stronger separation between sounddesign and composition.
-
 ### Download MilkyTrackerX:
 
 * Linux: [MilkyTracker-x86_64.AppImage](https://ci.appveyor.com/api/projects/coderofsalvation/milkytrackerx/artifacts/milkytracker/MilkyTrackerX-x86_64.AppImage?branch=master&job=Image:%20Ubuntu1604;%20Platform:%20x64)
@@ -29,6 +24,10 @@ Samples & all-in-one-screen-UX are first-class-citizens, which introduces the up
 
 > NOTE #2: scripts for windows usually end with `.ps1` or `.bat` 
 
+### Video demo: easy chords/arps recording 
+
+[![MilkyTrackerX esily record chords and arps](https://img.youtube.com/vi/umFLn9QZtf4/maxresdefault.jpg)](https://www.youtube.com/watch?v=umFLn9QZtf4)
+
 ### Video demo: soundgrain integration
 
 [![MilkyTrackerX soundgrain integration](https://img.youtube.com/vi/s49Vd9cyvw0/maxresdefault.jpg)](https://www.youtube.com/watch?v=s49Vd9cyvw0)
@@ -45,3 +44,9 @@ Samples & all-in-one-screen-UX are first-class-citizens, which introduces the up
 
 [![MilkyTrackerX dev brainstorm session](https://img.youtube.com/vi/as9Ii0pt8dE/maxresdefault.jpg)](https://www.youtube.com/watch?v=as9Ii0pt8dE)
 
+### Background
+
+> Q: Why a tracker? We have DAW's which supports 1001 things'n'plugins these days.
+
+A: Well good luck with that: 1001 things'n'plugins easily become a burden for productivity. This is where sample-trackers shine since the late 80s. 
+Samples & all-in-one-screen-UX are first-class-citizens, which introduces the up/downside of stronger separation between sounddesign and composition.
