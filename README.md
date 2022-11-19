@@ -3,9 +3,7 @@
 
 > Q: What are the differences between MilkyTrackerX and MilkyTracker?
 
-A: MilkyTrackerX is basically a build of mainline MilkyTracker, but with **new gridsequencer-like features & UX-changes, new keyboard shortcuts, [sample-editor scripting](https://gitlab.com/coderofsalvation/milkytracker-scripts), [ASCIISTEP16 liveperforming](https://tinyurl.com/asciistep16) and different default settings** on top of it:
-
-> a 'better' (opiniated) milkytracker workflow.
+A: MilkyTrackerX is basically a build of mainline MilkyTracker, but with **new gridsequencer-like features & UX-changes, new keyboard shortcuts, [sample-editor scripting](https://gitlab.com/coderofsalvation/milkytracker-scripts), [ASCIISTEP16 liveperforming](https://tinyurl.com/asciistep16) and different default settings** on top of it (a 'better' (opiniated) milkytracker workflow).
 
 > Q: Why a tracker? We have DAW's which supports 1001 things'n'plugins these days.
 
