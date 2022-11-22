@@ -26,6 +26,7 @@ pull(){
   git reset $UPSTREAM_MILKYTRACKER_COMMIT --hard
   # copy this for creating diffpatch later
   test -d ../milkytracker.mainline && rm -rf ../milkytracker.mainline
+  git submodule update --init --recursive
   cp -r ../milkytracker ../milkytracker.mainline
   cd ..
 }
@@ -101,8 +102,9 @@ patch(){
     # set default rowadd to 0 
     sed -i 's|settingsDatabase->store("ROWINSERTADD", 1);|settingsDatabase->store("ROWINSERTADD", 0);|g' milkytracker/src/tracker/TrackerSettings.cpp
     # now create the diff file 
-    rm milkytracker/all.patch # leftover?
-    $(which diff) -Naur milkytracker.mainline milkytracker/ > patch/all.patch
+    rm milkytracker/all.patch milkytracker/build # leftovers
+
+    $(which diff) -Naur -x .git -x milkysynth milkytracker.mainline/src milkytracker/src  > patch/all.patch
     #cat patch/all.patch |less
   }
 
