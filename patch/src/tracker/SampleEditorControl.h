@@ -323,7 +323,8 @@ private:
 		MenuCommandIDGenerateSawtooth,
 		MenuCommandIDGenerateHalfSine,
 		MenuCommandIDGenerateAbsoluteSine,
-		MenuCommandIDGenerateQuarterSine
+		MenuCommandIDGenerateQuarterSine,
+		MenuCommandIDGenerateMilkySynth
 	};
 	
 	void executeMenuCommand(pp_int32 commandId);

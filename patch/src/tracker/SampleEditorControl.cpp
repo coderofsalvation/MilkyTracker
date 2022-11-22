@@ -41,6 +41,7 @@
 #include "ControlIDs.h"
 #include "SectionSamples.h"
 #include "TrackerSettingsDatabase.h"
+#include "FilterParameters.h"
 
 #include <algorithm>
 #include <math.h>
@@ -180,6 +181,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuGenerators->addEntry("Absolute Sine" PPSTR_PERIODS, MenuCommandIDGenerateAbsoluteSine);
 	subMenuGenerators->addEntry("Quarter Sine" PPSTR_PERIODS, MenuCommandIDGenerateQuarterSine);
 	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
+    subMenuGenerators->addEntry("MilkySynth (random)" PPSTR_PERIODS, MenuCommandIDGenerateMilkySynth);
 
 	// scripting menu
 	subMenuScripting = new PPContextMenu(8, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
@@ -1883,6 +1885,12 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			sampleEditor->tool_scaleSample(&par);
 			break;
 		}
+
+		case MenuCommandIDGenerateMilkySynth:{
+      		FilterParameters par(1);
+			sampleEditor->tool_milkysynth(&par);
+			break;
+    	}
 
 		case MenuCommandIDVolumeFold:{
 			sampleEditor->tool_foldSample(NULL);

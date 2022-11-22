@@ -20,7 +20,7 @@
 #
 
 cmake_minimum_required(VERSION 3.10)
-project(MilkyTracker)
+project(MilkyTrackerX)
 
 # Set C++ standard to C++98
 set(CMAKE_CXX_STANDARD 11)
@@ -52,7 +52,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # Version number in format X.YY.ZZ
 set(VER_X  1)
-set(VER_YY 03)
+set(VER_YY 04)
 set(VER_ZZ 00)
 set(VER_FULL "${VER_X}.${VER_YY}.${VER_ZZ}")
 
@@ -81,11 +81,11 @@ else()
 endif()
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME_LOWER})
 set(CPACK_PACKAGE_VENDOR "MilkyTracker Team")
-set(CPACK_PACKAGE_CONTACT "support@milkytracker.org")
+set(CPACK_PACKAGE_CONTACT "leonvankammen@gmail.com")
 set(CPACK_PACKAGE_VERSION_MAJOR ${VER_X})
 set(CPACK_PACKAGE_VERSION_MINOR ${VER_YY})
 set(CPACK_PACKAGE_VERSION_PATCH ${VER_ZZ})
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FastTracker II compatible music tracker")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "A crossplatform SAMPLE-tracker DAW which exports to .wav & XM-module (=open format)")
 include(CPack)
 
 if(APPLE)
@@ -221,6 +221,7 @@ add_subdirectory(resources/music)
 add_subdirectory(src/compression)
 add_subdirectory(src/fx)
 add_subdirectory(src/milkyplay)
+add_subdirectory(src/milkysynth)
 add_subdirectory(src/ppui)
 add_subdirectory(src/tracker)
 
