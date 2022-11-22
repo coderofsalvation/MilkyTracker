@@ -1,6 +1,6 @@
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/midi/posix/MidiReceiver_pthread.cpp milkytracker/src/midi/posix/MidiReceiver_pthread.cpp
---- milkytracker.mainline/src/midi/posix/MidiReceiver_pthread.cpp	2022-11-22 21:54:16.439905265 +0100
-+++ milkytracker/src/midi/posix/MidiReceiver_pthread.cpp	2022-11-22 21:54:16.640904710 +0100
+--- milkytracker.mainline/src/midi/posix/MidiReceiver_pthread.cpp	2022-11-22 21:57:21.019399674 +0100
++++ milkytracker/src/midi/posix/MidiReceiver_pthread.cpp	2022-11-22 21:57:21.235399087 +0100
 @@ -42,12 +42,12 @@
  	recordVelocity(false),
  	velocityAmplify(100)
@@ -34,8 +34,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/midi/posix/MidiReceiv
 +}
 \ No newline at end of file
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/midi/posix/MidiReceiver_pthread.h milkytracker/src/midi/posix/MidiReceiver_pthread.h
---- milkytracker.mainline/src/midi/posix/MidiReceiver_pthread.h	2022-11-22 21:54:16.439905265 +0100
-+++ milkytracker/src/midi/posix/MidiReceiver_pthread.h	2022-11-22 21:54:16.640904710 +0100
+--- milkytracker.mainline/src/midi/posix/MidiReceiver_pthread.h	2022-11-22 21:57:21.019399674 +0100
++++ milkytracker/src/midi/posix/MidiReceiver_pthread.h	2022-11-22 21:57:21.235399087 +0100
 @@ -66,6 +66,7 @@
  
  	bool startRecording(unsigned int deviceID);
@@ -46,7 +46,7 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/midi/posix/MidiReceiv
  #endif
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/milkyplay/Limiter.h milkytracker/src/milkyplay/Limiter.h
 --- milkytracker.mainline/src/milkyplay/Limiter.h	1970-01-01 01:00:00.000000000 +0100
-+++ milkytracker/src/milkyplay/Limiter.h	2022-11-22 21:54:16.657904663 +0100
++++ milkytracker/src/milkyplay/Limiter.h	2022-11-22 21:57:21.254399035 +0100
 @@ -0,0 +1,195 @@
 +/*
 + * Copyright (c) 2022, The MilkyTracker Team.
@@ -245,8 +245,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/milkyplay/Limiter.h m
 +};
 \ No newline at end of file
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/milkyplay/MasterMixer.cpp milkytracker/src/milkyplay/MasterMixer.cpp
---- milkytracker.mainline/src/milkyplay/MasterMixer.cpp	2022-11-22 21:54:16.441905259 +0100
-+++ milkytracker/src/milkyplay/MasterMixer.cpp	2022-11-22 21:54:16.657904663 +0100
+--- milkytracker.mainline/src/milkyplay/MasterMixer.cpp	2022-11-22 21:57:21.021399669 +0100
++++ milkytracker/src/milkyplay/MasterMixer.cpp	2022-11-22 21:57:21.254399035 +0100
 @@ -64,6 +64,7 @@
  	started(false),
  	paused(false)
@@ -284,8 +284,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/milkyplay/MasterMixer
  	if (!disableMixing)
  		swapOutBuffer(buffer);
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/milkyplay/MasterMixer.h milkytracker/src/milkyplay/MasterMixer.h
---- milkytracker.mainline/src/milkyplay/MasterMixer.h	2022-11-22 21:54:16.442905257 +0100
-+++ milkytracker/src/milkyplay/MasterMixer.h	2022-11-22 21:54:16.657904663 +0100
+--- milkytracker.mainline/src/milkyplay/MasterMixer.h	2022-11-22 21:57:21.021399669 +0100
++++ milkytracker/src/milkyplay/MasterMixer.h	2022-11-22 21:57:21.254399035 +0100
 @@ -39,6 +39,7 @@
  #define __MASTERMIXER_H__
  
@@ -313,8 +313,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/milkyplay/MasterMixer
  	struct DeviceDescriptor
  	{
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/milkyplay/PlayerGeneric.cpp milkytracker/src/milkyplay/PlayerGeneric.cpp
---- milkytracker.mainline/src/milkyplay/PlayerGeneric.cpp	2022-11-22 21:54:16.442905257 +0100
-+++ milkytracker/src/milkyplay/PlayerGeneric.cpp	2022-11-22 21:54:16.657904663 +0100
+--- milkytracker.mainline/src/milkyplay/PlayerGeneric.cpp	2022-11-22 21:57:21.022399666 +0100
++++ milkytracker/src/milkyplay/PlayerGeneric.cpp	2022-11-22 21:57:21.254399035 +0100
 @@ -923,7 +923,8 @@
  									 const mp_ubyte* mutingArray/* = NULL*/, mp_uint32 mutingNumChannels/* = 0*/,
  									 const mp_ubyte* customPanningTable/* = NULL*/,
@@ -334,8 +334,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/milkyplay/PlayerGener
  		
  		mixer.start();
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/milkyplay/PlayerGeneric.h milkytracker/src/milkyplay/PlayerGeneric.h
---- milkytracker.mainline/src/milkyplay/PlayerGeneric.h	2022-11-22 21:54:16.442905257 +0100
-+++ milkytracker/src/milkyplay/PlayerGeneric.h	2022-11-22 21:54:16.657904663 +0100
+--- milkytracker.mainline/src/milkyplay/PlayerGeneric.h	2022-11-22 21:57:21.022399666 +0100
++++ milkytracker/src/milkyplay/PlayerGeneric.h	2022-11-22 21:57:21.254399035 +0100
 @@ -103,6 +103,8 @@
  	mp_sint32			panningSeparation;
  	// remember maximum amount of virtual channels
@@ -356,16 +356,16 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/milkyplay/PlayerGener
  	/**
  	 * Grab current channel data from a module channel
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/ContextMenu.cpp milkytracker/src/ppui/ContextMenu.cpp
---- milkytracker.mainline/src/ppui/ContextMenu.cpp	2022-11-22 21:54:16.444905251 +0100
-+++ milkytracker/src/ppui/ContextMenu.cpp	2022-11-22 21:54:16.751904404 +0100
+--- milkytracker.mainline/src/ppui/ContextMenu.cpp	2022-11-22 21:57:21.025399658 +0100
++++ milkytracker/src/ppui/ContextMenu.cpp	2022-11-22 21:57:21.349398777 +0100
 @@ -375,4 +375,3 @@
  
  	this->location = loc;
  }
 -
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/ContextMenu.h milkytracker/src/ppui/ContextMenu.h
---- milkytracker.mainline/src/ppui/ContextMenu.h	2022-11-22 21:54:16.444905251 +0100
-+++ milkytracker/src/ppui/ContextMenu.h	2022-11-22 21:54:16.751904404 +0100
+--- milkytracker.mainline/src/ppui/ContextMenu.h	2022-11-22 21:57:21.025399658 +0100
++++ milkytracker/src/ppui/ContextMenu.h	2022-11-22 21:57:21.349398777 +0100
 @@ -101,6 +101,9 @@
  	
  	void setNotifyParentOnHide(bool notifyParentOnHide) { this->notifyParentOnHide = notifyParentOnHide; }
@@ -377,8 +377,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/ContextMenu.h mi
  
  #endif
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/DialogFileSelector.cpp milkytracker/src/ppui/DialogFileSelector.cpp
---- milkytracker.mainline/src/ppui/DialogFileSelector.cpp	2022-11-22 21:54:16.444905251 +0100
-+++ milkytracker/src/ppui/DialogFileSelector.cpp	2022-11-22 21:54:16.722904484 +0100
+--- milkytracker.mainline/src/ppui/DialogFileSelector.cpp	2022-11-22 21:57:21.025399658 +0100
++++ milkytracker/src/ppui/DialogFileSelector.cpp	2022-11-22 21:57:21.321398853 +0100
 @@ -76,7 +76,9 @@
  	allowEditFileName(editfileName),
  	sortAscending(true)
@@ -391,8 +391,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/DialogFileSelect
  	PPControl* text = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION);
  	text->setLocation(PPPoint(text->getLocation().x, text->getLocation().y - 4));
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/Dictionary.cpp milkytracker/src/ppui/Dictionary.cpp
---- milkytracker.mainline/src/ppui/Dictionary.cpp	2022-11-22 21:54:16.444905251 +0100
-+++ milkytracker/src/ppui/Dictionary.cpp	2022-11-22 21:54:16.657904663 +0100
+--- milkytracker.mainline/src/ppui/Dictionary.cpp	2022-11-22 21:57:21.025399658 +0100
++++ milkytracker/src/ppui/Dictionary.cpp	2022-11-22 21:57:21.254399035 +0100
 @@ -68,7 +68,7 @@
  	for (pp_int32 i = 0;  i < keys->size(); i++)
  	{
@@ -403,8 +403,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/Dictionary.cpp m
  	}
  	return NULL;
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/DisplayDeviceBase.h milkytracker/src/ppui/DisplayDeviceBase.h
---- milkytracker.mainline/src/ppui/DisplayDeviceBase.h	2022-11-22 21:54:16.444905251 +0100
-+++ milkytracker/src/ppui/DisplayDeviceBase.h	2022-11-22 21:54:18.145900556 +0100
+--- milkytracker.mainline/src/ppui/DisplayDeviceBase.h	2022-11-22 21:57:21.025399658 +0100
++++ milkytracker/src/ppui/DisplayDeviceBase.h	2022-11-22 21:57:22.987394321 +0100
 @@ -25,8 +25,8 @@
  
  // Some default values
@@ -417,8 +417,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/DisplayDeviceBas
  	#define DISPLAYDEVICE_WIDTH 320
  	#define DISPLAYDEVICE_HEIGHT 240
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/Screen.cpp milkytracker/src/ppui/Screen.cpp
---- milkytracker.mainline/src/ppui/Screen.cpp	2022-11-22 21:54:16.446905246 +0100
-+++ milkytracker/src/ppui/Screen.cpp	2022-11-22 21:54:18.107900661 +0100
+--- milkytracker.mainline/src/ppui/Screen.cpp	2022-11-22 21:57:21.027399652 +0100
++++ milkytracker/src/ppui/Screen.cpp	2022-11-22 21:57:22.942394443 +0100
 @@ -468,6 +468,24 @@
  	s.width = width; s.height = height;
  	g->blit(rawData, p, s, pitch, bpp, intensity);
@@ -445,8 +445,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/Screen.cpp milky
  	
  	displayDevice->update();	
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/sdl/DisplayDevice_SDL.cpp milkytracker/src/ppui/sdl/DisplayDevice_SDL.cpp
---- milkytracker.mainline/src/ppui/sdl/DisplayDevice_SDL.cpp	2022-11-22 21:54:16.448905240 +0100
-+++ milkytracker/src/ppui/sdl/DisplayDevice_SDL.cpp	2022-11-22 21:54:16.701904542 +0100
+--- milkytracker.mainline/src/ppui/sdl/DisplayDevice_SDL.cpp	2022-11-22 21:57:21.031399641 +0100
++++ milkytracker/src/ppui/sdl/DisplayDevice_SDL.cpp	2022-11-22 21:57:21.303398901 +0100
 @@ -28,6 +28,7 @@
  	size_t namelen = 0;
  	char rendername[256] = { 0 };
@@ -474,8 +474,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/ppui/sdl/DisplayDevic
  	if (theWindow == NULL)
  	{
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tools/generateHelp.sh milkytracker/src/tools/generateHelp.sh
---- milkytracker.mainline/src/tools/generateHelp.sh	2022-11-22 21:54:16.521905039 +0100
-+++ milkytracker/src/tools/generateHelp.sh	2022-11-22 21:54:16.936903893 +0100
+--- milkytracker.mainline/src/tools/generateHelp.sh	2022-11-22 21:57:21.110399427 +0100
++++ milkytracker/src/tools/generateHelp.sh	2022-11-22 21:57:21.563398194 +0100
 @@ -1,7 +1,11 @@
  #!/bin/sh
  set -x
@@ -490,8 +490,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tools/generateHelp.sh
    echo "// generated by src/tools/generateHelp.sh"
    xxd -i milkytracker.help 
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/CMakeLists.txt milkytracker/src/tracker/CMakeLists.txt
---- milkytracker.mainline/src/tracker/CMakeLists.txt	2022-11-22 21:54:16.521905039 +0100
-+++ milkytracker/src/tracker/CMakeLists.txt	2022-11-22 21:54:16.535905000 +0100
+--- milkytracker.mainline/src/tracker/CMakeLists.txt	2022-11-22 21:57:21.111399424 +0100
++++ milkytracker/src/tracker/CMakeLists.txt	2022-11-22 21:57:21.126399383 +0100
 @@ -207,6 +207,7 @@
  target_link_libraries(tracker
      fx
@@ -501,8 +501,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/CMakeLists.tx
      ppui
  )
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/ControlIDs.h milkytracker/src/tracker/ControlIDs.h
---- milkytracker.mainline/src/tracker/ControlIDs.h	2022-11-22 21:54:16.521905039 +0100
-+++ milkytracker/src/tracker/ControlIDs.h	2022-11-22 21:54:18.117900633 +0100
+--- milkytracker.mainline/src/tracker/ControlIDs.h	2022-11-22 21:57:21.111399424 +0100
++++ milkytracker/src/tracker/ControlIDs.h	2022-11-22 21:57:22.954394411 +0100
 @@ -170,6 +170,7 @@
  	BUTTON_INSTRUMENTEDITOR_CLEAR =		270,
  	
@@ -521,8 +521,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/ControlIDs.h 
  	MAINMENU_EDIT =						(BUTTON_MENU_ITEM_0+22),
  	
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/DialogHelpText.h milkytracker/src/tracker/DialogHelpText.h
---- milkytracker.mainline/src/tracker/DialogHelpText.h	2022-11-22 21:54:16.522905036 +0100
-+++ milkytracker/src/tracker/DialogHelpText.h	2022-11-22 21:54:16.938903887 +0100
+--- milkytracker.mainline/src/tracker/DialogHelpText.h	2022-11-22 21:57:21.111399424 +0100
++++ milkytracker/src/tracker/DialogHelpText.h	2022-11-22 21:57:21.565398189 +0100
 @@ -97,982 +97,1436 @@
    0x0a, 0x0a, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x39, 0x2e, 0x20, 0x5b,
    0x31, 0x39, 0x5d, 0x43, 0x72, 0x65, 0x64, 0x69, 0x74, 0x73, 0x0a, 0x0a,
@@ -9084,8 +9084,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/DialogHelpTex
 -unsigned int milkytracker_help_len = 53664;
 +unsigned int milkytracker_help_len = 55105;
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/EnvelopeEditorControl.cpp milkytracker/src/tracker/EnvelopeEditorControl.cpp
---- milkytracker.mainline/src/tracker/EnvelopeEditorControl.cpp	2022-11-22 21:54:16.522905036 +0100
-+++ milkytracker/src/tracker/EnvelopeEditorControl.cpp	2022-11-22 21:54:16.589904851 +0100
+--- milkytracker.mainline/src/tracker/EnvelopeEditorControl.cpp	2022-11-22 21:57:21.112399421 +0100
++++ milkytracker/src/tracker/EnvelopeEditorControl.cpp	2022-11-22 21:57:21.181399233 +0100
 @@ -338,7 +338,7 @@
  		}
  	}
@@ -9096,8 +9096,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/EnvelopeEdito
  	{
  		PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/FilterParameters.h milkytracker/src/tracker/FilterParameters.h
---- milkytracker.mainline/src/tracker/FilterParameters.h	2022-11-22 21:54:16.522905036 +0100
-+++ milkytracker/src/tracker/FilterParameters.h	2022-11-22 21:54:16.794904285 +0100
+--- milkytracker.mainline/src/tracker/FilterParameters.h	2022-11-22 21:57:21.112399421 +0100
++++ milkytracker/src/tracker/FilterParameters.h	2022-11-22 21:57:21.409398613 +0100
 @@ -38,6 +38,8 @@
  	{
  		float floatPart;
@@ -9121,7 +9121,7 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/FilterParamet
  private:
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/MilkySynthRandom.h milkytracker/src/tracker/MilkySynthRandom.h
 --- milkytracker.mainline/src/tracker/MilkySynthRandom.h	1970-01-01 01:00:00.000000000 +0100
-+++ milkytracker/src/tracker/MilkySynthRandom.h	2022-11-22 21:54:16.535905000 +0100
++++ milkytracker/src/tracker/MilkySynthRandom.h	2022-11-22 21:57:21.126399383 +0100
 @@ -0,0 +1,64 @@
 +/*
 + *  tracker/RandomSynth.h
@@ -9189,8 +9189,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/MilkySynthRan
 +#endif
 \ No newline at end of file
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/ModuleServices.cpp milkytracker/src/tracker/ModuleServices.cpp
---- milkytracker.mainline/src/tracker/ModuleServices.cpp	2022-11-22 21:54:16.525905028 +0100
-+++ milkytracker/src/tracker/ModuleServices.cpp	2022-11-22 21:54:16.657904663 +0100
+--- milkytracker.mainline/src/tracker/ModuleServices.cpp	2022-11-22 21:57:21.116399410 +0100
++++ milkytracker/src/tracker/ModuleServices.cpp	2022-11-22 21:57:21.255399032 +0100
 @@ -59,7 +59,9 @@
  									   parameters.muting, 
  									   module.header.channum, 
@@ -9245,8 +9245,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/ModuleService
  	return res;
  }
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/ModuleServices.h milkytracker/src/tracker/ModuleServices.h
---- milkytracker.mainline/src/tracker/ModuleServices.h	2022-11-22 21:54:16.525905028 +0100
-+++ milkytracker/src/tracker/ModuleServices.h	2022-11-22 21:54:16.657904663 +0100
+--- milkytracker.mainline/src/tracker/ModuleServices.h	2022-11-22 21:57:21.116399410 +0100
++++ milkytracker/src/tracker/ModuleServices.h	2022-11-22 21:57:21.255399032 +0100
 @@ -64,6 +64,7 @@
  		pp_uint32 toOrder;
  		const pp_uint8* muting;
@@ -9266,8 +9266,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/ModuleService
  		}
  	};
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PatternEditorControlEventListener.cpp milkytracker/src/tracker/PatternEditorControlEventListener.cpp
---- milkytracker.mainline/src/tracker/PatternEditorControlEventListener.cpp	2022-11-22 21:54:16.526905025 +0100
-+++ milkytracker/src/tracker/PatternEditorControlEventListener.cpp	2022-11-22 21:54:16.912903959 +0100
+--- milkytracker.mainline/src/tracker/PatternEditorControlEventListener.cpp	2022-11-22 21:57:21.116399410 +0100
++++ milkytracker/src/tracker/PatternEditorControlEventListener.cpp	2022-11-22 21:57:21.530398284 +0100
 @@ -1135,4 +1135,4 @@
  		return true;
  		
@@ -9276,8 +9276,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PatternEditor
 +}
 \ No newline at end of file
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PatternEditorControlKeyboard.cpp milkytracker/src/tracker/PatternEditorControlKeyboard.cpp
---- milkytracker.mainline/src/tracker/PatternEditorControlKeyboard.cpp	2022-11-22 21:54:16.526905025 +0100
-+++ milkytracker/src/tracker/PatternEditorControlKeyboard.cpp	2022-11-22 21:54:16.975903785 +0100
+--- milkytracker.mainline/src/tracker/PatternEditorControlKeyboard.cpp	2022-11-22 21:57:21.116399410 +0100
++++ milkytracker/src/tracker/PatternEditorControlKeyboard.cpp	2022-11-22 21:57:21.602398088 +0100
 @@ -37,8 +37,8 @@
  	eventKeyDownBindingsMilkyTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
  
@@ -9378,8 +9378,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PatternEditor
  
  void PatternEditorControl::eventKeyDownBinding_InsertNote()
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PatternEditor.cpp milkytracker/src/tracker/PatternEditor.cpp
---- milkytracker.mainline/src/tracker/PatternEditor.cpp	2022-11-22 21:54:16.525905028 +0100
-+++ milkytracker/src/tracker/PatternEditor.cpp	2022-11-22 21:54:16.975903785 +0100
+--- milkytracker.mainline/src/tracker/PatternEditor.cpp	2022-11-22 21:57:21.116399410 +0100
++++ milkytracker/src/tracker/PatternEditor.cpp	2022-11-22 21:57:21.602398088 +0100
 @@ -265,23 +265,6 @@
  		
  	if (!instrumentEnabled)
@@ -9440,8 +9440,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PatternEditor
  							  bool withUndo/* = false*/, 
  							  PatternAdvanceInterface* advanceImpl/* = NULL*/)
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PatternEditor.h milkytracker/src/tracker/PatternEditor.h
---- milkytracker.mainline/src/tracker/PatternEditor.h	2022-11-22 21:54:16.526905025 +0100
-+++ milkytracker/src/tracker/PatternEditor.h	2022-11-22 21:54:16.975903785 +0100
+--- milkytracker.mainline/src/tracker/PatternEditor.h	2022-11-22 21:57:21.116399410 +0100
++++ milkytracker/src/tracker/PatternEditor.h	2022-11-22 21:57:21.602398088 +0100
 @@ -277,6 +277,7 @@
  	bool isInstrumentEnabled() { return instrumentEnabled; }	
  	// Intelligent instrument backtrace?
@@ -9464,8 +9464,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PatternEditor
  	// --- write through, without undo etc. ----------------------------------
  	void writeDirectNote(pp_int32 note,
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PlayerMaster.cpp milkytracker/src/tracker/PlayerMaster.cpp
---- milkytracker.mainline/src/tracker/PlayerMaster.cpp	2022-11-22 21:54:16.526905025 +0100
-+++ milkytracker/src/tracker/PlayerMaster.cpp	2022-11-22 21:54:16.658904661 +0100
+--- milkytracker.mainline/src/tracker/PlayerMaster.cpp	2022-11-22 21:57:21.117399408 +0100
++++ milkytracker/src/tracker/PlayerMaster.cpp	2022-11-22 21:57:21.255399032 +0100
 @@ -68,7 +68,9 @@
  
  		if (!player->isPlaying())
@@ -9487,8 +9487,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PlayerMaster.
  	if (settings.ramping >= 0)
  		currentSettings.ramping = settings.ramping;
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PlayerMaster.h milkytracker/src/tracker/PlayerMaster.h
---- milkytracker.mainline/src/tracker/PlayerMaster.h	2022-11-22 21:54:16.527905022 +0100
-+++ milkytracker/src/tracker/PlayerMaster.h	2022-11-22 21:54:16.658904661 +0100
+--- milkytracker.mainline/src/tracker/PlayerMaster.h	2022-11-22 21:57:21.117399408 +0100
++++ milkytracker/src/tracker/PlayerMaster.h	2022-11-22 21:57:21.255399032 +0100
 @@ -56,6 +56,8 @@
      pp_uint32 numPlayerChannels;
  	// 0 means disable virtual channels, negative value means ignore
@@ -9516,8 +9516,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/PlayerMaster.
  public:
  	PlayerMaster(pp_uint32 numDevices = DefaultMaxDevices);
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/RecorderLogic.cpp milkytracker/src/tracker/RecorderLogic.cpp
---- milkytracker.mainline/src/tracker/RecorderLogic.cpp	2022-11-22 21:54:16.527905022 +0100
-+++ milkytracker/src/tracker/RecorderLogic.cpp	2022-11-22 21:54:16.548904964 +0100
+--- milkytracker.mainline/src/tracker/RecorderLogic.cpp	2022-11-22 21:57:21.117399408 +0100
++++ milkytracker/src/tracker/RecorderLogic.cpp	2022-11-22 21:57:21.139399348 +0100
 @@ -194,10 +194,10 @@
  				}
  				// if there is already a note playing on this channel
@@ -9534,8 +9534,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/RecorderLogic
  			
  			// play it
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SampleEditorControl.cpp milkytracker/src/tracker/SampleEditorControl.cpp
---- milkytracker.mainline/src/tracker/SampleEditorControl.cpp	2022-11-22 21:54:16.527905022 +0100
-+++ milkytracker/src/tracker/SampleEditorControl.cpp	2022-11-22 21:54:18.125900611 +0100
+--- milkytracker.mainline/src/tracker/SampleEditorControl.cpp	2022-11-22 21:57:21.117399408 +0100
++++ milkytracker/src/tracker/SampleEditorControl.cpp	2022-11-22 21:57:22.964394384 +0100
 @@ -25,6 +25,7 @@
  #include "GraphicsAbstract.h"
  #include "PPUIConfig.h"
@@ -9896,8 +9896,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SampleEditorC
 +}
 \ No newline at end of file
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SampleEditorControl.h milkytracker/src/tracker/SampleEditorControl.h
---- milkytracker.mainline/src/tracker/SampleEditorControl.h	2022-11-22 21:54:16.527905022 +0100
-+++ milkytracker/src/tracker/SampleEditorControl.h	2022-11-22 21:54:18.115900639 +0100
+--- milkytracker.mainline/src/tracker/SampleEditorControl.h	2022-11-22 21:57:21.118399405 +0100
++++ milkytracker/src/tracker/SampleEditorControl.h	2022-11-22 21:57:22.952394416 +0100
 @@ -70,7 +70,8 @@
  	PPContextMenu* subMenuAdvanced;
  	PPContextMenu* subMenuXPaste;
@@ -9959,8 +9959,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SampleEditorC
  	
  	void executeMenuCommand(pp_int32 commandId);
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SampleEditorControlLastValues.h milkytracker/src/tracker/SampleEditorControlLastValues.h
---- milkytracker.mainline/src/tracker/SampleEditorControlLastValues.h	2022-11-22 21:54:16.527905022 +0100
-+++ milkytracker/src/tracker/SampleEditorControlLastValues.h	2022-11-22 21:54:16.752904401 +0100
+--- milkytracker.mainline/src/tracker/SampleEditorControlLastValues.h	2022-11-22 21:57:21.118399405 +0100
++++ milkytracker/src/tracker/SampleEditorControlLastValues.h	2022-11-22 21:57:21.350398774 +0100
 @@ -48,6 +48,10 @@
  	pp_int32 resampleInterpolationType;
  	bool adjustFtAndRelnote;
@@ -9983,8 +9983,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SampleEditorC
  		
  	PPDictionary convertToDictionary()
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SampleEditor.cpp milkytracker/src/tracker/SampleEditor.cpp
---- milkytracker.mainline/src/tracker/SampleEditor.cpp	2022-11-22 21:54:16.527905022 +0100
-+++ milkytracker/src/tracker/SampleEditor.cpp	2022-11-22 21:54:16.856904114 +0100
+--- milkytracker.mainline/src/tracker/SampleEditor.cpp	2022-11-22 21:57:21.117399408 +0100
++++ milkytracker/src/tracker/SampleEditor.cpp	2022-11-22 21:57:21.477398428 +0100
 @@ -36,6 +36,11 @@
  #include "EQConstants.h"
  #include "FilterParameters.h"
@@ -10280,8 +10280,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SampleEditor.
 +}
 +
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SampleEditor.h milkytracker/src/tracker/SampleEditor.h
---- milkytracker.mainline/src/tracker/SampleEditor.h	2022-11-22 21:54:16.527905022 +0100
-+++ milkytracker/src/tracker/SampleEditor.h	2022-11-22 21:54:16.847904139 +0100
+--- milkytracker.mainline/src/tracker/SampleEditor.h	2022-11-22 21:57:21.117399408 +0100
++++ milkytracker/src/tracker/SampleEditor.h	2022-11-22 21:57:21.465398461 +0100
 @@ -103,6 +103,8 @@
  private:
  	TXMSample* sample;
@@ -10342,8 +10342,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SampleEditor.
  	bool tool_canApplyLastFilter() const;
  
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/ScopesControl.cpp milkytracker/src/tracker/ScopesControl.cpp
---- milkytracker.mainline/src/tracker/ScopesControl.cpp	2022-11-22 21:54:16.527905022 +0100
-+++ milkytracker/src/tracker/ScopesControl.cpp	2022-11-22 21:54:16.623904757 +0100
+--- milkytracker.mainline/src/tracker/ScopesControl.cpp	2022-11-22 21:57:21.118399405 +0100
++++ milkytracker/src/tracker/ScopesControl.cpp	2022-11-22 21:57:21.217399135 +0100
 @@ -109,6 +109,7 @@
  	backgroundButton = new PPButton(0, parentScreen, NULL, PPPoint(location.x, location.y), PPSize(size.width, size.height), false, false);
  	backgroundButton->setColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorListBoxBackground));
@@ -10467,8 +10467,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/ScopesControl
 +}
 \ No newline at end of file
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/ScopesControl.h milkytracker/src/tracker/ScopesControl.h
---- milkytracker.mainline/src/tracker/ScopesControl.h	2022-11-22 21:54:16.527905022 +0100
-+++ milkytracker/src/tracker/ScopesControl.h	2022-11-22 21:54:16.604904809 +0100
+--- milkytracker.mainline/src/tracker/ScopesControl.h	2022-11-22 21:57:21.118399405 +0100
++++ milkytracker/src/tracker/ScopesControl.h	2022-11-22 21:57:21.194399198 +0100
 @@ -76,6 +76,7 @@
  
  	PlayerController* playerController;
@@ -10488,7 +10488,7 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/ScopesControl
  
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/Scripting.h milkytracker/src/tracker/Scripting.h
 --- milkytracker.mainline/src/tracker/Scripting.h	1970-01-01 01:00:00.000000000 +0100
-+++ milkytracker/src/tracker/Scripting.h	2022-11-22 21:54:16.752904401 +0100
++++ milkytracker/src/tracker/Scripting.h	2022-11-22 21:57:21.350398774 +0100
 @@ -0,0 +1,139 @@
 +/*
 + *  tracker/ScopesControl.h
@@ -10630,8 +10630,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/Scripting.h m
 +#endif
 +
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/sdl/SDL_Main.cpp milkytracker/src/tracker/sdl/SDL_Main.cpp
---- milkytracker.mainline/src/tracker/sdl/SDL_Main.cpp	2022-11-22 21:54:16.530905014 +0100
-+++ milkytracker/src/tracker/sdl/SDL_Main.cpp	2022-11-22 21:54:16.701904542 +0100
+--- milkytracker.mainline/src/tracker/sdl/SDL_Main.cpp	2022-11-22 21:57:21.121399397 +0100
++++ milkytracker/src/tracker/sdl/SDL_Main.cpp	2022-11-22 21:57:21.303398901 +0100
 @@ -282,7 +282,11 @@
  
  void InitMidi()
@@ -10668,8 +10668,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/sdl/SDL_Main.
  }
  
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SectionHDRecorder.cpp milkytracker/src/tracker/SectionHDRecorder.cpp
---- milkytracker.mainline/src/tracker/SectionHDRecorder.cpp	2022-11-22 21:54:16.528905019 +0100
-+++ milkytracker/src/tracker/SectionHDRecorder.cpp	2022-11-22 21:54:16.658904661 +0100
+--- milkytracker.mainline/src/tracker/SectionHDRecorder.cpp	2022-11-22 21:57:21.118399405 +0100
++++ milkytracker/src/tracker/SectionHDRecorder.cpp	2022-11-22 21:57:21.255399032 +0100
 @@ -53,6 +53,7 @@
  #include "PPSavePanel.h"
  
@@ -10695,8 +10695,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SectionHDReco
  	tracker.signalWaitState(true);
  
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SectionSamples.cpp milkytracker/src/tracker/SectionSamples.cpp
---- milkytracker.mainline/src/tracker/SectionSamples.cpp	2022-11-22 21:54:16.528905019 +0100
-+++ milkytracker/src/tracker/SectionSamples.cpp	2022-11-22 21:54:16.536904997 +0100
+--- milkytracker.mainline/src/tracker/SectionSamples.cpp	2022-11-22 21:57:21.119399402 +0100
++++ milkytracker/src/tracker/SectionSamples.cpp	2022-11-22 21:57:21.127399380 +0100
 @@ -180,6 +180,12 @@
  				break;
  			}
@@ -10740,8 +10740,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SectionSample
  	
  	button = new PPButton(BUTTON_SAMPLE_PLAY_RANGE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight), PPSize(size3, bHeightm));
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SectionSettings.cpp milkytracker/src/tracker/SectionSettings.cpp
---- milkytracker.mainline/src/tracker/SectionSettings.cpp	2022-11-22 21:54:16.528905019 +0100
-+++ milkytracker/src/tracker/SectionSettings.cpp	2022-11-22 21:54:16.658904661 +0100
+--- milkytracker.mainline/src/tracker/SectionSettings.cpp	2022-11-22 21:57:21.119399402 +0100
++++ milkytracker/src/tracker/SectionSettings.cpp	2022-11-22 21:57:21.255399032 +0100
 @@ -146,8 +146,11 @@
  	RADIOGROUP_SETTINGS_FREQTAB,
  	STATICTEXT_SETTINGS_BUFFERSIZE,
@@ -10829,8 +10829,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/SectionSettin
  			case SLIDER_SPACING:
  			{
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/TrackerConfig.cpp milkytracker/src/tracker/TrackerConfig.cpp
---- milkytracker.mainline/src/tracker/TrackerConfig.cpp	2022-11-22 21:54:16.529905016 +0100
-+++ milkytracker/src/tracker/TrackerConfig.cpp	2022-11-22 21:54:18.123900617 +0100
+--- milkytracker.mainline/src/tracker/TrackerConfig.cpp	2022-11-22 21:57:21.120399399 +0100
++++ milkytracker/src/tracker/TrackerConfig.cpp	2022-11-22 21:57:22.961394392 +0100
 @@ -86,31 +86,31 @@
  const PPString TrackerConfig::defaultProTrackerPanning("0000002000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF00");
  
@@ -10906,8 +10906,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/TrackerConfig
 -const pp_int32 TrackerConfig::mixFrequencies[] = {11025, 22050, 44100, 48000};
 +const pp_int32 TrackerConfig::mixFrequencies[] = {22050, 32000, 44100, 48000};
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/Tracker.cpp milkytracker/src/tracker/Tracker.cpp
---- milkytracker.mainline/src/tracker/Tracker.cpp	2022-11-22 21:54:16.529905016 +0100
-+++ milkytracker/src/tracker/Tracker.cpp	2022-11-22 21:54:18.119900628 +0100
+--- milkytracker.mainline/src/tracker/Tracker.cpp	2022-11-22 21:57:21.120399399 +0100
++++ milkytracker/src/tracker/Tracker.cpp	2022-11-22 21:57:22.956394406 +0100
 @@ -753,8 +753,8 @@
  				playerLogic->playPattern();
  				break;
@@ -11014,8 +11014,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/Tracker.cpp m
 +	getPatternEditor()->setCurrentInstrument(ins);
 +}
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/Tracker.h milkytracker/src/tracker/Tracker.h
---- milkytracker.mainline/src/tracker/Tracker.h	2022-11-22 21:54:16.529905016 +0100
-+++ milkytracker/src/tracker/Tracker.h	2022-11-22 21:54:18.111900650 +0100
+--- milkytracker.mainline/src/tracker/Tracker.h	2022-11-22 21:57:21.120399399 +0100
++++ milkytracker/src/tracker/Tracker.h	2022-11-22 21:57:22.947394430 +0100
 @@ -92,6 +92,14 @@
  class Tracker : public EventListenerInterface
  {
@@ -11088,8 +11088,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/Tracker.h mil
  private:
  	// - friend classes --------------------------------------------------------
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/TrackerInit.cpp milkytracker/src/tracker/TrackerInit.cpp
---- milkytracker.mainline/src/tracker/TrackerInit.cpp	2022-11-22 21:54:16.529905016 +0100
-+++ milkytracker/src/tracker/TrackerInit.cpp	2022-11-22 21:54:18.140900570 +0100
+--- milkytracker.mainline/src/tracker/TrackerInit.cpp	2022-11-22 21:57:21.120399399 +0100
++++ milkytracker/src/tracker/TrackerInit.cpp	2022-11-22 21:57:22.983394332 +0100
 @@ -420,7 +420,7 @@
  #ifdef __LOWRES__
  	switchEditMode(EditModeMilkyTracker);
@@ -11291,8 +11291,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/TrackerInit.c
  
  void Tracker::showMessageBox(pp_int32 id, const PPString& caption, MessageBoxTypes type, bool update/* = true*/)
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/TrackerKeyboard.cpp milkytracker/src/tracker/TrackerKeyboard.cpp
---- milkytracker.mainline/src/tracker/TrackerKeyboard.cpp	2022-11-22 21:54:16.529905016 +0100
-+++ milkytracker/src/tracker/TrackerKeyboard.cpp	2022-11-22 21:54:18.109900655 +0100
+--- milkytracker.mainline/src/tracker/TrackerKeyboard.cpp	2022-11-22 21:57:21.120399399 +0100
++++ milkytracker/src/tracker/TrackerKeyboard.cpp	2022-11-22 21:57:22.945394436 +0100
 @@ -59,6 +59,8 @@
  #include "SectionAbout.h"
  
@@ -11457,8 +11457,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/TrackerKeyboa
 +	loadTypeWithDialog(FileTypes::FileTypeSongAllInstruments);
 +}
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/TrackerSettings.cpp milkytracker/src/tracker/TrackerSettings.cpp
---- milkytracker.mainline/src/tracker/TrackerSettings.cpp	2022-11-22 21:54:16.529905016 +0100
-+++ milkytracker/src/tracker/TrackerSettings.cpp	2022-11-22 21:54:18.158900520 +0100
+--- milkytracker.mainline/src/tracker/TrackerSettings.cpp	2022-11-22 21:57:21.120399399 +0100
++++ milkytracker/src/tracker/TrackerSettings.cpp	2022-11-22 21:57:22.998394291 +0100
 @@ -75,8 +75,10 @@
  #endif
  	settingsDatabase->store("MIXERVOLUME", 256);
@@ -11552,8 +11552,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/TrackerSettin
  }
  
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/TrackerShortCuts.cpp milkytracker/src/tracker/TrackerShortCuts.cpp
---- milkytracker.mainline/src/tracker/TrackerShortCuts.cpp	2022-11-22 21:54:16.529905016 +0100
-+++ milkytracker/src/tracker/TrackerShortCuts.cpp	2022-11-22 21:54:18.113900644 +0100
+--- milkytracker.mainline/src/tracker/TrackerShortCuts.cpp	2022-11-22 21:57:21.120399399 +0100
++++ milkytracker/src/tracker/TrackerShortCuts.cpp	2022-11-22 21:57:22.950394422 +0100
 @@ -47,6 +47,8 @@
  #include "SectionInstruments.h"
  #include "SectionTranspose.h"
@@ -11794,8 +11794,8 @@ diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/TrackerShortC
 +	}
 +}
 diff -Naur -x .git -x milkysynth milkytracker.mainline/src/tracker/TrackerUpdate.cpp milkytracker/src/tracker/TrackerUpdate.cpp
---- milkytracker.mainline/src/tracker/TrackerUpdate.cpp	2022-11-22 21:54:16.529905016 +0100
-+++ milkytracker/src/tracker/TrackerUpdate.cpp	2022-11-22 21:54:16.659904658 +0100
+--- milkytracker.mainline/src/tracker/TrackerUpdate.cpp	2022-11-22 21:57:21.120399399 +0100
++++ milkytracker/src/tracker/TrackerUpdate.cpp	2022-11-22 21:57:21.255399032 +0100
 @@ -45,6 +45,7 @@
  #include "SectionSamples.h"
  #include "SectionHDRecorder.h"
