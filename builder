@@ -14,7 +14,10 @@ pull(){
   test -d milkytracker && rm -rf milkytracker 
   git clone https://github.com/milkytracker/MilkyTracker milkytracker
   cd milkytracker; 
-  git remote | grep coderofsalvation || git remote add coderofsalvation https://github.com/coderofsalvation/milkytracker
+  git remote | grep coderofsalvation || {
+    git remote add coderofsalvation https://github.com/coderofsalvation/milkytracker
+    git remote add coderofsalvation_ssh git@github.com:/coderofsalvation/milkytracker
+  }
   git fetch coderofsalvation
   test -f CMakeLists.txt && git reset $UPSTREAM_MILKYTRACKER_COMMIT --hard
   git config --global user.email "CI@appveyor.com"
