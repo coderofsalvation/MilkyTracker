@@ -112,6 +112,7 @@ patch(){
     set -x
     touch milkytracker/patch.all # why is this needed
     $(which patch) -p0 < patch/all.patch
+    git submodule update --init --recursive
   }
 
   test -z $1 && apply
