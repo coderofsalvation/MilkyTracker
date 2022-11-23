@@ -62,6 +62,7 @@ for:
 
   build_script:
   - sh: cmake -DCMAKE_BUILD_TYPE=Debug ..
+  - sh: pwd
   - sh: make
   - sh: cpack -C %configuration% -D CPACK_GENERATOR="ZIP"
   - sh: cd ..

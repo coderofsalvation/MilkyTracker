@@ -112,7 +112,9 @@ patch(){
     pwd
     set -x
     $(which patch) -p0 < patch/all.patch
+    cd milkytracker; 
     git submodule update --init --recursive
+    cd -
   }
 
   test -z $1 && apply
