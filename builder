@@ -103,7 +103,8 @@ patch(){
     sed -i 's|settingsDatabase->store("ROWINSERTADD", 1);|settingsDatabase->store("ROWINSERTADD", 0);|g' milkytracker/src/tracker/TrackerSettings.cpp
     # now create the diff file 
     rm milkytracker/all.patch milkytracker/build # leftovers
-
+    # enforce c++ to 11
+    sed -i 's|set(CMAKE_CXX_STANDARD.*|set(CMAKE_CXX_STANDARD 11)|g' milkytracker/CMakeLists.txt 
     $(which diff) -Naur -x appveyor.yml -x .git -x milkysynth milkytracker.mainline milkytracker  > patch/all.patch
     #cat patch/all.patch |less
   }
