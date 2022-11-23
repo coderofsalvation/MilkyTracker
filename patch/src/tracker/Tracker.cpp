@@ -1714,10 +1714,14 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						if (shouldFollowSong() && 
 							isEditingCurrentOrderlistPattern())
 							updateSongRow();
+						else backtraceInstrument(0,true);
 						break;
 					}
+
+					case PatternEditorControl::AdvanceCodeColumn:
+						backtraceInstrument(0,false);
+						break;
 				}
-				backtraceInstrument(0);
 				break;
 			}
 		}
@@ -3239,7 +3243,7 @@ void Tracker::getSelectedInstrument( int *instrument, int *sample ) {
 	*sample = listBoxSamples->getSelectedIndex();
 }
 
-void Tracker::backtraceInstrument(pp_uint8 channelIncrement){
+void Tracker::backtraceInstrument(pp_uint8 channelIncrement, bool currentPosOnly ){
 	PatternEditor *p = getPatternEditor();
 	if( !p->getInstrumentBackTrace() ) return;
 	// when switching channels: visually auto-switch instrument
@@ -3251,14 +3255,15 @@ void Tracker::backtraceInstrument(pp_uint8 channelIncrement){
 	// backtrace last instrument on pattern-channel
 	for (pp_int32 i = cursor.row; i >= 0; i--)
 	{
-		patternTools.setPosition( p->getPattern(), chan, i);
+		patternTools.setPosition( p->getPattern(), chan, cursor.row);
 		if ( patternTools.getInstrument() != 0 ){
 			ins = patternTools.getInstrument();	
 			break;
 		}
+		if( currentPosOnly ) return;
 	}
 	// find future note if backtrace wasn't possible
-	if( ins == -1 ){
+	if( ins == -1 && !currentPosOnly ){
 		for (pp_int32 i = cursor.row; i < p->getNumRows(); i++)
 		{
 			patternTools.setPosition( p->getPattern(), chan, i);
@@ -3266,10 +3271,10 @@ void Tracker::backtraceInstrument(pp_uint8 channelIncrement){
 			if (ins != 0 ) break;
 		}
 	}
+	if( ins == -1 ) return;
 	getPatternEditor()->setCurrentInstrument(ins);
 	moduleEditor->setCurrentInstrumentIndex(ins-1);
 	listBoxInstruments->setSelectedIndex(ins-1);
 	updateInstrumentsListBox(true);
 	updateSampleEditor(true);
-	getPatternEditor()->setCurrentInstrument(ins);
 }
