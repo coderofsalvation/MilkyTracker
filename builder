@@ -104,7 +104,7 @@ patch(){
     # now create the diff file 
     rm milkytracker/all.patch milkytracker/build # leftovers
 
-    $(which diff) -Naur -x .git -x milkysynth milkytracker.mainline/src milkytracker/src  > patch/all.patch
+    $(which diff) -Naur -x milkysynth milkytracker.mainline/src milkytracker/src  > patch/all.patch
     #cat patch/all.patch |less
   }
 
