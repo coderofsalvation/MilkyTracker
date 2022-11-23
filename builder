@@ -104,7 +104,7 @@ patch(){
     # now create the diff file 
     rm milkytracker/all.patch milkytracker/build # leftovers
 
-    $(which diff) -Naur -x milkysynth milkytracker.mainline/src milkytracker/src  > patch/all.patch
+    $(which diff) -Naur -x appveyor.yml -x .git -x milkysynth milkytracker.mainline milkytracker  > patch/all.patch
     #cat patch/all.patch |less
   }
 
@@ -113,6 +113,7 @@ patch(){
     set -x
     $(which patch) -p0 < patch/all.patch
     cd milkytracker; 
+    test -d src/milkysynth && git submodule add https://gitlab.com/coderofsalvation/milkysynth.git src/milkysynth
     git submodule update --init --recursive
     cd -
   }
