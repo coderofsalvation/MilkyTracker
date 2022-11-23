@@ -27,7 +27,7 @@ before_build:
   - sh: sudo apt-get update
   - sh: sudo apt-get install libjack-dev liblhasa-dev librtmidi-dev libsdl2-dev libzzip-dev -y
   - sh: if [ $APPVEYOR_REPO_BRANCH == "master" ]; then ./builder pull && ./builder patch apply; fi
-  - sh: zip -r source_patched.zip milkytracker
+  - sh: zip -q -r source_patched.zip milkytracker
   - sh: if [ $APPVEYOR_REPO_BRANCH == "master" ]; then cd milkytracker; fi
   - sh: if [ $PLATFORM == "Win32" ]; then exit 0; fi 
   - sh: mkdir -p build
