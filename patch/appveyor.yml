@@ -49,7 +49,7 @@ before_build:
   - cmd: dir
 
 build:
-    project: MilkyTracker.sln
+    project: milkytracker/build/MilkyTrackerX.sln
 
 for:
 -
