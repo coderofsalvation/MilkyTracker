@@ -113,7 +113,7 @@ patch(){
     set -x
     $(which patch) -p0 < patch/all.patch
     cd milkytracker; 
-    test -d src/milkysynth && git submodule add https://gitlab.com/coderofsalvation/milkysynth.git src/milkysynth
+    test -d src/milkysynth || git submodule add https://gitlab.com/coderofsalvation/milkysynth.git src/milkysynth
     git submodule update --init --recursive
     cd -
   }
