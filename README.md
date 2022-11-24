@@ -9,7 +9,7 @@ A: MilkyTrackerX is basically a build of mainline MilkyTracker, but with **new g
 
 > Q: where's the issue tracker?
 
-A: To keep things central, use the official [issue-tracker](https://github.com/milkytracker/milkytracker) and mention 'MilkyTracker X build'
+A: To keep things central, use the official [issue-tracker](https://github.com/milkytracker/MilkyTracker/issues) and mention 'MilkyTracker X build'
 
 ### Download MilkyTrackerX:
 
