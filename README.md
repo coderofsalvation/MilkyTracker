@@ -7,6 +7,10 @@
 
 A: MilkyTrackerX is basically a build of mainline MilkyTracker, but with **new gridsequencer-like features & UX-changes, new keyboard shortcuts, [sample-editor scripting](https://gitlab.com/coderofsalvation/milkytracker-scripts), [ASCIISTEP16 liveperforming](https://tinyurl.com/asciistep16) and different default settings** on top of it (a 'better' (opiniated) milkytracker workflow).
 
+> Q: where's the issue tracker?
+
+A: To keep things central, use the official [issue-tracker](https://github.com/milkytracker/milkytracker) and mention 'MilkyTracker X build'
+
 ### Download MilkyTrackerX:
 
 * Linux: [MilkyTracker-x86_64.AppImage](https://ci.appveyor.com/api/projects/coderofsalvation/milkytrackerx/artifacts/milkytracker/MilkyTrackerX-x86_64.AppImage?branch=master&job=Image:%20Ubuntu1604;%20Platform:%20x64)
