@@ -28,10 +28,7 @@ before_build:
   - sh: sudo apt-get install libjack-dev liblhasa-dev librtmidi-dev libsdl2-dev libzzip-dev -y
   - sh: if [ $APPVEYOR_REPO_BRANCH == "master" ]; then ./builder pull && ./builder patch apply; fi
   - sh: git log | head -n1 > milkytracker/commit.txt
-  - sh: cd milkytracker && git branch tmp && git checkout tmp && git add . && git commit -m "win build $(date)" 
-  - sh: "set +e; git branch -d win; set -e;"
-  - sh: git branch -m tmp win && git push origin master -f
-  - sh: zip -q -r source_patched.zip milkytracker
+  #- sh: zip -q -r source_patched.zip milkytracker
   - sh: if [ $APPVEYOR_REPO_BRANCH == "master" ]; then cd milkytracker; fi
   - sh: if [ $PLATFORM == "Win32" ]; then exit 0; fi 
   - sh: mkdir -p build
@@ -45,13 +42,16 @@ before_build:
   #- cmd: unzip source_patched.zip
   - ps: |
       if ($env:APPVEYOR_REPO_BRANCH -eq "master"){ cd milkytracker }
-  - cmd: git checkout win
   - cmd: pwd
+  - cmd: type milkytracker\commit.txt
   - cmd: md build
   - cmd: cd build
   - cmd: if %platform% == Win32 cmake -G "Visual Studio 15 2017" -T v140_xp ..
   - cmd: if %platform% == x64 cmake -G "Visual Studio 15 2017 Win64" -T v140_xp ..
   - cmd: dir
+
+cache:
+  - milkytracker
 
 build:
     project: milkytracker/build/MilkyTrackerX.sln
