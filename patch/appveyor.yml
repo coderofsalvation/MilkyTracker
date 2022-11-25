@@ -27,6 +27,7 @@ before_build:
   - sh: sudo apt-get update
   - sh: sudo apt-get install libjack-dev liblhasa-dev librtmidi-dev libsdl2-dev libzzip-dev -y
   - sh: if [ $APPVEYOR_REPO_BRANCH == "master" ]; then ./builder pull && ./builder patch apply; fi
+  - sh: git log | head -n1 > milkytracker/commit.txt
   - sh: zip -q -r source_patched.zip milkytracker
   - sh: if [ $APPVEYOR_REPO_BRANCH == "master" ]; then cd milkytracker; fi
   - sh: if [ $PLATFORM == "Win32" ]; then exit 0; fi 
@@ -39,6 +40,7 @@ before_build:
   - cmd: curl -L "https://tinyurl.com/patchedsource" -o source_patched.zip
   - cmd: rmdir /q /s milkytracker
   - cmd: unzip source_patched.zip
+  . cmd: type milkytracker\commit.txt
   - ps: |
       if ($env:APPVEYOR_REPO_BRANCH -eq "master"){ cd milkytracker }
   - cmd: pwd
