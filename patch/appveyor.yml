@@ -38,12 +38,12 @@ before_build:
   #- cmd: bin\patch.exe -p0 < patch\all.patch
   #- cmd: curl -L "https://ci.appveyor.com/api/projects/coderofsalvation/milkytrackerx/artifacts/source_patched.zip?branch=master&job=Image:%20Ubuntu1604;%20Platform:%20x64" -o source_patched.zip
   #- cmd: curl -L "https://tinyurl.com/patchedsource" -o source_patched.zip
-  #- cmd: rmdir /q /s milkytracker
   #- cmd: unzip source_patched.zip
   - ps: |
       if ($env:APPVEYOR_REPO_BRANCH -eq "master"){ cd milkytracker }
   - cmd: pwd
-  - cmd: type milkytracker\commit.txt
+  - cmd: type commit.txt
+  - cmd: rmdir /q /s build
   - cmd: md build
   - cmd: cd build
   - cmd: if %platform% == Win32 cmake -G "Visual Studio 15 2017" -T v140_xp ..
