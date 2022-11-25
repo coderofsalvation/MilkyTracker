@@ -40,7 +40,7 @@ before_build:
   - cmd: curl -L "https://tinyurl.com/patchedsource" -o source_patched.zip
   - cmd: rmdir /q /s milkytracker
   - cmd: unzip source_patched.zip
-  . cmd: type milkytracker\\commit.txt
+  - cmd: type milkytracker\commit.txt
   - ps: |
       if ($env:APPVEYOR_REPO_BRANCH -eq "master"){ cd milkytracker }
   - cmd: pwd
