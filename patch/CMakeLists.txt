@@ -23,10 +23,15 @@ cmake_minimum_required(VERSION 3.10)
 project(MilkyTrackerX)
 
 # Set C++ standard to C++98
-set(CMAKE_CXX_STANDARD 98)
-set(CMAKE_C_FLAGS "-std=c99")
+#set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 11)
 #set(CMAKE_CXX_STANDARD 11)
-#set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(CXXFLAGS "${CXXFLAGS} /permissive-")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive-")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /permissive-")
+add_compile_options(/permissive-)
 
 # Enable IDE solution folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -229,3 +234,5 @@ add_subdirectory(src/tracker)
 
 # Set MilkyTracker target as startup project in Visual Studio
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT tracker)
+
+set_property(TARGET tracker PROPERTY CXX_STANDARD 11) 
