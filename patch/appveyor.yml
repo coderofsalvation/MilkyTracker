@@ -40,9 +40,10 @@ before_build:
   - cmd: cd milkytracker 
   - cmd: git reset caa8169 --hard
   - cmd: cd ..
-  - cmd: curl -L "https://gnuwin32.sourceforge.net/downlinks/patch-bin-zip.php" -o patch.zip 
-  - cmd: unzip patch.zip
-  - cmd: bin\patch.exe -p0 < patch\all.patch
+  #- cmd: curl -L "https://gnuwin32.sourceforge.net/downlinks/patch-bin-zip.php" -o patch.zip 
+  #- cmd: unzip patch.zip
+  #- cmd: bin\patch.exe -p0 < patch\all.patch
+  - cmd: git apply --unsafe-paths patch\all.patch
   - cmd: cd milkytracker
   #- ps: |
   #    if ($env:APPVEYOR_REPO_BRANCH -eq "master"){ cd milkytracker }
