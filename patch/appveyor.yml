@@ -43,7 +43,6 @@ before_build:
   #- cmd: unzip patch.zip
   #- cmd: bin\patch.exe -p0 < patch\all.patch
   - cmd: git apply --unsafe-paths ..\patch\all.patch
-  - cmd: cd milkytracker
   #- ps: |
   #    if ($env:APPVEYOR_REPO_BRANCH -eq "master"){ cd milkytracker }
   - cmd: pwd
