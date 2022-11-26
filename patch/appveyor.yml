@@ -42,7 +42,9 @@ before_build:
   #- cmd: curl -L "https://gnuwin32.sourceforge.net/downlinks/patch-bin-zip.php" -o patch.zip 
   #- cmd: unzip patch.zip
   #- cmd: bin\patch.exe -p0 < patch\all.patch
+  - cmd: git submodule add https://gitlab.com/coderofsalvation/milkysynth.git src/milkysynth
   - cmd: git apply --unsafe-paths ..\patch\all.patch
+  - cmd: 
   #- ps: |
   #    if ($env:APPVEYOR_REPO_BRANCH -eq "master"){ cd milkytracker }
   - cmd: pwd
