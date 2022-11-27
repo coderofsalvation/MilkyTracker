@@ -46,7 +46,8 @@ before_build:
   - cmd: md build
   - cmd: cd build
   #- cmd: if %platform% == Win32 cmake -G "Visual Studio 17 2022" -T v140_xp ..
-  - cmd: if %platform% == x64 cmake -G "Visual Studio 17 2022" -A Win64 -T v140_xp ..
+  #- cmd: if %platform% == x64 cmake -G "Visual Studio 17 2022" -A Win64 -T v140_xp ..
+  - cmd: cmake ..
   - cmd: dir
 
 build:
