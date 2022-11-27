@@ -25,8 +25,9 @@ project(MilkyTrackerX)
 
 # Set C++ standard to C++98
 #set(CMAKE_CXX_STANDARD 98)
-#set(CMAKE_CXX_STANDARD 11)
-#set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set_target_properties(${PROJECT_NAME} PROPERTIES C_STANDARD 99) # needed by milkysynth
 
 # Enable IDE solution folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -144,8 +145,8 @@ elseif(WIN32)
         add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
         # Enable parallel compilation
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
         # Enable static linkage of the Microsoft Visual C/C++ Runtime
         set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
