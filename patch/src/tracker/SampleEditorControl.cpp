@@ -181,7 +181,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuGenerators->addEntry("Absolute Sine" PPSTR_PERIODS, MenuCommandIDGenerateAbsoluteSine);
 	subMenuGenerators->addEntry("Quarter Sine" PPSTR_PERIODS, MenuCommandIDGenerateQuarterSine);
 	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
-#ifndef _WIN32
+#ifndef MILKYSYNTH
     subMenuGenerators->addEntry("MilkySynth (random)" PPSTR_PERIODS, MenuCommandIDGenerateMilkySynth);
 #endif
 
