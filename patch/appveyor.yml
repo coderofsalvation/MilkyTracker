@@ -55,9 +55,6 @@ before_build:
   - cmd: if %platform% == x64 cmake -G "Visual Studio 15 2017 Win64" -T v140_xp ..
   - cmd: dir
 
-cache:
-  - milkytracker
-
 build:
     project: milkytracker/build/MilkyTrackerX.sln
 
