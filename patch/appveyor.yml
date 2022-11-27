@@ -33,15 +33,9 @@ before_build:
   - sh: if [ $PLATFORM == "Win32" ]; then exit 0; fi 
   - sh: mkdir -p build
   - sh: cd build
-  #- cmd: curl -L "https://ci.appveyor.com/api/projects/coderofsalvation/milkytrackerx/artifacts/source_patched.zip?branch=master&job=Image:%20Ubuntu1604;%20Platform:%20x64" -o source_patched.zip
-  #- cmd: curl -L "https://tinyurl.com/patchedsource" -o source_patched.zip
-  #- cmd: unzip source_patched.zip
   - cmd: git clone https://github.com/milkytracker/milkytracker
   - cmd: cd milkytracker 
   - cmd: git reset caa8169 --hard
-  #- cmd: curl -L "https://gnuwin32.sourceforge.net/downlinks/patch-bin-zip.php" -o patch.zip 
-  #- cmd: unzip patch.zip
-  #- cmd: bin\patch.exe -p0 < patch\all.patch
   #https://stackoverflow.com/questions/19611/how-to-patch-on-windows/8056005#8056005
   #https://math.nist.gov/oommf/software-patchsets/patch_on_Windows7.html
   - cmd: git apply --unsafe-paths ..\patch\all.patch
