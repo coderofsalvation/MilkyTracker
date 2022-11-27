@@ -35,7 +35,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Enable tracker-specific functions in MilkyPlay
 add_definitions(-DMILKYTRACKER)
-add_definitions(-DMILKYSYNTH)
 
 # Adhere to GNU filesystem layout conventions
 include(GNUInstallDirs)
@@ -200,6 +199,7 @@ if(UNIX)
     if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         find_package(ALSA)
         find_package(JACK)
+        add_definitions(-DMILKYSYNTH)
 
         # Linux MIDI support requires ALSA and RtMidi
         if(ALSA_FOUND)
