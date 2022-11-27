@@ -181,7 +181,9 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuGenerators->addEntry("Absolute Sine" PPSTR_PERIODS, MenuCommandIDGenerateAbsoluteSine);
 	subMenuGenerators->addEntry("Quarter Sine" PPSTR_PERIODS, MenuCommandIDGenerateQuarterSine);
 	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
+#ifndef _WIN32
     subMenuGenerators->addEntry("MilkySynth (random)" PPSTR_PERIODS, MenuCommandIDGenerateMilkySynth);
+#endif
 
 	// scripting menu
 	subMenuScripting = new PPContextMenu(8, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
