@@ -3,7 +3,7 @@ configuration:
 
 image:
   - Ubuntu1604
-  - Visual Studio 2017
+  - Visual Studio 2022
   #  - Ubuntu1804
   #  - Ubuntu2004
   #  - Ubuntu

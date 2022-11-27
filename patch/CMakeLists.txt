@@ -26,6 +26,7 @@ project(MilkyTrackerX)
 # Set C++ standard to C++98
 #set(CMAKE_CXX_STANDARD 98)
 #set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_FLAGS "-std=c99")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -34,6 +35,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Enable tracker-specific functions in MilkyPlay
 add_definitions(-DMILKYTRACKER)
+add_definitions(-DMILKYSYNTH)
 
 # Adhere to GNU filesystem layout conventions
 include(GNUInstallDirs)
@@ -199,7 +201,6 @@ if(UNIX)
         find_package(ALSA)
         find_package(JACK)
 
-        add_definitions(-DMILKYSYNTH)
         # Linux MIDI support requires ALSA and RtMidi
         if(ALSA_FOUND)
             find_package(RTMIDI 2.1.0)
