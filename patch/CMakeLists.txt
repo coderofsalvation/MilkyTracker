@@ -27,8 +27,6 @@ project(MilkyTrackerX)
 #set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
-#set_target_properties(${PROJECT_NAME} PROPERTIES C_STANDARD 99) # needed by milkysynth
-set_property(GLOBAL PROPERTY C_STANDARD 99) # needed by milkysynth
 
 # Enable IDE solution folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
