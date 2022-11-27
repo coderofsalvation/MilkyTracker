@@ -199,6 +199,7 @@ if(UNIX)
         find_package(ALSA)
         find_package(JACK)
 
+        add_definitions(-DMILKYSYNTH)
         # Linux MIDI support requires ALSA and RtMidi
         if(ALSA_FOUND)
             find_package(RTMIDI 2.1.0)
