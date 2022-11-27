@@ -19,7 +19,8 @@
 #  along with MilkyTracker.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.10)
+#cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.2)
 project(MilkyTrackerX)
 
 # Set C++ standard to C++98
@@ -232,7 +233,8 @@ add_subdirectory(src/milkysynth)
 add_subdirectory(src/ppui)
 add_subdirectory(src/tracker)
 
-# Set MilkyTracker target as startup project in Visual Studio
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT tracker)
-
-set_property(TARGET tracker PROPERTY CXX_STANDARD 11) 
+message(STATUS "CXX FLAGS ARE ${CMAKE_CXX_FLAGS}")
+message(STATUS "CXX FLAGS ARE ${CMAKE_CXX_STANDARD}")
+message(STATUS "CXX FLAGS ARE ${CMAKE_CXX_EXTENSIONS}")
+message(STATUS "CXX FLAGS ARE ${CMAKE_CXX_FLAGS_DEBUG}")
+message(STATUS "CXX FLAGS ARE ${CMAKE_CXX_FLAGS_RELEASE}")
