@@ -24,10 +24,8 @@ cmake_minimum_required(VERSION 3.2)
 project(MilkyTrackerX)
 
 # Set C++ standard to C++98
-#set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 98)
 #set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_C_FLAGS "-std=c99")
-set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Enable IDE solution folders
@@ -226,7 +224,6 @@ add_subdirectory(resources/music)
 add_subdirectory(src/compression)
 add_subdirectory(src/fx)
 add_subdirectory(src/milkyplay)
-add_subdirectory(src/milkysynth)
 add_subdirectory(src/ppui)
 add_subdirectory(src/tracker)
 

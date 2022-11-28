@@ -42,7 +42,6 @@ merge(){
 
   cd milkytracker
   #runverbose git merge --no-edit coderofsalvation/feat/keep-open-filedialog
-  runverbose git merge --no-edit coderofsalvation/feat/milkysynth
   runverbose git merge --no-edit coderofsalvation/bugfix/sustain-keyjazz-note-instead-of-retriggering
   runverbose git merge --no-edit coderofsalvation/feat/sample-editor-scaling-compress
   runverbose git merge --no-edit coderofsalvation/chore/copy-paste-sample-respect-relative-notenumber
@@ -64,7 +63,10 @@ merge(){
   accept_both_commits src/tracker/SampleEditorControl.cpp src/tracker/SampleEditor.cpp
   runverbose git merge --no-edit coderofsalvation/feat/ASCIISTEP16-compatibility-stepsequencer-mode
   runverbose git merge --no-edit coderofsalvation/feat/update-docs-with-asciistep16-and-scripting
-  expecterror runverbose git merge --no-edit coderofsalvation/feat/show-note-backtrace-in-instrumentlistbox
+  rm src/tracker/FilterParameters.h
+  expecterror runverbose git merge --no-edit coderofsalvation/feat/milkysynth
+  accept_both_commits src/tracker/FilterParameters.h src/tracker/SampleEditor.cpp src/tracker/SampleEditorControl.cpp
+  runverbose git merge --no-edit coderofsalvation/feat/show-note-backtrace-in-instrumentlistbox
   git submodule update --init --recursive
   cd ..
 }
