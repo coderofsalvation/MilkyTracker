@@ -180,6 +180,12 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case BUTTON_SAMPLE_MILKYSYNTH_RANDOM:
+			{
+				sampleEditor->tool_milkysynth(NULL);
+				break;
+			}
+
 			case BUTTON_SAMPLE_PLAY_RANGE:
 			{
 				SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
@@ -521,7 +527,12 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	pp_int32 size2 = (pp_int32)(conSize1*0.4367816091954f);
 	pp_int32 size3 = (pp_int32)(conSize1/*0.2988505747126f*/*0.3218390804598f);
 
-	PPButton* button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, PPPoint(x2+size2, y2+2+bHeight), PPSize(size, bHeightm));
+	PPButton* button = new PPButton(BUTTON_SAMPLE_MILKYSYNTH_RANDOM, screen, this, PPPoint(x2+size2, y2+2), PPSize(size, bHeightm));
+	button->setText("Syn");
+	button->setColor( TrackerConfig::colorHighLight_1);
+	container->addControl(button);
+
+	button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, PPPoint(x2+size2, y2+2+bHeight), PPSize(size, bHeightm));
 	button->setText("Up");
 	container->addControl(button);
 	
@@ -530,11 +541,12 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_PLAY_STOP, screen, this, PPPoint(x2+2, y2+2+bHeight*2), PPSize(size2-3, bHeightm+1));
-	button->setText("Stop");
+	button->setText("\xa7");
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_PLAY_WAVE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2), PPSize(size3, bHeightm));
-	button->setText("Wav");
+	button->setColor( TrackerConfig::colorHighLight_1);
+	button->setText("\x10");
 	container->addControl(button);
 	
 	button = new PPButton(BUTTON_SAMPLE_PLAY_RANGE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight), PPSize(size3, bHeightm));

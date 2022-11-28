@@ -38,6 +38,7 @@ public:
 	{
 		float floatPart;
 		pp_int32 intPart;
+		char *stringPart = NULL;
 		
 		Parameter()
 		{
@@ -56,6 +57,11 @@ public:
 
 		explicit Parameter(pp_int32 value) :
 			intPart(value)
+		{
+		}
+
+		explicit Parameter(char *value) :
+			stringPart(value)
 		{
 		}
 	};

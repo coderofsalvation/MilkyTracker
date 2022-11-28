@@ -33,6 +33,7 @@
 #include "TrackerConfig.h"
 #include "PlayerController.h"
 #include "DialogBase.h"
+#include "FilterParameters.h"
 
 #include <algorithm>
 #include <math.h>
@@ -164,6 +165,9 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuGenerators->addEntry("Absolute Sine" PPSTR_PERIODS, MenuCommandIDGenerateAbsoluteSine);
 	subMenuGenerators->addEntry("Quarter Sine" PPSTR_PERIODS, MenuCommandIDGenerateQuarterSine);
 	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
+#ifdef MILKYSYNTH
+	subMenuGenerators->addEntry("MilkySynth (random)" PPSTR_PERIODS, MenuCommandIDGenerateMilkySynth);
+#endif
 	
 	// build context menu
 	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain, true);
@@ -1880,6 +1884,12 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		case MenuCommandIDGenerateSilence:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeGenerateSilence);
 			break;
+
+		case MenuCommandIDGenerateMilkySynth:{
+      		FilterParameters par(1);
+			sampleEditor->tool_milkysynth(&par);
+			break;
+    	}
 
 		case MenuCommandIDGenerateNoise:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeGenerateNoise);
