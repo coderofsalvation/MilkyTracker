@@ -24,7 +24,12 @@
 #define __MILKYLUA_H
 
 #include "../lua/minilua.h"
+
+#if defined(_WIN32)
+#include <cstdlib>
+#else
 #include <math.h>
+#endif
 
 extern unsigned char config_lua[];
 extern unsigned int config_lua_len;
