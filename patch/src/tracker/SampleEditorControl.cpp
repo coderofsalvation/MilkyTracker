@@ -113,7 +113,8 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	visibleHeight = size.height - SCROLLBARWIDTH - 4;
 
 	scrollDist = (3298*visibleWidth) >> 16;
-	
+
+	lua_State *L = NULL;	
 	adjustScrollbars();
 
 	showMarks = new ShowMark[TrackerConfig::maximumPlayerChannels];
@@ -137,6 +138,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Protracker Boost", MenuCommandIDPTBoost);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
+	subMenuFX->addEntry("Filter" PPSTR_PERIODS, MenuCommandIDLuaFilter);
 	subMenuFX->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuFX->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
@@ -1870,6 +1872,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDResample:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResample);
+			break;
+		
+		case MenuCommandIDLuaFilter:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeLua);
 			break;
 
 		case MenuCommandIDVolumeFadeOut:{

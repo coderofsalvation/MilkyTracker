@@ -3268,7 +3268,7 @@ void SampleEditor::tool_milkysynth(const FilterParameters* par)
 	char *script         = par == NULL ? NULL : par->getParameter(0).stringPart;
 	pp_uint32 srate      = 44100;
 	bool isEmpty         = isEmptySample();
-	pp_uint32 samples = srate/5;
+	pp_int32 samples 	 = srate/5;
 
 	PPString config = System::getConfigFileName();
 	config.append(".lua");
@@ -3280,19 +3280,20 @@ void SampleEditor::tool_milkysynth(const FilterParameters* par)
 	if(L == NULL) return;
 	Lua::initDSP(L,srate,samples);
 	if( ! Lua::initSYN(L,config.getStrBuffer()) ) return;
+	samples = (pp_int32) Lua::getTableInt(L,"synth","samples",samples);
 
 	// create sample in milkytracker
 	FilterParameters p(2);
-	p.setParameter(0, FilterParameters::Parameter( (pp_int32) samples));
+	p.setParameter(0, FilterParameters::Parameter( samples));
 	p.setParameter(1, FilterParameters::Parameter( 16 ));
 	tool_newSample(&p);
 
 	for ( int i = 0; i < samples; i++) { 
-		lua_getglobal(L, "SYN_process");
-		lua_pushinteger(L, getFloatSampleFromWaveform(i) ); 
+		lua_getglobal(L, "button_SYN");
+		lua_pushnumber(L, getFloatSampleFromWaveform(i) ); 
 		lua_pushinteger(L, i);
-		lua_pushinteger(L, srate);
 		lua_pushinteger(L, samples);
+		lua_pushinteger(L, srate);
 		if (lua_pcall(L, 4, 1, 0) == LUA_OK) {
 			if (lua_isnumber(L, -1)) {
 				float y = lua_tonumber(L, -1);
@@ -3301,15 +3302,49 @@ void SampleEditor::tool_milkysynth(const FilterParameters* par)
 			}
 			lua_pop(L, lua_gettop(L)); // remove function from stack
 		}else Lua::printError(L);
-		//printf("loop.type = %i\n", Lua::getTableInt(L,"loop","type") );
 	}
 
-	//setLoopType(loop_type);
-	//setRepeatStart( loop_start == -1 ? getSelectionStart() : loop_start );
-	//setRepeatEnd(   loop_stop  == -1 ? getSelectionEnd()   : loop_stop  );
-	//setFT2Volume(0x20);
+	setLoopType(    Lua::getTableInt(L,"synth","loop_type", getLoopType()) );
+	setRepeatStart( Lua::getTableInt(L,"synth","loop_start", getSelectionStart() ) );
+	setRepeatEnd(   Lua::getTableInt(L,"synth","loop_stop", getSelectionEnd()   ) );
 
 	lua_close(L);
+
+	finishUndo();
+	postFilter();
+}
+
+void SampleEditor::tool_luaSample(const FilterParameters* par)
+{
+	lua_State *L = (lua_State *)par->getParameter(0).pointerPart;
+	char *func   = (char *)par->getParameter(1).stringPart;
+	pp_uint32 samples = getSampleLen();
+
+	preFilter(&SampleEditor::tool_luaSample, par);
+	prepareUndo();
+		
+	if( luaL_loadstring( L, "reset()" ) == 0 ) lua_call(L, 0, 0);
+	else{
+		Lua::printError(L);
+		return;
+	}
+
+	for ( int i = 0; i < samples; i++) { 
+		lua_getglobal(L, func );
+		lua_pushnumber(L, getFloatSampleFromWaveform(i) ); 
+		lua_pushinteger(L, i);
+		lua_pushinteger(L, samples);
+		lua_pushinteger(L, 44100);
+		if (lua_pcall(L, 4, 1, 0) == LUA_OK) {
+			if (lua_isnumber(L, -1)) {
+				float y = lua_tonumber(L, -1);
+				lua_pop(L, 1);
+				setFloatSampleInWaveform(i, y);
+			}
+		}else Lua::printError(L);
+		lua_pop(L, lua_gettop(L)); // remove function from stack
+		//printf("loop.type = %i\n", Lua::getTableInt(L,"loop","type") );
+	}
 
 	finishUndo();
 	postFilter();

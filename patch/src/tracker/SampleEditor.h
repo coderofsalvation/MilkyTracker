@@ -363,6 +363,7 @@ public:
 	void tool_generateAbsoluteSine(const FilterParameters* par);
 	void tool_generateQuarterSine(const FilterParameters* par);
 	void tool_milkysynth(const FilterParameters* par);
+	void tool_luaSample(const FilterParameters* par);
 
 	void tool_applyLastFilter();
 	bool tool_canApplyLastFilter() const;

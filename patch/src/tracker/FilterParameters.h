@@ -39,6 +39,7 @@ public:
 		float floatPart;
 		pp_int32 intPart;
 		char *stringPart = NULL;	
+		void *pointerPart;
 		
 		Parameter()
 		{
@@ -61,6 +62,10 @@ public:
 		}
 		explicit Parameter(char *value) :
 			stringPart(value)
+		{
+		}
+		explicit Parameter(void *value) :
+			pointerPart(value)
 		{
 		}
 	};

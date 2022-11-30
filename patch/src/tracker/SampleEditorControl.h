@@ -30,6 +30,7 @@
 #include "SampleEditor.h"
 #include "EditorBase.h"
 #include "SampleEditorControlLastValues.h"
+#include "Lua.h"
 
 // Forwards
 class PPGraphicsAbstract;
@@ -121,6 +122,7 @@ private:
 	float calcScale();
 	
 protected:
+	lua_State *L;
 	virtual void translateCoordinates(PPPoint& cp) 
 	{
 		PPControl::translateCoordinates(cp);
@@ -307,6 +309,7 @@ private:
 		MenuCommandIDChangeSign,
 		MenuCommandIDSwapByteOrder,
 		MenuCommandIDResample,
+		MenuCommandIDLuaFilter,
 		MenuCommandIDDCNormalize,
 		MenuCommandIDDCOffset,
 		MenuCommandIDRectangularSmooth,
@@ -356,6 +359,7 @@ private:
 			SampleToolTypeChangeSign,
 			SampleToolTypeSwapByteOrder,
 			SampleToolTypeResample,
+			SampleToolTypeLua,
 			SampleToolTypeDCNormalize,
 			SampleToolTypeDCOffset,
 			SampleToolTypeRectangularSmooth,
