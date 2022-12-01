@@ -114,7 +114,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 
 	scrollDist = (3298*visibleWidth) >> 16;
 
-	lua_State *L = NULL;	
+	L = NULL;	
 	adjustScrollbars();
 
 	showMarks = new ShowMark[TrackerConfig::maximumPlayerChannels];
