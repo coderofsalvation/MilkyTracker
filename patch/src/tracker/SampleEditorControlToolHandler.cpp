@@ -106,21 +106,16 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeLua:{
-			const char *script = ""
-				"dialog = { title='filter', height=160, func='dialog_filter' }\n"
-				"sliders = {\n"
-				"  {label='highpass', min=40, max=7000, val=0},\n"
-				"  {label='lowpass',  min=40, max=7000, val=6999},\n"
-				"  {label='resonance',min=0, max=100, val=0}\n"
-				"}\n";
-			printf("\n%s\n",script);
+			printf("\n%s\n",luaScript.getStrBuffer());
 			if( L != NULL ){
 				lua_close(L);
 				lua_gettop(L);
 			}
 			L = luaL_newstate();
-			dialog = new DialogLua(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, L, script );
-			static_cast<DialogLua*>(dialog)->setSampleEditor(sampleEditor);
+			dialog = new DialogLua(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, L, luaScript );
+			DialogLua *dialogLua = static_cast<DialogLua*>(dialog);
+			dialogLua->setSampleEditor(sampleEditor);
+			if( !dialogLua->isReady() ) return false; // parse error
 			break;
 		}
 

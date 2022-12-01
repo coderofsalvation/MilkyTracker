@@ -1,4 +1,5 @@
 -- don't edit here, create a user.lua instead (loaded automatically)
+version = 0.1
 
 synths = {
 
@@ -81,9 +82,40 @@ synths = {
 
 }
 
+-- sample-editor: rightclick > fx > filter
 dialog_filter = function(x,i,samples,srate)
-  x = hpf.get(x, sliders[1].val, sliders[3].val/100 )
-  return lpf.get(x, sliders[2].val, sliders[3].val/100 )
+  local lfo = math.abs( math.sin( math.ceil(sliders[4].val/2) * (1*math.pi)*(i/samples) ) )
+  local y = hpf.get(x, sliders[1].val, sliders[3].val/100 )
+  y = lpf.get(y, sliders[2].val, sliders[3].val/100 )
+  if( sliders[4].val > 0 ) then y = ((1-lfo)*x) + lfo*y end
+  return y*(sliders[5].val/100)
+end
+
+-- sample-editor: rightclick > fx > distort
+dialog_distort = function(x,i,samples,srate)
+  local lfo = math.abs( math.sin( math.ceil(sliders[5].val/2) * (1*math.pi)*(i/samples) ) )
+  local a   = x*(1+(sliders[1].val/10))          -- input
+  local b   = a 
+  if( sliders[2].val>1 ) then 
+    b = fwrap2(  a + (a*(sliders[2].val/2000) ) ) -- harsh
+  end
+  local c   = b
+  if( sliders[3].val>1 ) then
+    c   = mirror( b + (b*(sliders[3].val/100) ) ) -- smooth
+  end
+  local d  = c                                    -- grit
+  if( sliders[4].val>1 ) then 
+    local f = math.ceil
+    if x < 0 then f = math.floor end
+    local s = 101-sliders[4].val
+    d = f( d * s ) / s
+  end
+  local e  = d
+  if( sliders[5].val > 0 ) then                   -- apply lfo
+    e  = ((1-lfo)*x) + (lfo*e)                
+  end
+  local f = e*(sliders[6].val/100)
+  return f
 end
 
 -- SYN_process (syn-button in sample-editor)
@@ -110,17 +142,15 @@ end
 
 -- hz(note) converts notenumber to hz
 function hz(note)
-    a = 440  -- frequency of A (note 49=440Hz   note 40=C4)
-    note = note + 52
-    return 440 * (2 / ((note  - 49) / 12));
+    local a = 440  -- frequency of A (note 49=440Hz   note 40=C4)
+    local n = note + 52
+    return 440 * (2 / ((n  - 49) / 12));
 end
 
 function fwrap(x)
-  b = x
-  if( x < 0 ) then b = -x  end
-  z,c = math.modf(b,1)
-  if (x > 1)  then return clamp(x) - c end
-  if (x < -1) then return clamp(x) + c end
+  if x > 1 then return x % 1  end
+  if x < 0 then return x % -1 end
+  return x
 end
 
 function mirror(x)
@@ -195,7 +225,7 @@ end
 excite = {
   s0=0,
   get= function(x,amp)
-    y = x + (x-excite.s0)*amp
+    local y = x + (x-excite.s0)*amp
     excite.s0 = y
     return clamp(y)
   end

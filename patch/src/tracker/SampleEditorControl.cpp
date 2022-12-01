@@ -134,13 +134,14 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFX->addEntry("Fade in" PPSTR_PERIODS, MenuCommandIDVolumeFadeIn);
 	subMenuFX->addEntry("Fade out" PPSTR_PERIODS, MenuCommandIDVolumeFadeOut);
 	subMenuFX->addEntry("Fade custom" PPSTR_PERIODS, MenuCommandIDVolumeFade);
-	subMenuFX->addEntry("Compress", MenuCommandIDCompress);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
-	subMenuFX->addEntry("Protracker Boost", MenuCommandIDPTBoost);
+	subMenuFX->addEntry("Compress", MenuCommandIDCompress);
+	subMenuFX->addEntry("Distort" PPSTR_PERIODS, MenuCommandIDLuaDistort);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Filter" PPSTR_PERIODS, MenuCommandIDLuaFilter);
 	subMenuFX->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuFX->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
+	subMenuFX->addEntry("Protracker Boost", MenuCommandIDPTBoost);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Normalize", MenuCommandIDNormalize);
 	subMenuFX->addEntry("Backwards", MenuCommandIDReverse);
@@ -1874,9 +1875,36 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResample);
 			break;
 		
-		case MenuCommandIDLuaFilter:
+		case MenuCommandIDLuaFilter:{
+			const char *script = ""
+				"dialog = { title='filter', height=164, func='dialog_filter' }\n"
+				"sliders = {\n"
+				"  {label='highpass', min=40, max=7000, val=0},\n"
+				"  {label='lowpass',  min=40, max=7000, val=6999},\n"
+				"  {label='resonance',min=0, max=100, val=0},\n"
+				"  {label='lfo',      min=0, max=100, val=0},\n"
+				"  {label='out',      min=1, max=200, val=100}\n"
+				"}\n";
+			luaScript = PPString(script);
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeLua);
 			break;
+		}
+
+		case MenuCommandIDLuaDistort:{
+			const char *script = ""
+				"dialog = { title='distort', height=190, func='dialog_distort' }\n"
+				"sliders = {\n"
+				"  {label='drive',  min=1, max=100, val=1},\n"
+				"  {label='harsh',  min=1, max=100, val=1},\n"
+				"  {label='smooth', min=1, max=100, val=1},\n"
+				"  {label='bitgrit',min=1, max=100, val=0},\n"
+				"  {label='lfo',    min=0, max=100, val=0},\n"
+				"  {label='out',    min=1, max=200, val=100}\n"
+				"}\n";
+			luaScript = PPString(script);
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeLua);
+			break;
+		}
 
 		case MenuCommandIDVolumeFadeOut:{
 			FilterParameters par(2);

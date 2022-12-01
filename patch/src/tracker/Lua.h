@@ -104,6 +104,7 @@ class Lua {
 #else
     void initDSP(lua_State *L, int srate, int samples){
 #endif
+printf("initdsp\n");
     luaL_openlibs(L);
     // version
     lua_pushnumber(L, VERSION);
@@ -145,6 +146,7 @@ class Lua {
 #else      
   bool initSYN(lua_State *L, const char *fn){
 #endif
+printf("initSYN\n");
     FILE *file;
     file = fopen(fn,"r");
     bool exist = (file != NULL);

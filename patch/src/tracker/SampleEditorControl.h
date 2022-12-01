@@ -120,6 +120,8 @@ private:
 	
 	float calcScale(mp_sint32 len);
 	float calcScale();
+
+	PPString luaScript;
 	
 protected:
 	lua_State *L;
@@ -310,6 +312,7 @@ private:
 		MenuCommandIDSwapByteOrder,
 		MenuCommandIDResample,
 		MenuCommandIDLuaFilter,
+		MenuCommandIDLuaDistort,
 		MenuCommandIDDCNormalize,
 		MenuCommandIDDCOffset,
 		MenuCommandIDRectangularSmooth,

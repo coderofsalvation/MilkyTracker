@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 UPSTREAM_MILKYTRACKER_COMMIT=caa8169
 
@@ -8,6 +8,17 @@ error(){
 
 runverbose(){  set -x; "$@"; set +x; };
 expecterror(){ set +e; "$@"; set +e; }
+
+diffwork(){
+  set +e
+  find patch/src -type f | while read f; do 
+    diff -Nau --brief $f ${f/patch/milkytracker} | grep -q differ && {
+      echo $f
+      test "$1" == "--copy" && cp ${f/patch/milkytracker} $f;
+    }
+  done
+  test -z $1 && { echo "add '--copy' to actually copy to patch-dir"; }
+}
 
 pull(){
   echo "\nPULL: pulling+merging branches from coderofsalvation-repo"

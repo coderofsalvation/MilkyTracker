@@ -48,6 +48,7 @@ private:
 	bool needUpdate;
 	bool preview;
 	lua_State* L;
+	bool ready;
 
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);	
 	
@@ -68,6 +69,7 @@ public:
 
 	void setSampleEditor(SampleEditor *s){ this->sampleEditor = s; }
 	SampleEditor * getSampleEditor(){ return this->sampleEditor; }
+	bool isReady(){ return ready; }
 
 };
 

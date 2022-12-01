@@ -43,22 +43,23 @@ DialogLua::DialogLua(PPScreen *parentScreen, DialogResponder *toolHandlerRespond
 	sampleEditor = NULL;
 	needUpdate   = false;
 	preview      = false;
+	ready        = false;
 	PPString config = System::getConfigFileName();
 	config.append(".lua");
 
 	L = l;
-	bool ok = (L != NULL);
-	if( ok = (L != NULL) ){
+	ready = (L != NULL);
+	if( ready = (L != NULL) ){
 		lua_settop(L,0);
 		Lua::initDSP(L,44100,0);
-		if( !Lua::initSYN(L,config.getStrBuffer())                 ) ok = false;
-		if( ok && luaL_loadstring( L, script.getStrBuffer() ) != 0 ) ok = false;
-		if( !ok ){
+		if( !Lua::initSYN(L,config.getStrBuffer())                 ) ready = false;
+		if( ready && luaL_loadstring( L, script.getStrBuffer() ) != 0 ) ready = false;
+		if( !ready ){
 			printf("[luadialog:error]\n");
 			Lua::printError(L);
 		}else lua_call(L, 0, 0);
 	}
-	if( ok ) initControls(parentScreen, toolHandlerResponder, ID );
+	if( ready ) initControls(parentScreen, toolHandlerResponder, ID );
 
 }
 
@@ -70,6 +71,7 @@ void DialogLua::initControls(PPScreen* screen,
 	
 	PPString title  = PPString( Lua::getTableString(L,"dialog","title","LUA dialog") );
 	float dheight   = (int)Lua::getNumber(L,"height",230);
+	title.toUpper();
 	initDialog(screen, responder, id, title.getStrBuffer(), 300, dheight, 26, "Ok", "Cancel");
 	
 	pp_int32 x      = getMessageBoxContainer()->getLocation().x;
@@ -78,7 +80,7 @@ void DialogLua::initControls(PPScreen* screen,
 	pp_int32 height = getMessageBoxContainer()->getSize().height;
 	pp_uint32 borderSpace = 12;
 	pp_uint32 scalaSpace = 16*5+8;
-	pp_int32 y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y + 26;
+	pp_int32 y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y + 20;
 	pp_int32 x2 = x + borderSpace;
 	pp_int32 size = width-120;
 	
@@ -102,7 +104,7 @@ void DialogLua::initControls(PPScreen* screen,
 		staticText->setFont(font);
 		getMessageBoxContainer()->addControl(staticText);
 
-		y2 += SCROLLBUTTONSIZE*2 + 2;
+		y2 += SCROLLBUTTONSIZE + 6;
 		i++;
 	LUA_FOREACH_END
 	numSliders = i;
