@@ -73,16 +73,15 @@ for:
   - sh: cp -r milkytrackerx-* MilkyTrackerX-x86_64.AppDir
   - sh: cd MilkyTrackerX-x86_64.AppDir 
   - sh: echo -e '#!/bin/sh\nHERE="$(dirname "$(readlink -f "${0}")")"\nLD_LIBRARY_PATH="$HERE/usr/lib":$LD_LIBRARY_PATH $HERE/bin/milkytrackerx' > AppRun && chmod +x AppRun
-  - sh: mkdir -p usr/lib/x86_64-linux-gnu usr/share
-  - sh: find /usr/lib |grep rtmidi
-  - sh: cp /usr/lib/x86_64-linux-gnu/librtmidi.so.2v5 usr/lib/x86_64-linux-gnu/.
-  - sh: cd usr/lib && ln -s x86_64-linux-gnu/librtmidi.so.2v5 && cd ../..
+  - sh: echo CHECKING LIBS && find . -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+  - sh: mkdir -p usr/share 
+  - sh: cp $(ldd milkytrackerx-* | grep -o ‘\W/[^ ]*’) usr/lib/.
+  - sh: cd usr && ln -s lib x86_64-linux-gnu && cd -
   - sh: cp ../resources/pictures/carton.png milkytracker.png
   - sh: cp ../resources/milkytracker.desktop .
   - sh: sed -i 's|MilkyTracker|MilkyTrackerX|g;s|Comment=.*|Comment=A Portable SampleTracker DAW|g' milkytracker.desktop
   #- sh: cp ../resources/milkytracker.appdata /usr/share/metainfo
   - sh: find .
-  - sh: echo CHECKING LIBS && find . -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
   - sh: cd .. 
   - sh: wget 'https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage';
   - sh: chmod +x appimagetool*.AppImage
