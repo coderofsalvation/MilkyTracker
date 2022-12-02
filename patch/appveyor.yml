@@ -76,7 +76,7 @@ for:
   - sh: echo CHECKING LIBS && find . -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
   - sh: mkdir -p usr/share usr/lib
   #- sh: cp $(ldd bin/milkytrackerx | grep -o '\W/[^ ]*' | grep -vE '(libX.*|librt\.so|libc|libstdc++|libsystemd|libpthread|libdl|libselinux)' ) usr/lib/.
-  - sh: objdump -p bin/milkytrackerx | awk '/ NEEDED/ {printf("/usr/lib/x86_64-linux-gnu/%s ",$2)}' | while read f; do test -f $f && cp $f usr/lib/.; done
+  - sh: objdump -p milkytracker/build/src/tracker/milkytrackerx | awk '/ NEEDED/ {print $2}' | while read lib; do test -f /usr/lib/x86_64-linux-gnu/$lib && cp /usr/lib/x86_64-linux-gnu/$lib usr/lib/.; done
   - sh: cd usr && ln -s lib x86_64-linux-gnu && cd -
   - sh: cp ../resources/pictures/carton.png milkytracker.png
   - sh: cp ../resources/milkytracker.desktop .
