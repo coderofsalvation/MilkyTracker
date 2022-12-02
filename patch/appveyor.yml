@@ -75,7 +75,7 @@ for:
   - sh: echo -e '#!/bin/sh\nHERE="$(dirname "$(readlink -f "${0}")")"\nLD_LIBRARY_PATH="$HERE/usr/lib":$LD_LIBRARY_PATH $HERE/bin/milkytrackerx' > AppRun && chmod +x AppRun
   - sh: echo CHECKING LIBS && find . -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
   - sh: mkdir -p usr/share usr/lib
-  - sh: cp $(ldd bin/milkytrackerx | grep -o '\W/[^ ]*' | grep -vE '(ld-linux|libselinux)' ) usr/lib/.
+  - sh: cp $(ldd bin/milkytrackerx | grep -o '\W/[^ ]*' | grep -vE '(ld-linux)' ) usr/lib/.
   - sh: cd usr && ln -s lib x86_64-linux-gnu && cd -
   - sh: cp ../resources/pictures/carton.png milkytracker.png
   - sh: cp ../resources/milkytracker.desktop .
