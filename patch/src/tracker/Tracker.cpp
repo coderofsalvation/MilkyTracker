@@ -2841,26 +2841,19 @@ bool Tracker::loadTypeWithDialog(FileTypes eLoadType, bool suspendPlayer/* = tru
 		return false;
 	
 	bool res = true;
-		
-	filepicker:
-		PPOpenPanel::ReturnCodes ret = openPanel->runModal();	
-		
-		if( ret == PPModalDialog::ReturnCodeCANCEL ) goto filepicker_done;
-		if (ret == PPModalDialog::ReturnCodeOK)
-		{
-			PPSystemString file = openPanel->getFileName();
-		
-			if (file.length())
-			{
-				PPSystemString fileName = file;
-				res = loadTypeFromFile(eLoadType, fileName, suspendPlayer, repaint, false);
-			}
-		
-		}
-		goto filepicker;
 
-	filepicker_done:
+	if (openPanel->runModal() == PPModalDialog::ReturnCodeOK)
+	{
+		PPSystemString file = openPanel->getFileName();
+
+		if (file.length())
+		{
+			PPSystemString fileName = file;
+			res = loadTypeFromFile(eLoadType, fileName, suspendPlayer, repaint, false);
+		}
+
 		delete openPanel;
+	}	
 	
 	return res;
 }
