@@ -844,7 +844,8 @@ static pp_int32 ASCIISTEP16_channel(pp_uint8 ascii)
 void Tracker::doASCIISTEP16( pp_uint8 character, bool chselect ){
 	// check for ASCIISTEP16 events
 	PatternEditorTools::Position& cursor = getPatternEditor()->getCursor();
-	pp_int32 stepsize = settingsDatabase->restore("HIGHLIGHTMODULO2")->getIntValue();
+	pp_int32 stepsize = getPatternEditorControl()->getRowInsertAdd() + 1;
+	getPatternEditorControl()->getRowInsertAdd() + 1;
 	pp_int32 bar      = cursor.row / (16*stepsize);
 	pp_int32 step     = ASCIISTEP16(character,bar) * stepsize;
 	pp_int32 ch       = ASCIISTEP16_channel(character);
