@@ -147,7 +147,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('W', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleCursorWrapAround);	
 	eventKeyDownBindingsMilkyTracker->addBinding('L', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleLiveSwitch);	
 
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_F1, 0, &Tracker::eventKeyDownBinding_InvokeHelp);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_F1, KeyModifierCTRL, &Tracker::eventKeyDownBinding_InvokeHelp);
 
 	// Transpose stuff like FT2
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_F1, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_TransposeAllInsTrackDown);
@@ -191,6 +191,10 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('J', KeyModifierSHIFT, &Tracker::eventKeyDownBinding_AddPlus);
 	eventKeyDownBindingsMilkyTracker->addBinding('H', KeyModifierSHIFT, &Tracker::eventKeyDownBinding_AddMinus);
 	eventKeyDownBindingsMilkyTracker->addBinding('I', KeyModifierALT, &Tracker::eventKeyDownBinding_LoadInstrument);
+
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_ADD, KeyModifierCTRL, &Tracker::eventKeyDownBinding_AddPlus);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_SUBTRACT, KeyModifierCTRL, &Tracker::eventKeyDownBinding_AddMinus);
+
 	// TODO: sequencer controls
 
 	// Key-down bindings for Fasttracker
@@ -1081,7 +1085,7 @@ void Tracker::eventKeyDownBinding_InvokePatternCapture()
 
 void Tracker::eventKeyDownBinding_InvokeHelp()
 {
-  dialog = new DialogHelp(screen, responder,PP_DEFAULT_ID,"Help",true);	
+  dialog = new DialogHelp(screen, responder,PP_DEFAULT_ID,"Help (ctrl+F1)",true);	
   dialog->show();
 }
 

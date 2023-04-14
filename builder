@@ -12,17 +12,18 @@ expecterror(){ set +e; "$@"; set +e; }
 diffwork(){
   set +e
   find patch/src -type f | while read f; do 
-    diff -Nau --brief $f ${f/patch/milkytracker} | grep -q differ && {
+    diff -NauEZb --brief $f ${f/patch/milkytracker} | grep -q differ && {
       echo $f
+      diff -NauEZb $f ${f/patch/milkytracker}
       test "$1" == "--copy" && cp ${f/patch/milkytracker} $f;
     }
   done
-  test -z $1 && { echo "add '--copy' to actually copy to patch-dir"; }
+  test -z $1 && { echo "add '--copy' to actually copy to patch-dir (or use VERBOSE= ./builder diffwork for more info)"; }
 }
 
 pull(){
   echo "\nPULL: pulling+merging branches from coderofsalvation-repo"
-  test -d milkytracker && rm -rf milkytracker 
+  test -d milkytracker && { echo "please remove (backup) milkytracker directory"; exit 1; }
   git clone https://github.com/milkytracker/MilkyTracker milkytracker
   cd milkytracker; 
   git remote | grep coderofsalvation || {
@@ -31,8 +32,8 @@ pull(){
   }
   git fetch coderofsalvation
   test -f CMakeLists.txt && git reset $UPSTREAM_MILKYTRACKER_COMMIT --hard
-  git config --global user.email "CI@appveyor.com"
-  git config --global user.name "ci-appveyor"
+  git config --local user.email "CI@appveyor.com"
+  git config --local user.name "ci-appveyor"
   git checkout master
   git reset $UPSTREAM_MILKYTRACKER_COMMIT --hard
   # copy this for creating diffpatch later
@@ -53,6 +54,7 @@ merge(){
 
   cd milkytracker
   #runverbose git merge --no-edit coderofsalvation/feat/keep-open-filedialog
+  runverbose git merge --no-edit coderofsalvation/bugfix/machinegun 
   runverbose git merge --no-edit coderofsalvation/bugfix/sustain-keyjazz-note-instead-of-retriggering
   runverbose git merge --no-edit coderofsalvation/feat/sample-editor-scaling-compress
   runverbose git merge --no-edit coderofsalvation/chore/copy-paste-sample-respect-relative-notenumber
@@ -85,7 +87,7 @@ merge(){
 patch(){
 
   create(){
-    pull && merge
+    #pull && merge
     echo "\nPATCH: patching"
     cd patch
     find . -type f | while read file; do 
@@ -158,6 +160,6 @@ all(){
   pull && patch && build
 }
 
-test -z "$1" && all
+#test -z "$1" && all
 test -z "$1" || "$@"
 

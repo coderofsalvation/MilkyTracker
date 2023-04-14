@@ -1186,11 +1186,11 @@ void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 	getModuleEditor()->setInstrumentName(7,str.getStrBuffer(),str.length());
 	str.replace("CTRLSHIFT\x18\x19= smp");
 	getModuleEditor()->setInstrumentName(8,str.getStrBuffer(),str.length());
-	str.replace("SHIFT +/-  = add/del order");
+	str.replace("ALT +/-    = pat add/del");
 	getModuleEditor()->setInstrumentName(9,str.getStrBuffer(),str.length());
-	str.replace("ALT\x18\x19      = ordernav");
+	str.replace("ALT \x18\x19\x1a\x1b+- = pat nav");
 	getModuleEditor()->setInstrumentName(10,str.getStrBuffer(),str.length());
-	str.replace("ALT\x1a\x1b      = setpatt.");
+	str.replace("");
 	getModuleEditor()->setInstrumentName(11,str.getStrBuffer(),str.length());
 }
 
