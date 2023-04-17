@@ -1,0 +1,30 @@
+jobs: # a basic unit of work in a run
+
+  build: 
+    macos:
+      xcode: 14.2.0 # indicate your selected version of Xcode
+    steps: 
+      - checkout
+      - run:
+          name: build 
+          command: |
+						pushd resources/pictures/docicons/osx
+						wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/docerator/docerator-2.0.zip
+						unzip docerator-2.0.zip -d docerator
+						rm docerator-2.0.zip
+						"/usr/bin/python genicons.py"
+						popd
+						mkdir build
+						pushd build
+						cmake -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 ..
+						cmake --build .
+						cpack
+						popd
+      - store_artifacts: # store this build output. Read more: https://circleci.com/docs/2.0/artifacts/
+          path: app.zip
+          destination: app
+          
+workflows:
+  test_build:
+    jobs:
+      - build:
