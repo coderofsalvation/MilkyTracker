@@ -1,3 +1,4 @@
+version: 2.1
 jobs: # a basic unit of work in a run
   build: 
     macos:
