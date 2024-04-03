@@ -26,14 +26,14 @@ after_build:
   - cpack -C %configuration%
 
 artifacts:
-  - path: build\milkytrackerx*.zip
+  - path: build\milkytracker*.zip
 
 deploy:
   description: Release $(appveyor_repo_tag_name)
   provider: GitHub
   auth_token:
     secure: k4eMw7MSycoyZwL8VfdAS8ejNXnwhFQ0KOVpif3IqyQDUrOGeGRyCHXm7FsD4kjb
-  artifact: /milkytrackerx.*\.zip/
+  artifact: /milkytracker*\.zip/
   prerelease: false
   overwrite: true
   on:
