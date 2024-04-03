@@ -12,13 +12,13 @@ install:
       Update-AppveyorBuild -Version "$env:GIT_TAG-$env:APPVEYOR_BUILD_NUMBER"
 
 before_build:
-  - md c:\projects\milkytracker\build
-  - cd c:\projects\milkytracker\build
+  - md c:\projects\milkytrackerx\build
+  - cd c:\projects\milkytrackerx\build
   - if %platform% == Win32 cmake -G "Visual Studio 14" -T v140_xp ..
   - if %platform% == x64 cmake -G "Visual Studio 14 Win64" -T v140_xp ..
 
 build:
-    project: c:\projects\milkytracker\build\MilkyTracker.sln
+    project: c:\projects\milkytrackerx\build\MilkyTracker.sln
 
 after_build:
   # https://github.com/chocolatey/chocolatey/issues/431
@@ -26,14 +26,14 @@ after_build:
   - cpack -C %configuration%
 
 artifacts:
-  - path: build\milkytracker*.zip
+  - path: build\milkytrackerx*.zip
 
 deploy:
   description: Release $(appveyor_repo_tag_name)
   provider: GitHub
   auth_token:
     secure: k4eMw7MSycoyZwL8VfdAS8ejNXnwhFQ0KOVpif3IqyQDUrOGeGRyCHXm7FsD4kjb
-  artifact: /milkytracker.*\.zip/
+  artifact: /milkytrackerx.*\.zip/
   prerelease: false
   overwrite: true
   on:
