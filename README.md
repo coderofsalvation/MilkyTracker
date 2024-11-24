@@ -1,5 +1,7 @@
 # MilkyTrackerX 
 
+> NOTE: nearly all features of MilkyTrackerX have been incorporated upstream in [Milkytracker](https://github.com/milkytracker/MilkyTracker). Please follow developments there ([specifically releasecandidate 1.05](https://github.com/milkytracker/MilkyTracker/issues/341)) 
+
 <img src="res/milkytrackerX.png"/>
 <img src="res/milkytrackerX.gif" width="100%"/>
 
@@ -14,10 +16,6 @@ A: To keep things central, use the official [issue-tracker](https://github.com/m
 ### Download MilkyTrackerX:
 
 https://github.com/coderofsalvation/MilkyTrackerX/releases/tag/v1.04.00
-
-### Discord chat
-
-https://discord.gg/rRjHHqqt
 
 ### Download scripts
 
